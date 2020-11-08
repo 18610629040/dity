@@ -42,6 +42,7 @@ public class AuthController {
         Map<String, Object> rmap = new HashMap<>();
         rmap.put("O_RUNSTATUS", 500);
         rmap.put("O_MSG", "无效session");
+        
         return rmap;
     }
     

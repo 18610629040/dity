@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class DityTestController {
     @RequestMapping(value = "/index", method = { RequestMethod.POST, RequestMethod.GET })
     public String holle(){
-        return "/index";
+        return "/index"; 
     }
 }
