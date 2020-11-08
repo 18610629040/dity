@@ -1,0 +1,43 @@
+{
+  "groups": [
+    {
+      "name": "dity.datasource",
+      "type": "javax.sql.DataSource",
+      "sourceType": "com.dity.common.dbconfig.DataSourceConfig",
+      "sourceMethod": "public javax.sql.DataSource dataSource() "
+    }
+  ],
+  "properties": [
+    {
+      "name": "dity.datasource.driver-class-name",
+      "type": "java.lang.String",
+      "description": "A description for 'dity.datasource.driver-class-name'"
+    },
+    {
+      "name": "dity.datasource.jdbc-url",
+      "type": "java.lang.String",
+      "description": "A description for 'dity.datasource.jdbc-url'"
+    },
+    {
+      "name": "dity.datasource.maximum-pool-size",
+      "type": "java.lang.String",
+      "description": "A description for 'dity.datasource.maximum-pool-size'"
+    },
+    {
+      "name": "dity.datasource.password",
+      "type": "java.lang.String",
+      "description": "A description for 'dity.datasource.password'"
+    },
+    {
+      "name": "dity.datasource.type",
+      "type": "java.lang.String",
+      "description": "A description for 'dity.datasource.type'"
+    },
+    {
+      "name": "dity.datasource.username",
+      "type": "java.lang.String",
+      "description": "A description for 'dity.datasource.username'"
+    }
+  ],
+  "hints": []
+}
