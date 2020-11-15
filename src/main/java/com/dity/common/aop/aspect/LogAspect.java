@@ -49,6 +49,7 @@ public class LogAspect {
             Map<String, Object> O_DATA = (Map<String, Object>) ret;
             Log log = method.getAnnotation(Log.class);
             if (log != null) {
+            	
                 Map<String, Object> param = new HashMap<>(16);
                 HttpServletRequest request =
                         ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
