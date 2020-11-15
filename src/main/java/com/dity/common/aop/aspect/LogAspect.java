@@ -64,6 +64,8 @@ public class LogAspect {
                 } else {
                 	if("login".equals(method.getName())) {
                 		param.put("USER_ID", request.getParameter("USER_ID"));
+                	} else if("register".equals(method.getName())) {
+                		param.put("USER_ID", request.getParameter("USER_ID"));
                 	} else {
                 		param.put("USER_ID", user.get("USER_ID"));
                 	}

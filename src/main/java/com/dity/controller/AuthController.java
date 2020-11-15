@@ -108,4 +108,29 @@ public class AuthController {
         }
         return rmap;
     }
+    
+	@RequestMapping("/register")
+    @Log(content="注册")
+	@ResponseBody
+    public Object register(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "username", required = false) String name,
+            @RequestParam(value = "mobileno", required = false) String mobile,
+            @RequestParam(value = "userpass", required = false) String pass,
+            @RequestParam(value = "userpass1", required = false) String pass1) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            if(!pass.equals(pass1)) {
+            	map.put("O_RUNSTATUS", 0);
+            	map.put("O_MSG", "请核对再次输入密码！");
+                return map;
+            }
+            map.put("O_RUNSTATUS", 1);
+            map.put("O_MSG", "");
+        } catch (Exception e) {
+            logger.error("/register:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
 }
