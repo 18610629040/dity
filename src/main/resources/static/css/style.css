@@ -4824,7 +4824,7 @@ body.modal-open {
 }
 
 .middle-box h1 {
-    font-size: 170px;
+    font-size: 160px;
 }
 
 .wrapper .middle-box {
@@ -7889,4 +7889,11 @@ body.skin-3 {
         width: 12.5%;
         font-size: 12px
     }
+}
+
+.mt40{
+	margin-top: 40px !important;
+}
+.mb20{
+    margin-bottom: 20px !important;
 }

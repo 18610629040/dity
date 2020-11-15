@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -35,6 +36,16 @@ public class AuthController {
 	
 	@Autowired
 	TokenService tokenService;
+	
+	@RequestMapping(value = "/gotoLogin", method = { RequestMethod.POST, RequestMethod.GET })
+    public String gotoLogin(){
+        return "/login/login";
+    }
+	
+	@RequestMapping(value = "/gotoRegister", method = { RequestMethod.POST, RequestMethod.GET })
+    public String gotoRegister(){
+        return "/login/register";
+    }
 	
     @RequestMapping("/notLogin")
     @ResponseBody
