@@ -72,7 +72,6 @@ public class LogAspect {
                 param.put("METHOD_NAME", method.getName());
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 param.put("TIMESTR", format.format(new Date()));
-                param.put("CLIENT_IP", request.getHeader("Host"));
                 param.put("ID", IDUtils.createID());
                 logService.insertLog(param);
             }
