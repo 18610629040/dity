@@ -123,7 +123,7 @@ public class AuthController {
             	map.put("O_RUNSTATUS", 0);
             	map.put("O_MSG", "请核对再次输入密码！");
                 return map;
-            }
+            } 
             map.put("O_RUNSTATUS", 1);
             map.put("O_MSG", "");
         } catch (Exception e) {
