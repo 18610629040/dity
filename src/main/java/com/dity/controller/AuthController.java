@@ -125,7 +125,7 @@ public class AuthController {
                 return map;
             } 
             map.put("O_RUNSTATUS", 1);
-            map.put("O_MSG", "");
+            map.put("O_MSG", "注册成功");
         } catch (Exception e) {
             logger.error("/register:" + map, e);
             map.put("O_RUNSTATUS", -1);

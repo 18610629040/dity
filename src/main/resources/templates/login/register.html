@@ -40,6 +40,7 @@
                             <input type="checkbox"><i></i> 我同意注册协议</label>
                     </div>
                 </div>
+                <p id="O_MSG" class="text-muted text-center"></p>
                 <a id="submit" class="btn btn-primary block full-width m-b" href="javascript:">注 册</a>
 
                 <p class="text-muted text-center"><small>已经有账户了？</small><a href="gotoLogin">点此登录</a>
@@ -73,7 +74,10 @@
                 data: formObject,
                 dataType: "json",
                 success:function(data){
-                    alert(data.O_MSG);
+	                $("#O_MSG").text(data.O_MSG);
+                	if(data.O_RUNSTATUS == 1){
+                		window.location.href ="gotoLogin";
+                	}
                 },
                 error:function(e){
                 }
