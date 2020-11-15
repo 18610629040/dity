@@ -9,9 +9,8 @@
 			URL,
 			METHOD_NAME,
 			CONTENT,
-			TIMESTR,
-			CLIENT_IP) 
-		values(#{ID},#{USER_ID},#{URL},#{METHOD_NAME},#{CONTENT},#{TIMESTR},#{CLIENT_IP})
+			TIMESTR) 
+		values(#{ID},#{USER_ID},#{URL},#{METHOD_NAME},#{CONTENT},#{TIMESTR})
 	</insert>
     
 	
