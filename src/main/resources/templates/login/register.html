@@ -40,7 +40,7 @@
                             <input type="checkbox"><i></i> 我同意注册协议</label>
                     </div>
                 </div>
-                <button id="submit" class="btn btn-primary block full-width m-b">注 册</button>
+                <a id="submit" class="btn btn-primary block full-width m-b" href="javascript:">注 册</a>
 
                 <p class="text-muted text-center"><small>已经有账户了？</small><a href="gotoLogin">点此登录</a>
                 </p>
@@ -73,7 +73,7 @@
                 data: formObject,
                 dataType: "json",
                 success:function(data){
-                    alert(data.MSG);
+                    alert(data.O_MSG);
                 },
                 error:function(e){
                 }
