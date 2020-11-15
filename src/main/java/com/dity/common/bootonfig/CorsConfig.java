@@ -3,6 +3,7 @@ package com.dity.common.bootonfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -14,11 +15,27 @@ public class CorsConfig implements WebMvcConfigurer{
 				.allowedMethods("GET", "HEAD", "POST","PUT", "DELETE", "OPTIONS")
 				.allowCredentials(true).maxAge(3600);
 	}
-	@Override
+
+	/**
+     * 添加拦截器
+     * @param registry
+     */
+    @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(authenticationInterceptor())
-                .addPathPatterns("/**");    // 拦截所有请求，通过判断是否有 @LoginRequired 注解 决定是否需要登录
+        InterceptorRegistration interceptorRegistration = 
+        			registry.addInterceptor(new AuthenticationInterceptor());
+        interceptorRegistration.addPathPatterns("/**");
+        interceptorRegistration.excludePathPatterns(
+        		"/css/**",
+        		"/js/**",
+        		"/img/**",
+        		"/fonts/**",
+        		"/index.html",
+        		"/index_v1.html",
+        		"/error",
+        		"/dity/auth/**");
     }
+	
 	@Bean
     public AuthenticationInterceptor authenticationInterceptor() {
         return new AuthenticationInterceptor();

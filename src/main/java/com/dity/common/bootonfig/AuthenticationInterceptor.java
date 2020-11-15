@@ -29,6 +29,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor{
 	@SuppressWarnings("unchecked")
 	@Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object object) throws Exception {
+		System.out.println(httpServletRequest.getRequestURI());
 		HttpSession session = httpServletRequest.getSession();
 		String token = (String) session.getAttribute("token");
 		// 如果不是映射到方法直接通过
