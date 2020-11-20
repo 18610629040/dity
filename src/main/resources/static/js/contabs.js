@@ -107,7 +107,7 @@ $(function () {
 
     function menuItem() {
         // 获取标识数据
-        var dataUrl = $(this).attr('href'),
+        var dataUrl = $(this).attr('target'),
             dataIndex = $(this).data('index'),
             menuName = $.trim($(this).text()),
             flag = true;

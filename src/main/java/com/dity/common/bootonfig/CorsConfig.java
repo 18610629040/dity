@@ -30,8 +30,6 @@ public class CorsConfig implements WebMvcConfigurer{
         		"/js/**",
         		"/img/**",
         		"/fonts/**",
-        		"/index.html",
-        		"/index_v1.html",
         		"/error",
         		"/dity/auth/**");
     }
