@@ -3248,6 +3248,10 @@ a.forum-item-title:hover {
     width: 50%;
 }
 
+.sidebar-container ul.nav-tabs.navs-1 li {
+    width: 100%;
+}
+
 .sidebar-container ul.nav-tabs li {
     border: none;
 }
