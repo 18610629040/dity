@@ -28,9 +28,11 @@ public class FeePerfMgtController {
 	@Autowired
 	FeePerfMgtService feePerfMgtService;
 	
-
+	/**
+	 * 费率管理首页
+	 */
 	@RequestMapping(value = "/feePerfIndex", method = { RequestMethod.POST, RequestMethod.GET })
-    public String gotoLogin(){
+    public String feePerfIndex(){
         return "/sysMgt/feePerfMgt";
     }
 	
@@ -49,4 +51,20 @@ public class FeePerfMgtController {
 		}
 		return list;
 	}
+
+	/**
+	 * 商品类别维护管理首页
+	 */
+	@RequestMapping(value = "/prdtLbIndex", method = { RequestMethod.POST, RequestMethod.GET })
+    public String prdtLbIndex(){
+        return "/sysMgt/prdtLbMgt";
+    }
+
+	/**
+	 * 信息提示管理首页
+	 */
+	@RequestMapping(value = "/infoTsIndex", method = { RequestMethod.POST, RequestMethod.GET })
+    public String infoTsIndex(){
+        return "/sysMgt/infoTsMgt";
+    }
 }
