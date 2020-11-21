@@ -2,6 +2,7 @@ package com.dity.common.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 public class IDUtils {
 
@@ -24,5 +25,6 @@ public class IDUtils {
 		for (int i = 0; i < 10; i++) {
 			System.out.println(createID());
 		}
+		System.out.println(UUID.randomUUID());
 	}
 }

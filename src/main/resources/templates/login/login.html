@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>玩物在线购物商城 - 登录</title>
-    <link rel="shortcut icon" href="/img/favicon.ico"> <link href="/css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link rel="shortcut icon" href="/img/favicon.png"> <link href="/css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
     <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
 
     <link href="/css/animate.css" rel="stylesheet">
@@ -24,20 +24,19 @@
             </div>
             <h3 style="margin-top: 40px; margin-bottom: 20px;">欢迎您</h3>
 
-            <form class="m-t" role="form" action="index.html">
+            <div class="m-t">
                 <div class="form-group">
-                    <input type="email" class="form-control" placeholder="用户名" required="">
+                    <input type="text" id="USER_NO" class="form-control" placeholder="用户名" required="">
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" placeholder="密码" required="">
+                    <input type="password" id="PASS" class="form-control" placeholder="密码" required="">
                 </div>
-                <button type="submit" class="btn btn-primary block full-width m-b">登 录</button>
-
-
+                <button type="submit" id="submit" class="btn btn-primary block full-width m-b">登 录</button>
+                <p class="text-muted text-center" id="aaa" style="display: none"><a><small id="content" style="color:red;"></small></a></p>
                 <p class="text-muted text-center"> <a><small>忘记密码，请联系管理员</small></a> | <a href="gotoRegister">注册一个新账号</a>
                 </p>
 
-            </form>
+            </div>
         </div>
     </div>
 
@@ -45,9 +44,28 @@
     <script src="/js/jquery.min.js?v=2.1.4"></script>
     <script src="/js/bootstrap.min.js?v=3.3.7"></script>
 
-    <script type="text/javascript" src="http://tajs.qq.com/stats?sId=9051096" charset="UTF-8"></script>
-    <!--统计代码，可删除-->
-
+	<script type="text/javascript">
+	$(function(){
+	    $('#submit').click(function(){
+	         $.ajax({
+	             type: "POST",
+	             url: "/dity/auth/login",
+	             data: {USER_NO:$("#USER_NO").val(), PASS:$("#PASS").val()},
+	             dataType: "json",
+	             success: function(data){
+	            	 if(data.O_RUNSTATUS == 0){
+	            		 $("#aaa").show();
+	            	 	 $("#content").text(data.O_MSG);
+	            	 }else{
+	            		 window.location.href="/dity/index";
+	            	 }
+	             }
+	         });
+	    });
+	});	
+	
+	
+	</script>
 </body>
 
 </html>

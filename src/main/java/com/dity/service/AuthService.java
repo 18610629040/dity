@@ -14,4 +14,8 @@ public class AuthService {
 	public Object getUserInfo(Map<String, Object> map) {
 		return authDao.getUserInfo(map);
 	}
+	
+	public int saveUser(Map<String, Object> map) {
+		return authDao.saveUser(map);
+	}
 }

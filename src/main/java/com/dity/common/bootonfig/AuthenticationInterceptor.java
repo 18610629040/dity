@@ -30,12 +30,17 @@ public class AuthenticationInterceptor implements HandlerInterceptor{
 	@Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object object) throws Exception {
 		System.out.println(httpServletRequest.getRequestURI());
+		boolean flag = httpServletRequest.getRequestURI().indexOf("mobile")>=0;
 		HttpSession session = httpServletRequest.getSession();
 		String token = (String) session.getAttribute("token");
-		// 如果不是映射到方法直接通过
-        if(!(object instanceof HandlerMethod)){
-            return true;
-        }
+		if(token == null) {
+			if(flag) {
+				httpServletResponse.sendRedirect("/dity/auth/notLogin");//手机端的
+			}else {
+				httpServletResponse.sendRedirect("/dity/auth/gotoLogin");//pc
+			}
+			return false;
+		}
         HandlerMethod handlerMethod=(HandlerMethod)object;
         Method method=handlerMethod.getMethod();
         //检查是否有passtoken注释，有则跳过认证

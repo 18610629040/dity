@@ -18,4 +18,9 @@ public class AuthDao {
         return sqlSessionTemplate
                 .selectList("com.dity.dao.AuthDaoMapper.getUserInfo", map);
     }
+    
+    public int saveUser(Map<String, Object> map) {
+        return sqlSessionTemplate
+                .insert("com.dity.dao.AuthDaoMapper.saveUser", map);
+    }
 }

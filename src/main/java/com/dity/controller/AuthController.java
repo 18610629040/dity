@@ -22,6 +22,7 @@ import com.dity.common.aop.annotation.Log;
 import com.dity.common.bootonfig.TokenService;
 import com.dity.common.bootonfig.TokenUtil;
 import com.dity.common.bootonfig.UserLoginToken;
+import com.dity.common.utils.IDUtils;
 import com.dity.service.AuthService;
 
 @CrossOrigin
@@ -77,12 +78,12 @@ public class AuthController {
     @ResponseBody
     @Log(content="登录")
     public Object login(HttpServletRequest request,HttpServletResponse response, 
-            @RequestParam(value = "USER_ID", required = false) String userId,
+            @RequestParam(value = "USER_NO", required = false) String userNo,
             @RequestParam(value = "PASS", required = false) String pass) {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> rmap = new HashMap<>();
         try {
-            map.put("USER_ID", userId);
+            map.put("USER_NO", userNo);
             List<Map<String, Object>> list = (List<Map<String, Object>>) authService.getUserInfo(map);
             if(list.isEmpty()) {
             	rmap.put("O_RUNSTATUS", 0);
@@ -109,12 +110,13 @@ public class AuthController {
         return rmap;
     }
     
+	@SuppressWarnings("unchecked")
 	@RequestMapping("/register")
     @Log(content="注册")
 	@ResponseBody
     public Object register(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "userno", required = false) String userno,
             @RequestParam(value = "username", required = false) String name,
-            @RequestParam(value = "mobileno", required = false) String mobile,
             @RequestParam(value = "userpass", required = false) String pass,
             @RequestParam(value = "userpass1", required = false) String pass1) {
         Map<String, Object> map = new HashMap<>();
@@ -124,7 +126,17 @@ public class AuthController {
             	map.put("O_MSG", "请核对再次输入密码！");
                 return map;
             } 
-            map.put("O_RUNSTATUS", 1);
+            map.put("ID", IDUtils.createID());
+            map.put("USER_NO", userno);
+            map.put("USER_NAME", name);
+            map.put("PASS", pass);
+            List<Map<String, Object>> list = (List<Map<String, Object>>) authService.getUserInfo(map);
+            if(!list.isEmpty()) {
+            	map.put("O_RUNSTATUS", 0);
+            	map.put("O_MSG", "账号重复，请重新填写！");
+                return map;
+            }
+            map.put("O_RUNSTATUS", authService.saveUser(map));
             map.put("O_MSG", "注册成功");
         } catch (Exception e) {
             logger.error("/register:" + map, e);
