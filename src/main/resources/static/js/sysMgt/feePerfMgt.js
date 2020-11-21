@@ -1,7 +1,14 @@
 $(document).ready(function () {
 	$.jgrid.defaults.styleUI = 'Bootstrap';
+	initBtn();
 	initFeePerfGrid();
 });
+
+function initBtn(){
+	$("#sData").click(function(){
+		alert(123);
+	});
+}
 
 function initFeePerfGrid(){
 	$("#feePerf_list").jqGrid({
@@ -17,14 +24,15 @@ function initFeePerfGrid(){
         colNames: ['ID','费率名称', '费率值'],
         colModel: [
         	{name: 'ID',index: 'ID', align :"Center",hidden:true},
-            {name: 'RATE_NAME',index: 'RATE_NAME', align :"Center",width: '50%'},
-            {name: 'RATE_VAL',index: 'RATE_VAL', align :"Center",width: '50%'},
+            {name: 'RATE_NAME',index: 'RATE_NAME', align :"Center",editable: true,width: '50%'},
+            {name: 'RATE_VAL',index: 'RATE_VAL', align :"Center",editable: true,width: '50%'},
         ],
         loadComplete: function (data) {
           　　console.log(data)
       　　 },
         pager: "#feePerf_list_btn",
         viewrecords: true,
+        emptyrecords: "暂无数据",//viewrecords: true时生效
         caption: "费率管理",
         add: true,
         edit: true,
