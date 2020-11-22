@@ -1,5 +1,6 @@
 package com.dity.common.bootonfig;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -30,17 +31,13 @@ public class AuthenticationInterceptor implements HandlerInterceptor{
 	@Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object object) throws Exception {
 		System.out.println(httpServletRequest.getRequestURI());
-		boolean flag = httpServletRequest.getRequestURI().indexOf("mobile")>=0;
 		HttpSession session = httpServletRequest.getSession();
 		String token = (String) session.getAttribute("token");
-		if(token == null) {
-			if(flag) {
-				httpServletResponse.sendRedirect("/dity/auth/notLogin");//手机端的
-			}else {
-				httpServletResponse.sendRedirect("/dity/auth/gotoLogin");//pc
-			}
-			return false;
-		}
+		// 执行认证
+        if (token == null) {
+            redirectUrl(httpServletRequest,httpServletResponse);
+            return false;
+        }
         HandlerMethod handlerMethod=(HandlerMethod)object;
         Method method=handlerMethod.getMethod();
         //检查是否有passtoken注释，有则跳过认证
@@ -50,43 +47,40 @@ public class AuthenticationInterceptor implements HandlerInterceptor{
                 return true;
             }
         }
-        //检查有没有需要用户权限的注解
-        if (method.isAnnotationPresent(UserLoginToken.class)) {
-            UserLoginToken userLoginToken = method.getAnnotation(UserLoginToken.class);
-            if (userLoginToken.required()) {
-                // 执行认证
-                if (token == null) {
-                    httpServletResponse.sendRedirect("/dity/auth/notLogin");
-                    return false;
-                }
-                // 获取 token 中的 userId
-                String userId = "";
-                try {
-                	userId = JWT.decode(token).getAudience().get(0);
-                } catch (JWTDecodeException j) {
-                	httpServletResponse.sendRedirect("/dity/auth/notLogin");
-                    return false;
-                }
-                Map<String, Object> map = new HashMap<>();
-                map.put("USER_ID", userId);
-                List<Map<String, Object>> user = (List<Map<String, Object>>) authService.getUserInfo(map);
-                if (user.isEmpty()) {
-                	httpServletResponse.sendRedirect("/dity/auth/notLogin");
-                	return false;
-                }
-                // 验证 token
-                JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256((String)user.get(0).get("PASS"))).build();
-                try {
-                    jwtVerifier.verify(token);
-                } catch (JWTVerificationException e) {
-                	httpServletResponse.sendRedirect("/dity/auth/notLogin");
-                	return false;
-                }
-                return true;
-            }
+        // 获取 token 中的 userNo
+        String userNo = "";
+        try {
+        	userNo = JWT.decode(token).getAudience().get(0);
+        } catch (JWTDecodeException j) {
+        	redirectUrl(httpServletRequest,httpServletResponse);
+            return false;
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("USER_NO", userNo);
+        List<Map<String, Object>> user = (List<Map<String, Object>>) authService.getUserInfo(map);
+        if (user.isEmpty()) {
+        	redirectUrl(httpServletRequest,httpServletResponse);
+        	return false;
+        }
+        // 验证 token
+        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256((String)user.get(0).get("PASS"))).build();
+        try {
+            jwtVerifier.verify(token);
+        } catch (JWTVerificationException e) {
+        	redirectUrl(httpServletRequest,httpServletResponse);
+        	return false;
         }
         return true;
     }
+	
+	public void redirectUrl(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException{
+		boolean flag = httpServletRequest.getRequestURI().indexOf("mobile")>=0;
+		if(flag) {
+			httpServletResponse.sendRedirect("/dity/auth/notLogin");//手机端的
+		}else {
+			httpServletResponse.sendRedirect("/dity/auth/gotoLogin");//pc
+		}
+	}
 	
     @Override
     public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {

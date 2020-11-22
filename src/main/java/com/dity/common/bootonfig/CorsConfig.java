@@ -16,6 +16,11 @@ public class CorsConfig implements WebMvcConfigurer{
 				.allowCredentials(true).maxAge(3600);
 	}
 
+	@Bean
+	public AuthenticationInterceptor authenticationInterceptor() {
+	    return new AuthenticationInterceptor();
+	}
+	
 	/**
      * 添加拦截器
      * @param registry
@@ -23,7 +28,7 @@ public class CorsConfig implements WebMvcConfigurer{
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration interceptorRegistration = 
-        			registry.addInterceptor(new AuthenticationInterceptor());
+        			registry.addInterceptor(authenticationInterceptor());
         interceptorRegistration.addPathPatterns("/**");
         interceptorRegistration.excludePathPatterns(
         		"/css/**",
@@ -32,10 +37,5 @@ public class CorsConfig implements WebMvcConfigurer{
         		"/fonts/**",
         		"/error",
         		"/dity/auth/**");
-    }
-	
-	@Bean
-    public AuthenticationInterceptor authenticationInterceptor() {
-        return new AuthenticationInterceptor();
     }
 }

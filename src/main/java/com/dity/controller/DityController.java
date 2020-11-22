@@ -16,4 +16,9 @@ public class DityController {
     public String index(){
         return "/welcom/welcomIndex";
     }
+    
+    @RequestMapping(value = "/userIndex", method = { RequestMethod.POST, RequestMethod.GET })
+    public String userIndex(){
+        return "/abc/userIndex";
+    }
 }
