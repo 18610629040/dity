@@ -2,8 +2,6 @@ package com.dity.common.bootonfig;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.dity.service.AuthService;
 
@@ -33,7 +30,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor{
 		System.out.println(httpServletRequest.getRequestURI());
 		HttpSession session = httpServletRequest.getSession();
 		String token = (String) session.getAttribute("token");
-		// 执行认证
         if (token == null) {
             redirectUrl(httpServletRequest,httpServletResponse);
             return false;
@@ -47,26 +43,13 @@ public class AuthenticationInterceptor implements HandlerInterceptor{
                 return true;
             }
         }
-        // 获取 token 中的 userNo
-        String userNo = "";
-        try {
-        	userNo = JWT.decode(token).getAudience().get(0);
-        } catch (JWTDecodeException j) {
-        	redirectUrl(httpServletRequest,httpServletResponse);
-            return false;
-        }
-        Map<String, Object> map = new HashMap<>();
-        map.put("USER_NO", userNo);
-        List<Map<String, Object>> user = (List<Map<String, Object>>) authService.getUserInfo(map);
-        if (user.isEmpty()) {
-        	redirectUrl(httpServletRequest,httpServletResponse);
-        	return false;
-        }
         // 验证 token
-        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256((String)user.get(0).get("PASS"))).build();
         try {
+        	Map<String, Object> user = (Map<String, Object>) session.getAttribute("userInfo");
+        	JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256((String)user.get("PASS"))).build();
             jwtVerifier.verify(token);
         } catch (JWTVerificationException e) {
+        	//token验证失败，或已失效，TokenService中设置有效时间
         	redirectUrl(httpServletRequest,httpServletResponse);
         	return false;
         }
