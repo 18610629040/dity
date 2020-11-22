@@ -5,11 +5,10 @@ $(document).ready(function () {
 });
 
 function initBtn(){
-	$("#sData").click(function(){
-		alert(123);
-	});
+	
 }
 
+var actulID;
 function initFeePerfGrid(){
 	$("#feePerf_list").jqGrid({
 		url:'/dity/feePerfMgt/srchFeePerfData',
@@ -23,7 +22,7 @@ function initFeePerfGrid(){
         rowList: [10, 20, 30],
         colNames: ['ID','费率名称', '费率值'],
         colModel: [
-        	{name: 'ID',index: 'ID', align :"Center",hidden:true},
+        	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
             {name: 'RATE_NAME',index: 'RATE_NAME', align :"Center",editable: true,width: '50%'},
             {name: 'RATE_VAL',index: 'RATE_VAL', align :"Center",editable: true,width: '50%'},
         ],
@@ -36,8 +35,7 @@ function initFeePerfGrid(){
         caption: "费率管理",
         add: true,
         edit: true,
-        addtext: 'Add',
-        edittext: 'Edit',
+        editurl :'/dity/feePerfMgt/optFeePerfData',
         hidegrid: false
     });
 	

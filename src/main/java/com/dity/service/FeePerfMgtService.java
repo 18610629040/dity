@@ -16,4 +16,16 @@ public class FeePerfMgtService {
 	public List<Object> srchFeePerfData(Map<String, Object> map) {
 		return feePerfMgtDao.srchFeePerfData(map);
 	}
+
+	public int addFeePerfData(Map<String, Object> map) {
+		return feePerfMgtDao.addFeePerfData(map);
+	}
+
+	public int modfyFeePerfData(Map<String, Object> map) {
+		return feePerfMgtDao.modfyFeePerfData(map);
+	}
+
+	public int delFeePerfData(Map<String, Object> map) {
+		return feePerfMgtDao.delFeePerfData(map);
+	}
 }
