@@ -18,5 +18,20 @@ public class FeePerfMgtDao {
 		return sqlSessionTemplate
                 .selectList("com.dity.dao.FeePerfMgtDaoMapper.srchFeePerfData", map);
 	}
+
+	public int addFeePerfData(Map<String, Object> map) {
+		return sqlSessionTemplate
+        .insert("com.dity.dao.FeePerfMgtDaoMapper.addFeePerfData", map);
+	}
+
+	public int modfyFeePerfData(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.FeePerfMgtDaoMapper.modfyFeePerfData", map);
+	}
+
+	public int delFeePerfData(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .delete("com.dity.dao.FeePerfMgtDaoMapper.delFeePerfData", map);
+	}
 	
 }

@@ -7,8 +7,17 @@
 		SELECT * FROM T_DITY_RATE T
 	</select>
 	
-	<!-- <insert id="saveUser" parameterType="java.util.HashMap">
-		insert into T_Dity_USER (ID,USER_NO,PASS,USER_NAME,STATUS) values 
-			(#{ID},#{USER_NO},#{PASS},#{USER_NAME},1)
-	</insert> -->
+	<insert id="addFeePerfData" parameterType="java.util.HashMap">
+		INSERT INTO T_DITY_RATE (ID,RATE_NAME,RATE_VAL,CRITE_TIME,CRITE_USER) VALUES 
+			(#{ID},#{RATE_NAME},#{RATE_VAL},SYSDATE(),#{CRITE_USER})
+	</insert>
+	
+	<update id="modfyFeePerfData" parameterType="java.util.HashMap">
+		UPDATE T_DITY_RATE T SET T.RATE_NAME = #{RATE_NAME}, T.RATE_VAL = #{RATE_VAL},T.CRITE_USER = #{CRITE_USER}, T.CRITE_TIME = SYSDATE()
+			WHERE T.ID = #{ID}
+	</update>
+	
+	<delete id="delFeePerfData" parameterType="java.util.HashMap">
+		DELETE FROM T_DITY_RATE T WHERE T.ID IN (${ID})
+	</delete>
 </mapper>
