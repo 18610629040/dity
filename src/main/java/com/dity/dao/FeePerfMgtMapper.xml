@@ -4,7 +4,7 @@
 <mapper namespace="com.dity.dao.FeePerfMgtDaoMapper">
 	
 	<select id="srchFeePerfData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT * FROM T_DITY_RATE T
+		SELECT *,DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %T') CRITETIME FROM T_DITY_RATE T
 	</select>
 	
 	<insert id="addFeePerfData" parameterType="java.util.HashMap">
@@ -18,6 +18,42 @@
 	</update>
 	
 	<delete id="delFeePerfData" parameterType="java.util.HashMap">
-		DELETE FROM T_DITY_RATE T WHERE T.ID IN (${ID})
+		DELETE FROM T_DITY_RATE WHERE ID IN (${ID})
+	</delete>
+	
+	<select id="srchPrdtLbData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT *,DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %T') CRITETIME FROM T_DITY_PRODUCT_TYPE T
+	</select>
+	
+	<insert id="addPrdtLbData" parameterType="java.util.HashMap">
+		INSERT INTO T_DITY_PRODUCT_TYPE (ID,TYPE_ORDER,TYPE_NAME,CRITE_TIME,CRITE_USER) VALUES 
+			(#{ID},#{TYPE_ORDER},#{TYPE_NAME},SYSDATE(),#{CRITE_USER})
+	</insert>
+	
+	<update id="modfyPrdtLbData" parameterType="java.util.HashMap">
+		UPDATE T_DITY_PRODUCT_TYPE T SET T.TYPE_ORDER = #{TYPE_ORDER}, T.TYPE_NAME = #{TYPE_NAME},T.CRITE_USER = #{CRITE_USER}, T.CRITE_TIME = SYSDATE()
+			WHERE T.ID = #{ID}
+	</update>
+	
+	<delete id="delPrdtLbData" parameterType="java.util.HashMap">
+		DELETE FROM T_DITY_PRODUCT_TYPE WHERE ID IN (${ID})
+	</delete>
+	
+	<select id="srchInfoTsData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT *,DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %T') CRITETIME FROM T_DITY_CONTATE_INFO T
+	</select>
+	
+	<insert id="addInfoTsData" parameterType="java.util.HashMap">
+		INSERT INTO T_DITY_CONTATE_INFO (ID,CONTATE_NAME,CONTATE_INFO,CRITE_TIME,CRITE_USER) VALUES 
+			(#{ID},#{CONTATE_NAME},#{CONTATE_INFO},SYSDATE(),#{CRITE_USER})
+	</insert>
+	
+	<update id="modfyInfoTsData" parameterType="java.util.HashMap">
+		UPDATE T_DITY_CONTATE_INFO T SET T.CONTATE_NAME = #{CONTATE_NAME}, T.CONTATE_INFO = #{CONTATE_INFO},T.CRITE_USER = #{CRITE_USER}, T.CRITE_TIME = SYSDATE()
+			WHERE T.ID = #{ID}
+	</update>
+	
+	<delete id="delInfoTsData" parameterType="java.util.HashMap">
+		DELETE FROM T_DITY_CONTATE_INFO WHERE ID IN (${ID})
 	</delete>
 </mapper>
