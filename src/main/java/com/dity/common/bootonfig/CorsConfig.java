@@ -34,6 +34,7 @@ public class CorsConfig implements WebMvcConfigurer{
         		"/css/**",
         		"/js/**",
         		"/img/**",
+        		"/tempFile/**",
         		"/fonts/**",
         		"/error",
         		"/dity/auth/**");

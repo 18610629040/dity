@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.dity.dao.DityDaoMapper">
+	
+	<select id="qryUserList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT 
+			ID,
+			USER_NO,
+			PASS,
+			USER_NAME,
+			MOBILE_NO,
+			USER_ADD,
+			USER_AGE,
+			USER_BIRTH,
+			USER_TYPE,
+			STATUS,
+			BANK_NO,
+			WX_NO,
+			ZFB_NO,
+			DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
+			CRITE_USER 
+		FROM T_DITY_USER T where STATUS=1
+		<if test="ID != null and ID !=''">
+			and ID = #{ID}
+		</if>
+		<if test="USER_NAME != null and USER_NAME !=''">
+			and USER_NAME like concat('%',#{USER_NAME},'%')
+		</if>
+		<if test="USER_NO != null and USER_NO !=''">
+			and USER_NO like concat('%',#{USER_NO},'%')
+		</if>
+	</select>
+	
+	<select id="getUserByNo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT * FROM T_DITY_USER T where STATUS=1 and USER_NO=#{USER_NO}
+		<if test="ID != null and ID !=''">
+			and ID != #{ID}
+		</if>
+	</select>
+	
+	<insert id="addUser" parameterType="java.util.HashMap">
+		INSERT INTO T_DITY_USER (
+				ID,
+				USER_NO,
+				PASS,
+				USER_NAME,
+				MOBILE_NO,
+				USER_ADD,
+				USER_AGE,
+				USER_BIRTH,
+				USER_TYPE,
+				STATUS,
+				BANK_NO,
+				WX_NO,
+				ZFB_NO,
+				WX_IMAGE,
+				ZFB_IMAGE,
+				CRITE_TIME,
+				CRITE_USER 
+			) VALUES (
+				#{ID},
+				#{USER_NO},
+				#{PASS},
+				#{USER_NAME},
+				#{MOBILE_NO},
+				#{USER_ADD},
+				#{USER_AGE},
+				#{USER_BIRTH},
+				#{USER_TYPE},
+				1,
+				#{BANK_NO},
+				#{WX_NO},
+				#{ZFB_NO},
+				#{WX_IMAGE},
+				#{ZFB_IMAGE},
+				SYSDATE(),
+				#{CRITE_USER}
+			)
+	</insert>
+	
+	<update id="editUser" parameterType="java.util.HashMap">
+		UPDATE T_DITY_USER T SET 
+				T.USER_NO = #{USER_NO}, 
+				T.PASS = #{PASS},
+				T.USER_NAME = #{USER_NAME}, 
+				T.MOBILE_NO = #{MOBILE_NO}, 
+				T.USER_ADD = #{USER_ADD}, 
+				T.USER_AGE = #{USER_AGE}, 
+				T.USER_TYPE = #{USER_TYPE}, 
+				T.BANK_NO = #{BANK_NO}, 
+				T.WX_NO = #{WX_NO}, 
+				T.ZFB_NO = #{ZFB_NO}
+				<if test="WX_IMAGE != null and WX_IMAGE !=''">
+					, T.WX_IMAGE = #{WX_IMAGE}
+				</if>
+				<if test="ZFB_IMAGE != null and ZFB_IMAGE !=''">
+					, T.ZFB_IMAGE = #{ZFB_IMAGE}
+				</if>
+			WHERE T.ID = #{ID}
+	</update>
+	
+	<delete id="delUser" parameterType="java.util.HashMap">
+		DELETE FROM T_DITY_USER WHERE ID = #{ID}
+	</delete>
+</mapper>

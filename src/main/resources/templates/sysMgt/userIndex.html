@@ -12,16 +12,193 @@
 <link href="/css/font-awesome.css" rel="stylesheet">
 <link href="/css/animate.css" rel="stylesheet">
 <link href="/css/style.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
+<link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
 <script src="/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
 <script src="/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
 <script src="/js/sysMgt/userIndex.js"></script>
+<script src="/js/jquery.form.min.js"></script>
+<script src="/js/vendor/jquery.ui.widget.js"></script>
+<script src="/js/jquery.iframe-transport.js"></script>
+<script src="/js/jquery.fileupload.js"></script>
+
+<style>
+  .cover{
+      display: none;
+      position: absolute;
+      top: 0%;
+      left: 0%;
+      width: 100%;
+      height: 100%;
+      background-color: #999c9e;
+      z-index:1001;
+      -moz-opacity: 0.8;
+      opacity:.80;
+      filter: alpha(opacity=88);
+  }
+  .window {
+	display: none;
+	position: absolute;
+	top: 10%;
+	left: 10%;
+	width: 80%;
+	height: 80%;
+	border: 2px solid #777;
+	background-color: #ffffff;
+	z-index: 1002;
+	overflow: auto;
+  }
+</style>
 </head>
 <body>
 	<div>
         <div class="jqGrid_wrapper" style="margin-top: 15px;">
-            <table id="feePerf_list"></table>
-            <div id="feePerf_list_btn"></div>
+            <table id="user_list"></table>
+            <div id="user_list_btn"></div>
         </div>
 	</div>
+    <div class="cover"></div>
+    <div class="window">
+    	<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>请填写用户信息<small>&nbsp&nbsp妥善保管账户密码，防止泄露</small></h5>
+                        <div class="ibox-tools">
+                            <a class="close-link">
+                                <i class="fa fa-times" onclick="closeWindow()"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <form method="post" id="user_form" action="/dity/addUser" class="form-horizontal" enctype="multipart/form-data">
+                         	<div class="form-group" style="margin-left: 20px;">
+                                <div class="col-sm-10">
+                                    <div class="row">
+                                        <label class="col-sm-2 control-label">账号</label>
+                                        <div class="col-md-4">
+                                        	<input id="ID" name="ID" type="hidden">
+                                            <input id="USER_NO" name="USER_NO" type="text" placeholder="此账号是您登录系统的标识" class="form-control"
+                                            	required="" aria-required="true">
+                                        </div>
+                                        <label class="col-sm-2 control-label">密码</label>
+                                        <div class="col-md-4">
+                                            <input id="PASS" name="PASS" type="text" placeholder="请填写【字母、数字、字符】的组合作为您的密码" class="form-control"
+                                            	required="" aria-required="true">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-left: 20px;">
+                                <div class="col-sm-10">
+                                    <div class="row">
+                                        <label class="col-sm-2 control-label">姓名</label>
+                                        <div class="col-md-4">
+                                            <input id="USER_NAME" name="USER_NAME" type="text" placeholder="" class="form-control"
+                                            	required="" aria-required="true">
+                                        </div>
+                                        <label class="col-sm-2 control-label">手机号</label>
+                                        <div class="col-md-4">
+                                            <input id="MOBILE_NO" name="MOBILE_NO" type="text" placeholder="" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-left: 20px;">
+                                <div class="col-sm-10">
+                                    <div class="row">
+                                        <label class="col-sm-2 control-label">年龄</label>
+                                        <div class="col-md-4">
+                                            <input id="USER_AGE" name="USER_AGE" type="text" placeholder="请填写您的真实年龄" class="form-control">
+                                        </div>
+                                        <label class="col-sm-2 control-label">生日</label>
+                                        <div class="col-md-4">
+                                            <input id="USER_BIRTH" name="USER_BIRTH" type="text" placeholder="请填写您的生日（日期格式MM/DD）" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-left: 20px;">
+                                <div class="col-sm-10">
+                                    <div class="row">
+                                        <label class="col-sm-2 control-label">账号类别</label>
+                                        <div class="col-md-4">
+		                                    <div class="radio">
+		                                        <label>
+		                                            <input type="radio" checked="" value="1" name="USER_TYPE">管理员账号
+		                                         </label>
+		                                         <label><input type="radio" value="2" name="USER_TYPE">普通用户</label>
+		                                    </div>
+		                                </div>
+                                        <label class="col-sm-2 control-label">银行卡号</label>
+                                        <div class="col-md-4">
+                                            <input id="BANK_NO" type="text" name="BANK_NO" placeholder="" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-left: 20px;">
+                                <div class="col-sm-10">
+                                    <div class="row">
+                                        <label class="col-sm-2 control-label">微信</label>
+                                        <div class="col-md-4">
+                                            <input id="WX_NO" name="WX_NO" type="text" placeholder="请填写您的微信号、或绑定手机号" class="form-control">
+                                        </div>
+                                        <label class="col-sm-2 control-label">支付宝</label>
+                                        <div class="col-md-4">
+                                            <input id="ZFB_NO" name="ZFB_NO" type="text" placeholder="请填写您的支付宝账号" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">寄件地址</label>
+                                <div class="col-sm-10">
+                                    <input id="USER_ADD" name="USER_ADD" type="text" placeholder="请填写您的详细地址" class="form-control" required="" aria-required="true">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group" style="margin-left: 20px;">
+                            	<div class="col-sm-10">
+                                    <div class="row">
+                                    	<label class="col-sm-2 control-label" on>微信收款码</label>
+                                        <div class="col-md-4">
+                                        	<!-- <input id="wximgFile" type="file" name="wximgFile" multiple> -->
+                                        	<input id="wximgFile" type="file" name="wximgFile">
+                                        	<img style="margin-top: 8px;" 
+                                        		id="wximg" src=""/>
+                                        	<input type="hidden" id="wxFileName" name="wxFileName"/>
+                                        </div>
+                                        <label class="col-sm-2 control-label">支付宝收款码</label>
+                                        <div class="col-md-4">
+                                        	<input id="zfbimgFile" type="file" name="zfbimgFile">
+                                        	<img style="margin-top: 8px;"
+                                        		 id="zfbimg" src=""/>
+                                        	<input type="hidden" id="zfbFileName" name="zfbFileName"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-2" style="float: right;">
+                                	<input id="submitBtn" value="确定" type="submit" class="btn btn-primary"/>
+                                	<input id="celBtn" value="取消" type="button" class="btn btn-white"/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    	</div>
+    </div>
 </body>
 </html>
