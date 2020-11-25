@@ -2,8 +2,6 @@ package com.dity.controller;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,14 +27,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSON;
 import com.dity.common.bootonfig.UserLoginToken;
 import com.dity.common.utils.FileUtils;
 import com.dity.common.utils.IDUtils;
 import com.dity.common.utils.SessionUtil;
 import com.dity.service.DityService;
-
-import net.sf.json.JSONObject;
 
 @CrossOrigin
 @Controller
@@ -202,7 +197,7 @@ public class DityController {
 				fileName = zfbimg.getOriginalFilename();
 			}
 			String path = ResourceUtils.getURL("classpath:static").getPath() + File.separator +"tempFile"+ File.separator;
-			String fileType = fileName.split("\\.")[1];
+//			String fileType = fileName.split("\\.")[1];
 			File tempFile = new File(path,fileName);
 			tempFile.deleteOnExit();
 			tempFile.createNewFile();

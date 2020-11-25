@@ -5,6 +5,11 @@
 	
 	<select id="getUserInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 		SELECT * FROM T_Dity_USER T
-		 WHERE T.USER_ID = #{USER_ID} AND T.STATUS=1
+		 WHERE T.USER_NO = #{USER_NO} AND T.STATUS=1
 	</select>
+	
+	<insert id="saveUser" parameterType="java.util.HashMap">
+		insert into T_Dity_USER (ID,USER_NO,PASS,USER_NAME,STATUS) values 
+			(#{ID},#{USER_NO},#{PASS},#{USER_NAME},1)
+	</insert>
 </mapper>

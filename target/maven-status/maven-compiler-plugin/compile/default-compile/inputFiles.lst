@@ -1,3 +1,4 @@
+D:\Java\workspace - dity\dity\src\main\java\com\dity\controller\DityController.java
 D:\Java\workspace - dity\dity\src\main\java\com\dity\service\AuthService.java
 D:\Java\workspace - dity\dity\src\main\java\com\dity\DityApplication.java
 D:\Java\workspace - dity\dity\src\main\java\com\dity\dao\AuthDao.java
@@ -5,7 +6,6 @@ D:\Java\workspace - dity\dity\src\main\java\com\dity\common\bootonfig\TokenServi
 D:\Java\workspace - dity\dity\src\main\java\com\dity\common\aop\dao\LogDao.java
 D:\Java\workspace - dity\dity\src\main\java\com\dity\common\bootonfig\AuthenticationInterceptor.java
 D:\Java\workspace - dity\dity\src\main\java\com\dity\common\utils\PropertiesUtils.java
-D:\Java\workspace - dity\dity\src\main\java\com\dity\controller\DityTestController.java
 D:\Java\workspace - dity\dity\src\main\java\com\dity\common\utils\AnsjUtile.java
 D:\Java\workspace - dity\dity\src\main\java\com\dity\common\utils\IDUtils.java
 D:\Java\workspace - dity\dity\src\main\java\com\dity\controller\AuthController.java
