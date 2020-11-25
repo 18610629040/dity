@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dity.common.bootonfig.TokenUtil;
 import com.dity.common.bootonfig.UserLoginToken;
 import com.dity.common.utils.IDUtils;
@@ -61,25 +62,27 @@ public class FeePerfMgtController {
 	 */
 	@RequestMapping(value = "/optFeePerfData", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public Object modfyFeePerfData(HttpServletRequest request){
+	public Object optFeePerfData(HttpServletRequest request){
 		Map<String,Object> map = new HashMap<String, Object>();
-		String RATE_NAME = request.getParameter("RATE_NAME");
-		String RATE_VAL = request.getParameter("RATE_VAL");
-		String oper = request.getParameter("oper");
+		String postData = request.getParameter("postData");
+		JSONObject jObj = JSONObject.parseObject(postData);
+		String RATE_NAME = String.valueOf(jObj.get("RATE_NAME"));
+		String RATE_VAL = String.valueOf(jObj.get("RATE_VAL"));
+		String oper = String.valueOf(jObj.get("oper"));
 		String msg = "操作成功！";
 		int count = 0;
 		try {
 			map.put("RATE_NAME",RATE_NAME);
 			map.put("RATE_VAL",RATE_VAL);
-			map.put("CRITE_USER","");
+			map.put("CRITE_USER","admin");
 			if("add".equals(oper)){
 				map.put("ID",IDUtils.createID());
 				count = feePerfMgtService.addFeePerfData(map);
 			}else if("edit".equals(oper)) {
-				map.put("ID",request.getParameter("ID"));
+				map.put("ID",String.valueOf(jObj.get("ID")));
 				count = feePerfMgtService.modfyFeePerfData(map);
-			}else {
-				map.put("ID",request.getParameter("ID"));
+			}else if("del".equals(oper)){
+				map.put("ID",String.valueOf(jObj.get("ID")));
 				count = feePerfMgtService.delFeePerfData(map);
 			}
 			map.put("O_RUNSTATUS",count);
@@ -88,8 +91,8 @@ public class FeePerfMgtController {
 			}
 		} catch (Exception e) {
 			map.put("O_RUNSTATUS",0);
-			map.put("O_MSG","操作失败，请联系管理员！");
-			logger.error("/dity/feePerfMgt/modfyFeePerfData:"+map,e);
+			msg = "操作失败，请联系管理员！";
+			logger.error("/dity/feePerfMgt/optFeePerfData:"+map,e);
 		}
 		map.put("O_MSG",msg);
 		return map;
@@ -102,6 +105,63 @@ public class FeePerfMgtController {
     public String prdtLbIndex(){
         return "/sysMgt/prdtLbMgt";
     }
+	
+	/**
+	 * 商品类别数据-查询
+	 */
+	@RequestMapping(value = "/srchPrdtLbData", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public List<Object> srchPrdtLbData(){
+		Map<String,Object> map = new HashMap<String, Object>();
+		List<Object> list = new ArrayList<>();
+		try {
+			list = feePerfMgtService.srchPrdtLbData(map);
+		} catch (Exception e) {
+			logger.error("/dity/feePerfMgt/srchPrdtLbData:"+map,e);
+		}
+		return list;
+	}
+
+	/**
+	 * 商品类别数据-操作
+	 */
+	@RequestMapping(value = "/optPrdtLbData", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public Object optPrdtLbData(HttpServletRequest request){
+		Map<String,Object> map = new HashMap<String, Object>();
+		String postData = request.getParameter("postData");
+		JSONObject jObj = JSONObject.parseObject(postData);
+		String TYPE_ORDER = String.valueOf(jObj.get("TYPE_ORDER"));
+		String TYPE_NAME = String.valueOf(jObj.get("TYPE_NAME"));
+		String oper = String.valueOf(jObj.get("oper"));
+		String msg = "操作成功！";
+		int count = 0;
+		try {
+			map.put("TYPE_ORDER",TYPE_ORDER);
+			map.put("TYPE_NAME",TYPE_NAME);
+			map.put("CRITE_USER","admin");
+			if("add".equals(oper)){
+				map.put("ID",IDUtils.createID());
+				count = feePerfMgtService.addPrdtLbData(map);
+			}else if("edit".equals(oper)) {
+				map.put("ID",String.valueOf(jObj.get("ID")));
+				count = feePerfMgtService.modfyPrdtLbData(map);
+			}else if("del".equals(oper)){
+				map.put("ID",String.valueOf(jObj.get("ID")));
+				count = feePerfMgtService.delPrdtLbData(map);
+			}
+			map.put("O_RUNSTATUS",count);
+			if(count<1) {
+				msg = "操作失败，请联系管理员！";
+			}
+		} catch (Exception e) {
+			map.put("O_RUNSTATUS",0);
+			msg = "操作失败，请联系管理员！";
+			logger.error("/dity/feePerfMgt/optPrdtLbData:"+map,e);
+		}
+		map.put("O_MSG",msg);
+		return map;
+	}
 
 	/**
 	 * 信息提示管理首页
@@ -110,4 +170,61 @@ public class FeePerfMgtController {
     public String infoTsIndex(){
         return "/sysMgt/infoTsMgt";
     }
+	
+	/**
+	 * 信息提示数据-查询
+	 */
+	@RequestMapping(value = "/srchInfoTsData", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public List<Object> srchInfoTsData(){
+		Map<String,Object> map = new HashMap<String, Object>();
+		List<Object> list = new ArrayList<>();
+		try {
+			list = feePerfMgtService.srchInfoTsData(map);
+		} catch (Exception e) {
+			logger.error("/dity/feePerfMgt/srchInfoTsData:"+map,e);
+		}
+		return list;
+	}
+	
+	/**
+	 * 信息提示数据-操作
+	 */
+	@RequestMapping(value = "/optInfoTsData", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public Object optInfoTsData(HttpServletRequest request){
+		Map<String,Object> map = new HashMap<String, Object>();
+		String postData = request.getParameter("postData");
+		JSONObject jObj = JSONObject.parseObject(postData);
+		String CONTATE_NAME = String.valueOf(jObj.get("CONTATE_NAME"));
+		String CONTATE_INFO = String.valueOf(jObj.get("CONTATE_INFO"));
+		String oper = String.valueOf(jObj.get("oper"));
+		String msg = "操作成功！";
+		int count = 0;
+		try {
+			map.put("CONTATE_NAME",CONTATE_NAME);
+			map.put("CONTATE_INFO",CONTATE_INFO);
+			map.put("CRITE_USER","admin");
+			if("add".equals(oper)){
+				map.put("ID",IDUtils.createID());
+				count = feePerfMgtService.addInfoTsData(map);
+			}else if("edit".equals(oper)) {
+				map.put("ID",String.valueOf(jObj.get("ID")));
+				count = feePerfMgtService.modfyInfoTsData(map);
+			}else if("del".equals(oper)){
+				map.put("ID",String.valueOf(jObj.get("ID")));
+				count = feePerfMgtService.delInfoTsData(map);
+			}
+			map.put("O_RUNSTATUS",count);
+			if(count<1) {
+				msg = "操作失败，请联系管理员！";
+			}
+		} catch (Exception e) {
+			map.put("O_RUNSTATUS",0);
+			msg = "操作失败，请联系管理员！";
+			logger.error("/dity/feePerfMgt/optInfoTsData:"+map,e);
+		}
+		map.put("O_MSG",msg);
+		return map;
+	}
 }
