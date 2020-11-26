@@ -39,4 +39,29 @@ public class DityDao {
 		        .delete("com.dity.dao.DityDaoMapper.delUser", map);
 	}
 	
+	public int addRottn(Map<String, Object> map) {
+		return sqlSessionTemplate
+        .insert("com.dity.dao.DityDaoMapper.addRottn", map);
+	}
+
+	public List<Map<String, Object>> qryRottnChrt(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .selectList("com.dity.dao.DityDaoMapper.qryRottnChrt", map);
+	}
+	
+	public int delItton(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .delete("com.dity.dao.DityDaoMapper.delItton", map);
+	}
+	
+	public int editIttonOrder(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.editIttonOrder", map);
+	}
+	
+	public List<Map<String, Object>> qryRottnChrtById(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .selectList("com.dity.dao.DityDaoMapper.qryRottnChrtById", map);
+	}
+	
 }

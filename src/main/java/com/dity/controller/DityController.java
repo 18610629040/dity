@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.alibaba.fastjson.JSONObject;
 import com.dity.common.bootonfig.UserLoginToken;
 import com.dity.common.utils.FileUtils;
 import com.dity.common.utils.IDUtils;
@@ -282,4 +285,125 @@ public class DityController {
             }
         }
     }
+	
+	@RequestMapping(value = "/webuploader", method = { RequestMethod.POST, RequestMethod.GET })
+    public String webuploader(){
+        return "/sysMgt/webuploader";
+    }
+    
+	@RequestMapping(value = "/uploadLbtImg", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public Object uploadLbtImg(HttpServletRequest request,HttpServletResponse response,
+			@RequestParam(value = "file", required = false) MultipartFile img){
+		Map<String, Object> map = new HashMap<>();
+		try {
+			String id = IDUtils.createID();
+			String fileName = img.getOriginalFilename();
+			map.put("ID",id);
+//			map.put("IMAGE_ORDER",1);
+			map.put("IMAGE_NAME",fileName);
+			map.put("IMAGE",img.getBytes());
+			dityService.addRottn(map);
+			map.put("O_RUNSTATUS", 1);
+		} catch (IOException e) {
+			logger.error("文件上传失败", e);
+			map.put("O_RUNSTATUS", -1);
+		}
+    	return map;
+	}
+	
+	@RequestMapping(value = "/qryRottnChrt", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public List<Map<String,Object>> qryRottnChrt(){
+		Map<String,Object> map = new HashMap<String, Object>();
+		List<Map<String, Object>> list = new ArrayList<>();
+		try {
+			list = dityService.qryRottnChrt(map);
+		} catch (Exception e) {
+			logger.error("/dity/qryRottnChrt:"+map,e);
+		}
+ 		return list;
+	}
+	
+	@RequestMapping(value = "/getRottnChrtImg", method = { RequestMethod.POST, RequestMethod.GET })
+    @ResponseBody
+    public void getRottnChrtImg(HttpServletRequest request, HttpServletResponse response,
+            @RequestParam(value = "ID", required = true) String id) {
+        Map<String, Object> map = new HashMap<>();
+        OutputStream os = null;
+        response.addHeader("Content-Disposition",
+                "inline;filename=" + FileUtils.toUtf8String("轮播图") + ".jpg");
+        response.setContentType("image/jpg");
+        InputStream in = null;
+        byte[] b = null;
+        try {
+        	map.put("ID",id);
+        	List<Map<String,Object>> list = dityService.qryRottnChrtById(map);
+        	map = list.get(0);
+        	b= (byte[]) map.get("IMAGE");
+    	    in = new ByteArrayInputStream(b);
+            os = response.getOutputStream();
+            int count;
+            while ((count = in.read(b)) > 0) {
+                os.write(b, 0, count);
+            }
+        } catch (Exception e) {
+        	logger.error("文件下载失败", e);
+            map.put("O_RUNSTATUS", -1);
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                    in = null;
+                } catch (IOException e) {
+                }
+            }
+            if (os != null) {
+                try {
+                    os.flush();
+                    os.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+	
+	@RequestMapping("/delItton")
+	@ResponseBody
+    public Object delItton(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = true) Object id) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID", id);
+        	dityService.delItton(map);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/delItton:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+	
+	@RequestMapping("/editIttonOrder")
+	@ResponseBody
+    public Object editIttonOrder(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = true) Object id,
+            @RequestParam(value = "IMAGE_ORDER", required = true) Object der) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID", id);
+        	map.put("IMAGE_ORDER", der);
+        	dityService.editIttonOrder(map);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/editIttonOrder:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+	
 }

@@ -32,4 +32,25 @@ public class DityService {
 	public int delUser(Map<String, Object> map) {
 		return dityDao.delUser(map);
 	}
+	
+	
+	public int addRottn(Map<String, Object> map) {
+		return dityDao.addRottn(map);
+	}
+
+	public List<Map<String, Object>> qryRottnChrt(Map<String, Object> map) {
+		return dityDao.qryRottnChrt(map);
+	}
+	
+	public int delItton(Map<String, Object> map) {
+		return dityDao.delItton(map);
+	}
+	
+	public List<Map<String, Object>> qryRottnChrtById(Map<String, Object> map) {
+		return dityDao.qryRottnChrtById(map);
+	}
+	
+	public int editIttonOrder(Map<String, Object> map) {
+		return dityDao.editIttonOrder(map);
+	}
 }

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>轮播图管理</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <link rel="shortcut icon" href="favicon.ico"> 
+    <link href="/css/bootstrap.min.css?v=3.3.7" rel="stylesheet">
+    <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+    <link href="/css/animate.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
+    <link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
+    <link href="/css/style.css?v=4.1.0" rel="stylesheet">
+    
+    <link href="/js/plugins/fancybox/jquery.fancybox.css" rel="stylesheet">
+    <style type="text/css">
+    	.ibox-content>div{
+    		display:inline-block;
+   	    	position: relative;
+    	}
+    	.ibox-content>.ibox-content-item .image-panel{
+    		position: absolute;
+     		right: 0;
+     		height: 0;
+     		width:30px;
+     	  	background: rgba( 0, 0, 0, 0.5 );
+    		overflow: hidden;
+        	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#80000000', endColorstr='#80000000')\0;
+		    z-index: 300;
+		    text-align:center;
+		    transition:all .3s;
+		    opacity:0;
+		    border-radius:10px;
+    	}
+    	.ibox-content>.ibox-content-item .image-panel span{
+    		display:inline-block;
+    		height: 24px;
+         	width: 24px;
+         	margin-top:3px;
+		    background: url(../../img/icons.png)  center no-repeat;
+		    background-position: -44px -22px;
+		    cursor:pointer;
+    	}
+    	.ibox-content>.ibox-content-item .image-panel span:hover{
+    	    background-position: -44px 2px;
+    	}
+    	.ibox-content>.ibox-content-item:hover .image-panel{
+   	     	height: 30px;
+   	        opacity:1;
+    	}
+    	.inputClass{
+	    	background-color: #FFFFFF;
+		    background-image: none;
+		    border: 1px solid #e5e6e7;
+		    border-radius: 1px;
+		    color: inherit;
+		    -webkit-transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+		    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+		    width: 80px;
+			height: 20px;
+    	}
+    </style>
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated fadeIn">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>轮播图管理，</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="page-container">
+                            <p>您可以尝试文件拖拽，使用QQ截屏工具，然后激活窗口后粘贴，或者点击添加图片按钮，来添加管理图片</p>
+                            <div id="uploader" class="wu-example">
+                                <div class="queueList">
+                                    <div id="dndArea" class="placeholder">
+                                        <div id="filePicker"></div>
+                                        <p>或将照片拖到这里，单次可多可选。</p>
+                                    </div>
+                                </div>
+                                <div class="statusBar" style="display:none;">
+                                    <div class="progress">
+                                        <span class="text">0%</span>
+                                        <span class="percentage"></span>
+                                    </div>
+                                    <div class="info"></div>
+                                    <div class="btns">
+                                        <div id="filePicker2"></div>
+                                        <div class="uploadBtn">开始上传</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>轮播图展示 <small>可编辑图片排序，实现手机端顺序轮播</small></h5>
+                        <div class="ibox-tools" style="float: right;">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                            <a class="close-link">
+                                <i class="fa fa-times"></i>
+                            </a>
+                        </div>
+                        <div style="float: right; margin-right: 5%; ">
+                        	<span style="color: red;">轮播排序：</span>
+                        	<input id="ittonOrder" type="number" onchange="setIttonOrder(this.value)"
+                        		min="1" placeholder="请编辑" class="inputClass">
+                        	<input type="hidden" id="ittonId" />
+                       	</div>
+                    </div>
+                    <div class="ibox-content imgCon">
+	                    <!-- <div class="ibox-content-item">
+	                    	<div class="image-panel">
+	                    		<span onclick="delItton(this)"></span>
+	                    	</div>
+	                    	<img alt="image" src="/dity/getUserFkmImg?TYPE=WX&USER_NO=admin" onclick="editOrder(this)"/>
+	                    	<input type="hidden" value="1"/>
+	                   		<input type="hidden" value="11"/>
+						</div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 全局js -->
+    <script src="/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/js/bootstrap.min.js?v=3.3.7"></script>
+
+    <!-- 自定义js -->
+    <script src="/js/content.js?v=1.0.0"></script>
+
+    <!-- Web Uploader -->
+    <script type="text/javascript">
+        // 添加全局站点信息
+        var BASE_URL = '/js/plugins/webuploader';
+    </script>
+    <script src="/js/plugins/webuploader/webuploader.min.js"></script>
+    <script src="/js/demo/webuploader-demo.js"></script>
+    
+    
+    <!-- Peity -->
+    <script src="/js/plugins/peity/jquery.peity.min.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		$.ajax({
+			type:"post",
+			url:"/dity/qryRottnChrt",
+			dataType:"json",
+			success:function(data){
+				$(".imgCon").empty();
+				$.each(data,function(i,e){
+					$(".imgCon").append(
+						'<div class="ibox-content-item">'+
+	                    	'<div class="image-panel">'+
+	                    		'<span onclick="delItton(this)"></span>'+
+	                    	'</div>'+
+	                    	'<img alt="image" src="/dity/getRottnChrtImg?ID='+e.ID+'" onclick="editOrder(this)"/>'+
+	                    	'<input type="hidden" value="'+e.ID+'"/>'+
+	                   		'<input type="hidden" value="'+e.IMAGE_ORDER+'"/>'+
+						'</div>'		
+					);
+				});
+			},
+			error:function(jqXHR){
+				aler("error："+ jqXHR.status);
+			}
+		}); 
+	});
+	
+	function editOrder(obj){
+		var id = $(obj).next().val();
+		var order = $(obj).next().next().val();
+		$("#ittonId").val(id);
+		$("#ittonOrder").val(order);
+	}
+	function delItton(obj){
+		var id = $(obj).parent().next().next().val();
+		$.ajax({
+			type:"post",
+			url:"/dity/delItton",
+			data : {ID: id},
+			dataType:"json",
+			success:function(data){
+				/* window.location.reload(); */
+				$(obj).parent().parent().remove();
+			},
+			error:function(jqXHR){
+				aler("error："+ jqXHR.status);
+			}
+		});
+	}
+	
+	function setIttonOrder(val){
+		var id = $("#ittonId").val();
+		if(id != ""){
+			$.ajax({
+				type:"post",
+				url:"/dity/editIttonOrder",
+				data : {ID: id,IMAGE_ORDER:val},
+				dataType:"json",
+				success:function(data){
+					/* window.location.reload(); */
+				},
+				error:function(jqXHR){
+					aler("error："+ jqXHR.status);
+				}
+			});
+		}
+	}
+		
+	</script>
+</body>
+
+</html>

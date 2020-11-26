@@ -103,4 +103,33 @@
 	<delete id="delUser" parameterType="java.util.HashMap">
 		DELETE FROM T_DITY_USER WHERE ID = #{ID}
 	</delete>
+		
+	<insert id="addRottn" parameterType="java.util.HashMap">
+		INSERT INTO t_dity_rottn_chrt (
+			ID,
+			IMAGE_ORDER,
+			IMAGE_NAME,
+			IMAGE
+		)select #{ID},IFNULL((SELECT max(IMAGE_ORDER) FROM t_dity_rottn_chrt ), 0 ) +1,
+					#{IMAGE_NAME},#{IMAGE} from dual
+	</insert>
+	
+	<select id="qryRottnChrt" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT ID,IMAGE_ORDER,IMAGE_NAME FROM T_DITY_ROTTN_CHRT where 1=1
+		order by IMAGE_ORDER
+	</select>
+	
+	<select id="qryRottnChrtById" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT * FROM T_DITY_ROTTN_CHRT where ID = #{ID}
+	</select>
+	
+	<delete id="delItton" parameterType="java.util.HashMap">
+		DELETE FROM T_DITY_ROTTN_CHRT WHERE ID = #{ID}
+	</delete>
+	
+	<update id="editIttonOrder" parameterType="java.util.HashMap">
+		UPDATE T_DITY_ROTTN_CHRT SET 
+				IMAGE_ORDER = #{IMAGE_ORDER}
+			WHERE ID = #{ID}
+	</update>
 </mapper>
