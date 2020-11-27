@@ -56,4 +56,8 @@
 	<delete id="delInfoTsData" parameterType="java.util.HashMap">
 		DELETE FROM T_DITY_CONTATE_INFO WHERE ID IN (${ID})
 	</delete>
+	
+	<select id="srchPdOrderData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT *,DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %T') CRITETIME FROM T_DITY_ORDER T
+	</select>
 </mapper>

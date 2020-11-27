@@ -227,4 +227,28 @@ public class FeePerfMgtController {
 		map.put("O_MSG",msg);
 		return map;
 	}
+	
+	/**
+	 * 订单管理首页
+	 */
+	@RequestMapping(value = "/pdOrderIndex", method = { RequestMethod.POST, RequestMethod.GET })
+    public String pdOrderIndex(){
+        return "/sysMgt/pdOrderMgt";
+    }
+	
+	/**
+	 * 订单管理-查询
+	 */
+	@RequestMapping(value = "/srchPdOrderData", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public List<Object> srchPdOrderData(){
+		Map<String,Object> map = new HashMap<String, Object>();
+		List<Object> list = new ArrayList<>();
+		try {
+			list = feePerfMgtService.srchPdOrderData(map);
+		} catch (Exception e) {
+			logger.error("/dity/feePerfMgt/srchPdOrderData:"+map,e);
+		}
+		return list;
+	}
 }
