@@ -14,8 +14,12 @@ function initBtn(){
 		//e：事件对象
 		//data：图片上传后的对象，通过data.result.picAddr可以获取上传后的图片地址
 		done: function (e, data) {
-			$('#wximg').attr('src',data.result.url);
-			$('#wxFileName').val(data.result.fileName);
+			if(data.result.O_RUNSTATUS == -1){
+				alert(data.result.O_MSG);
+			}else{
+				$('#wximg').attr('src',data.result.url);
+				$('#wxFileName').val(data.result.fileName);
+			}
 		}
 	});
 	
@@ -51,7 +55,7 @@ function initFeePerfGrid(){
 		url:'/dity/qryUserList',
         datatype: "json",
         autowidth: true,
-        height: 370,
+        height: 620,
 //        width:1030,
         shrinkToFit: true,
         rownumbers: true,
@@ -153,7 +157,7 @@ function initFeePerfGrid(){
     						}
     					},
     					error:function(jqXHR){
-    						aler("error："+ jqXHR.status);
+    						alert("error："+ jqXHR.status);
     					}
     				});
     			}

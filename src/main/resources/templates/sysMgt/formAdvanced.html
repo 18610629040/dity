@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>秒杀活动管理</title>
+
+    <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+	<link href="/css/plugins/iCheck/custom.css" rel="stylesheet">
+	<link href="/css/plugins/chosen/chosen.css" rel="stylesheet">
+	<link href="/css/plugins/cropper/cropper.min.css" rel="stylesheet">
+	<link href="/css/plugins/switchery/switchery.css" rel="stylesheet">
+	<link href="/css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+	<link href="/css/plugins/nouslider/jquery.nouislider.css" rel="stylesheet">
+	<link href="/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+	<link href="/css/plugins/ionRangeSlider/ion.rangeSlider.css" rel="stylesheet">
+	<link href="/css/plugins/ionRangeSlider/ion.rangeSlider.skinFlat.css" rel="stylesheet">
+	<link href="/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+	<link href="/css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+	<link href="/css/animate.css" rel="stylesheet">
+	<link href="/css/style.css?v=4.1.0" rel="stylesheet">
+	<link href="/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
+	<link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
+<style>
+	.aspan{
+		    float: left;
+    /* margin-top: 8px; */
+    background-color: #eeeeee;
+    width: auto;
+    min-width: 16px;
+    padding: 7px 10px;
+    font-weight: normal;
+    line-height: 1.428571429;
+    text-align: center;
+    text-shadow: 0 1px 0 #fff;
+    vertical-align: middle;
+    background-color: #eeeeee;
+    border-width: 1px 0;
+    margin-left: -5px;
+    margin-right: -5px;
+	}
+</style>
+
+</head>
+
+<body class="gray-bg">
+	<div class="wrapper wrapper-content animated fadeInRight" >
+		<div style="float:right;">
+			<button id="xxxcxxxx" class="btn btn-primary" data-toggle="modal" data-target="#myModal">新增</button>
+			<button class="btn btn-default" id="ccccxcccc">修改</button>
+			<button class="btn btn-link" id="dddddd">下架</button>
+		</div>
+        <div class="jqGrid_wrapper" style="margin-top: 40px;">
+            <table id="user_list"></table>
+            <div id="user_list_btn"></div>
+        </div>
+	</div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:80%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">秒杀商品</h4>
+                </div>
+                <div class="modal-body">
+	            	<form method="post" id="user_form" action="/dity/addGoodsMs" class="form-horizontal" enctype="multipart/form-data">
+	            		<div class="row">
+							<label class="col-sm-1 control-label" style="text-align: right;">商品名称：</label>
+                          	<div class="col-md-4">
+								<input id="ID" name="ID" type="hidden">
+                                <input id="NAME" name="NAME" type="text" placeholder="" class="form-control"
+                                   		required="" aria-required="true">
+                            </div>
+                            <label class="col-sm-1 control-label" style="text-align: right;">价格：</label>
+                            <div class="col-md-4">
+                                <input id="PRICE" name="PRICE" type="number" min="0" placeholder="" class="form-control"
+                                   	required="" aria-required="true">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="row">
+							<label class="col-sm-1 control-label" style="text-align: right;">起止日期：</label>
+                            <div class="col-md-4" id="data_5">
+	                            <div class="input-daterange input-group" id="datepicker">
+	                                <input id="BUY_DATE" name="BUY_DATE" type="text" class="form-control" value="2020-11-11" />
+	                                <span class="input-group-addon">至</span>
+	                                <input id="WT_DATE" name="WT_DATE" type="text" class="form-control" value="2020-11-17" />
+	                            </div>
+                            </div>
+                            <label class="col-sm-1 control-label" style="text-align: right;">起止时间：</label>
+                            <div class="col-md-4">
+                                <div class="input-group clockpicker col-md-5" style="float: left;" data-autoclose="true">
+		                            <input type="text" id="BUY_TIME" name="BUY_TIME" class="form-control" value="09:30">
+		                            <span class="input-group-addon">
+		                                    <span class="fa fa-clock-o"></span>
+		                            </span>
+		                        </div>
+		                        <span class="aspan">至</span>
+		                        <div class="input-group clockpicker col-md-5" style="float: left;" data-autoclose="true">
+		                            <input type="text" id="WT_TIME" name="WT_TIME" class="form-control" value="09:30">
+		                            <span class="input-group-addon">
+		                                    <span class="fa fa-clock-o"></span>
+		                            </span>
+		                        </div>
+                             </div>
+                        </div>
+                        <!-- <div class="hr-line-dashed"></div>
+                        <div class="row">
+							<label class="col-sm-1 control-label" style="text-align: right;">开始日期：</label>
+                          	<div class="col-md-4">
+                                <input id="BUY_TIME" name="BUY_TIME" type="text" class="form-control" 
+                                	required="" aria-required="true" data-mask="9999-99-99 99:99:99" 
+                                		placeholder="请正确填写日期，格式（yyyy-MM-dd HH:mm:ss）">
+                            </div>
+                            <label class="col-sm-1 control-label" style="text-align: right;">截止日期：</label>
+                            <div class="col-md-4">
+                                <input id="WT_TIME" name="WT_TIME" type="text" class="form-control" 
+                                	required="" aria-required="true" data-mask="9999-99-99 99:99:99" 
+                                		placeholder="请正确填写日期，格式（yyyy-MM-dd HH:mm:ss）">
+		
+                             </div>
+                        </div> -->
+                        <div class="hr-line-dashed"></div>
+                        <div class="row">
+							<label class="col-sm-1 control-label" style="text-align: right;">简介：</label>
+                          	<div class="col-md-9">
+                                <input id="INTRDCT" name="INTRDCT" type="text" placeholder="" class="form-control"
+                                   		required="" aria-required="true">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                      	<div class="row">
+		                	<div id="file-pretty">
+	                        	<label class="col-sm-1 control-label" style="text-align: right;">图片：</label>
+                     			<div class="col-md-3">
+	                                <input id="IMAGE" name="IMAGE" type="file" class="form-control">
+		                            <input type="hidden" id="IMAGE_NAME" name="IMAGE_NAME"/>
+                     			</div>
+		                    </div>
+                        </div>
+                      	<div class="row">
+                      		<label class="col-sm-1 control-label" style="text-align: right;"></label>
+		                    <div class="col-md-9">
+                               <img id="spimg" style="max-width: 100%; margin-top: 20px;"  src=""/>
+                   			</div>
+                        </div>
+                        <!-- <div class="row">
+                        	<label class="col-sm-1 control-label" style="text-align: right;">行级显示</label>
+                        	<div class="col-md-4">
+	                            <fieldset>
+	                                <div class="radio radio-info radio-inline">
+	                                    <input type="radio" id="inlineRadio1" value="option1" name="radioInline" checked="">
+	                                    <label for="inlineRadio1"> 选项 01 </label>
+	                                </div>
+	                                <div class="radio radio-inline">
+	                                    <input type="radio" id="inlineRadio2" value="option2" name="radioInline">
+	                                    <label for="inlineRadio2"> 选项 02 </label>
+	                                </div>
+	                            </fieldset>
+                        	</div>
+                        </div> -->
+                        <div class="modal-footer">
+                        	<input id="submitBtn" value="确定" type="submit" class="btn btn-primary"/>
+                           	<input id="celBtn" value="取消" type="button" class="btn btn-default"/>
+		                </div>
+	        		</form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+	<script src="/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/js/bootstrap.min.js?v=3.3.7"></script>
+    <!-- Chosen -->
+    <script src="/js/plugins/chosen/chosen.jquery.js"></script>
+    <!-- JSKnob -->
+    <script src="/js/plugins/jsKnob/jquery.knob.js"></script>
+    <!-- Input Mask-->
+    <script src="/js/plugins/jasny/jasny-bootstrap.min.js"></script>
+    <!-- Data picker -->
+    <script src="/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <!-- Prettyfile -->
+    <script src="/js/plugins/prettyfile/bootstrap-prettyfile.js"></script>
+    <!-- NouSlider -->
+    <script src="/js/plugins/nouslider/jquery.nouislider.min.js"></script>
+    <!-- Switchery -->
+    <script src="/js/plugins/switchery/switchery.js"></script>
+    <!-- IonRangeSlider -->
+    <script src="/js/plugins/ionRangeSlider/ion.rangeSlider.min.js"></script>
+    <!-- iCheck -->
+    <script src="/js/plugins/iCheck/icheck.min.js"></script>
+    <!-- MENU -->
+    <script src="/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <!-- Clock picker -->
+    <script src="/js/plugins/clockpicker/clockpicker.js"></script>
+    <!-- Image cropper -->
+    <script src="/js/plugins/cropper/cropper.min.js"></script>
+    <script src="/js/demo/form-advanced-demo.js"></script>
+	
+	<script src="/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+	<script src="/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+	<script src="/js/jquery.form.min.js"></script>
+	<script src="/js/vendor/jquery.ui.widget.js"></script>
+	<script src="/js/jquery.iframe-transport.js"></script>
+	<script src="/js/jquery.fileupload.js"></script>
+	
+	<script type="text/javascript">
+	$(document).ready(function () {
+		$.jgrid.defaults.styleUI = 'Bootstrap';
+		initBtn();
+		initFeePerfGrid();
+	});
+
+	function initBtn(){
+		//初始化上传插件
+		$('#IMAGE').fileupload({
+			//上传地址
+			url:'/dity/uploadGoodsImg',
+			//返回格式
+			dataType: 'json',
+			//e：事件对象
+			//data：图片上传后的对象，通过data.result.picAddr可以获取上传后的图片地址
+			done: function (e, data) {
+				$('#spimg').attr('src',data.result.url);
+				$('#IMAGE_NAME').val(data.result.fileName);
+			}
+		});
+		
+		
+		$("#user_form").ajaxForm(function (data) {
+	        if(data.O_RUNSTATUS == 1){
+	        	window.location.reload();
+	        }else{
+	        	alert(data.O_MSG);
+	        }
+	    });
+		$("#celBtn").click(function (){
+			window.location.reload();
+		});
+		
+	}
+
+	function initFeePerfGrid(){
+		$("#user_list").jqGrid({
+			url:'/dity/qryGoodsMsList',
+	        datatype: "json",
+	        autowidth: true,
+	        height: 620,
+//	        width:1030,
+	        shrinkToFit: true,
+	        rownumbers: true,
+	        rowNum: 20,
+	        rowList: [10, 20, 30],
+	        colNames: ['ID','商品名称', '价格','简介','买入账号','开始日期', '截止日期','开始时间', '截止时间','状态'],
+	        colModel: [
+	        	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
+	            {name: 'NAME',index: 'NAME', align :"Center",editable: true,width: 220},
+	            {name: 'PRICE',index: 'PRICE', align :"Center",editable: true,width: 100},
+	            {name: 'INTRDCT',index: 'INTRDCT', align :"Center",editable: true,width: 500},
+	            {name: 'OWN_ACNT',index: 'OWN_ACNT', align :"Center",editable: true,width: 120},
+	            {name: 'BUY_DATE',index: 'BUY_DATE', align :"Center",editable: true,width: 140},
+	            {name: 'WT_DATE',index: 'WT_DATE', align :"Center",editable: true,width: 100},
+	            {name: 'BUY_TIME',index: 'BUY_TIME', align :"Center",editable: true,width: 140},
+	            {name: 'WT_TIME',index: 'WT_TIME', align :"Center",editable: true,width: 100},
+	            {name: 'STATUS_NAME',index: 'STATUS_NAME', align :"Center",editable: true,width: 100}
+	        ],
+	        loadComplete: function (data) {
+	          　　		console.log(data)
+	      　　	},
+	        pager: "#user_list_btn",
+	        viewrecords: true,
+	        emptyrecords: "暂无数据",//viewrecords: true时生效
+	        caption: "参与秒杀商品列表",
+	        add: true,
+	        edit: true,
+	        editurl :'/dity/addGoodsMs',
+	        hidegrid: false
+	    });
+		
+	    //设置操作按钮
+	    $("#user_list").jqGrid('navGrid', '#user_list_btn', {
+	        edit: false,
+	        add: false,
+	        del: false,
+	        search: false
+	    });
+	    $("#user_list").jqGrid('navButtonAdd', '#user_list_btn',
+	    		{caption:"", 
+	    		buttonicon:"glyphicon glyphicon-trash", 
+	    		onClickButton:function(){   
+	    			var rowid = $("#user_list").getGridParam("selrow");
+	    			if(rowid != null){
+	    				var rowData = $("#user_list").getRowData(rowid);
+	    				$.ajax({
+	    					type:"post",
+	    					url:"/dity/delGoodsMs",
+	    					data : {ID: rowData.ID},
+	    					dataType:"json",
+	    					success:function(data){
+	    						if(data.O_RUNSTATUS == 1){
+	    							window.location.reload();
+	    						}else{
+	    							alert(data.O_MSG);
+	    						}
+	    					},
+	    					error:function(jqXHR){
+	    						aler("error："+ jqXHR.status);
+	    					}
+	    				});
+	    			}
+	    		}, 
+	    		position: "first", title:"删除所选数据", cursor: "pointer"}
+	    );
+	    $("#user_list").jqGrid('navButtonAdd', '#user_list_btn',
+	    		{caption:"", 
+	    		buttonicon:"glyphicon glyphicon-edit", 
+	    		onClickButton:function(){   
+	    			var rowid = $("#user_list").getGridParam("selrow");
+	    			if(rowid != null){
+	    				var rowData = $("#user_list").getRowData(rowid);
+	    				$('#ID').val(rowData.ID);
+	    				$('#NAME').val(rowData.NAME);
+	    				$('#PRICE').val(rowData.PRICE);
+	    				$('#INTRDCT').val(rowData.INTRDCT);
+	    				$('#BUY_TIME').val(rowData.BUY_TIME);
+	    				$('#WT_TIME').val(rowData.WT_TIME);
+	    				$('#BUY_DATE').val(rowData.BUY_DATE);
+	    				$('#WT_DATE').val(rowData.WT_DATE);
+	    				$('#spimg').attr("src","/dity/getGoodsmsImg?ID="+rowData.ID);
+	    				$('#xxxcxxxx').click();
+	    			}
+	    		}, 
+	    		position: "first", title:"修改所选数据", cursor: "pointer"}
+	    );
+	    $("#user_list").jqGrid('navButtonAdd', '#user_list_btn',
+	    		{caption:"", 
+	    		buttonicon:"glyphicon glyphicon-plus", 
+	    		onClickButton:function(){   
+	    			$('#xxxcxxxx').click();
+	    		}, 
+	    		position: "first", title:"新增用户", cursor: "pointer"}
+	    );
+
+	    //改变列宽
+	    $(window).bind('resize', function () {
+	        var width = $('.jqGrid_wrapper').width();
+	        $('#user_list').setGridWidth(width);
+	    });
+	    
+	    $("#ccccxcccc").click(function (){
+	    	var rowid = $("#user_list").getGridParam("selrow");
+			if(rowid != null){
+				var rowData = $("#user_list").getRowData(rowid);
+				$('#ID').val(rowData.ID);
+				$('#NAME').val(rowData.NAME);
+				$('#PRICE').val(rowData.PRICE);
+				$('#INTRDCT').val(rowData.INTRDCT);
+				$('#BUY_TIME').val(rowData.BUY_TIME);
+				$('#WT_TIME').val(rowData.WT_TIME);
+				$('#BUY_DATE').val(rowData.BUY_DATE);
+				$('#WT_DATE').val(rowData.WT_DATE);
+				$('#spimg').attr("src","/dity/getGoodsmsImg?ID="+rowData.ID);
+				$('#xxxcxxxx').click();
+			}
+		});
+	    
+	    $("#dddddd").click(function (){
+	    	var rowid = $("#user_list").getGridParam("selrow");
+			if(rowid != null){
+				var rowData = $("#user_list").getRowData(rowid);
+				$('#ID').val(rowData.ID);
+				$.ajax({
+					type:"post",
+					url:"/dity/outGoodsMs",
+					data : {ID: rowData.ID},
+					dataType:"json",
+					success:function(data){
+						if(data.O_RUNSTATUS == 1){
+							window.location.reload();
+						}else{
+							alert(data.O_MSG);
+						}
+					},
+					error:function(jqXHR){
+						aler("error："+ jqXHR.status);
+					}
+				});
+			}
+		});
+	    
+	}
+
+	function closeWindow(){
+		window.location.reload();
+	}
+	</script>
+</body>
+
+</html>

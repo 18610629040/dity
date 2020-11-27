@@ -3474,7 +3474,7 @@ video {
 }
 
 .modal-dialog {
-    z-index: 1200;
+    z-index: 1;
 }
 
 .modal-body {
@@ -4391,11 +4391,11 @@ a.close-canvas-menu:hover {
 }
 
 .modal-backdrop {
-    z-index: 2040 !important;
+    z-index:2 !important;
 }
 
 .modal {
-    z-index: 2050 !important;
+    z-index: 3 !important;
 }
 
 .spiner-example {

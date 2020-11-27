@@ -67,6 +67,13 @@ $(document).ready(function () {
                 calendarWeeks: true,
                 autoclose: true
             });
+            $('#data_11 .input-group.date').datepicker({
+                todayBtn: "linked",
+                keyboardNavigation: false,
+                forceParse: false,
+                calendarWeeks: true,
+                autoclose: true
+            });
 
             $('#data_2 .input-group.date').datepicker({
                 startView: 1,
@@ -119,44 +126,6 @@ $(document).ready(function () {
                 radioClass: 'iradio_square-green'
             });
 
-            $('.colorpicker-demo1').colorpicker();
-
-            $('.colorpicker-demo2').colorpicker();
-
-            $('.colorpicker-demo3').colorpicker();
-
-            // Code for demos
-            function createColorpickers() {
-                // Api demo
-                var bodyStyle = $('body')[0].style;
-                $('#demo_apidemo').colorpicker({
-                    color: bodyStyle.backgroundColor
-                }).on('changeColor', function (ev) {
-                    bodyStyle.backgroundColor = ev.color.toHex();
-                });
-
-                // Horizontal mode
-                $('#demo_forceformat').colorpicker({
-                    format: 'rgba', // force this format
-                    horizontal: true
-                });
-
-                $('.demo-auto').colorpicker();
-
-                // Disabled / enabled triggers
-                $(".disable-button").click(function (e) {
-                    e.preventDefault();
-                    $("#demo_endis").colorpicker('disable');
-                });
-
-                $(".enable-button").click(function (e) {
-                    e.preventDefault();
-                    $("#demo_endis").colorpicker('enable');
-                });
-            }
-
-            createColorpickers();
-
             // Create / destroy instances
             $('.demo-destroy').click(function (e) {
                 e.preventDefault();
@@ -167,13 +136,6 @@ $(document).ready(function () {
             $('.demo-create').click(function (e) {
                 e.preventDefault();
                 createColorpickers();
-            });
-
-            var divStyle = $('.back-change')[0].style;
-            $('#demo_apidemo').colorpicker({
-                color: divStyle.backgroundColor
-            }).on('changeColor', function (ev) {
-                divStyle.backgroundColor = ev.color.toHex();
             });
 
             $('.clockpicker').clockpicker();
@@ -251,33 +213,3 @@ $(document).ready(function () {
         });
 
         $(".dial").knob();
-
-        $("#basic_slider").noUiSlider({
-            start: 40,
-            behaviour: 'tap',
-            connect: 'upper',
-            range: {
-                'min': 20,
-                'max': 80
-            }
-        });
-
-        $("#range_slider").noUiSlider({
-            start: [40, 60],
-            behaviour: 'drag',
-            connect: true,
-            range: {
-                'min': 20,
-                'max': 80
-            }
-        });
-
-        $("#drag-fixed").noUiSlider({
-            start: [40, 60],
-            behaviour: 'drag-fixed',
-            connect: true,
-            range: {
-                'min': 20,
-                'max': 80
-            }
-        });

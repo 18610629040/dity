@@ -15,6 +15,14 @@
 			USER_BIRTH,
 			USER_TYPE,
 			STATUS,
+			CASE STATUS
+				WHEN 1 THEN
+					'管理员'
+				WHEN 2 THEN
+					'普通用户'
+				ELSE
+					STATUS
+			END STATUS_NAME,
 			BANK_NO,
 			WX_NO,
 			ZFB_NO,
@@ -131,5 +139,181 @@
 		UPDATE T_DITY_ROTTN_CHRT SET 
 				IMAGE_ORDER = #{IMAGE_ORDER}
 			WHERE ID = #{ID}
+	</update>
+	
+	
+	<select id="qryGoodsMsList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT
+			ID,
+			NAME,
+			PRICE,
+			INTRDCT,
+			OWN_ACNT,
+			BUY_TIME,
+			WT_TIME,
+			BUY_DATE,
+			WT_DATE,
+			STATUS,
+			CASE STATUS
+				WHEN 0 THEN
+					'下架'
+				WHEN 1 THEN
+					'正常'
+				ELSE
+					STATUS
+			END STATUS_NAME,
+		 	DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
+		 	CRITE_USER
+		FROM T_DITY_GOODS_MS T
+			WHERE 1 = 1
+		<if test="ID != null and ID !=''">
+			and ID = #{ID}
+		</if>
+		<if test="NAME != null and NAME !=''">
+			and NAME like concat('%',#{NAME},'%')
+		</if>
+	</select>
+	
+	<select id="getGoodsMsByID" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT * FROM T_DITY_GOODS_MS T where ID=#{ID}
+	</select>
+	
+	<insert id="addGoodsMs" parameterType="java.util.HashMap">
+		INSERT INTO T_DITY_GOODS_MS (
+				ID,
+				NAME,
+				PRICE,
+				INTRDCT,
+				OWN_ACNT,
+				IMAGE,
+				STATUS,
+				BUY_TIME,
+				WT_TIME,
+				BUY_DATE,
+				WT_DATE,
+				CRITE_TIME,
+				CRITE_USER
+			) VALUES (
+				#{ID},
+				#{NAME},
+				#{PRICE},
+				#{INTRDCT},
+				null,
+				#{IMAGE},
+				1,
+				#{BUY_TIME},
+				#{WT_TIME},
+				#{BUY_DATE},
+				#{WT_DATE},
+				SYSDATE(),
+				#{CRITE_USER}
+			)
+	</insert>
+	
+	<update id="editGoodsMs" parameterType="java.util.HashMap">
+		UPDATE T_DITY_GOODS_MS T SET 
+				T.NAME = #{NAME}, 
+				T.PRICE = #{PRICE},
+				T.INTRDCT = #{INTRDCT}, 
+				T.BUY_TIME = #{BUY_TIME}, 
+				T.WT_TIME = #{WT_TIME}
+				T.BUY_DATE = #{BUY_DATE}, 
+				T.WT_DATE = #{WT_DATE}
+				<if test="IMAGE != null and IMAGE !=''">
+					, T.IMAGE = #{IMAGE}
+				</if>
+			WHERE T.ID = #{ID}
+	</update>
+	
+	<delete id="delGoodsMs" parameterType="java.util.HashMap">
+		DELETE FROM T_DITY_GOODS_MS WHERE ID = #{ID}
+	</delete>
+	
+	<update id="setGoodsMsStatus" parameterType="java.util.HashMap">
+		UPDATE T_DITY_GOODS_MS T SET 
+				T.STATUS = #{STATUS}
+			WHERE T.ID = #{ID}
+	</update>
+	
+	
+	<select id="qryGoodsList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT
+			ID,
+			NAME,
+			PRICE,
+			INTRDCT,
+			GOODS_TYPE,
+			OWN_ACNT,
+			STATUS,
+			CASE STATUS
+				WHEN 0 THEN
+					'下架'
+				WHEN 1 THEN
+					'正常'
+				ELSE
+					STATUS
+			END STATUS_NAME,
+		 	DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
+		 	CRITE_USER
+		FROM T_DITY_GOODS T
+			WHERE 1 = 1
+		<if test="ID != null and ID !=''">
+			and ID = #{ID}
+		</if>
+		<if test="NAME != null and NAME !=''">
+			and NAME like concat('%',#{NAME},'%')
+		</if>
+	</select>
+	
+	<select id="getGoodsByID" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT * FROM T_DITY_GOODS T where ID=#{ID}
+	</select>
+	
+	<insert id="addGoods" parameterType="java.util.HashMap">
+		INSERT INTO T_DITY_GOODS (
+				ID,
+				NAME,
+				PRICE,
+				INTRDCT,
+				GOODS_TYPE,
+				OWN_ACNT,
+				STATUS,
+				IMAGE,
+				CRITE_TIME,
+				CRITE_USER
+			) VALUES (
+				#{ID},
+				#{NAME},
+				#{PRICE},
+				#{INTRDCT},
+				#{GOODS_TYPE},
+				null,
+				1,
+				#{IMAGE},
+				SYSDATE(),
+				#{CRITE_USER}
+			)
+	</insert>
+	
+	<update id="editGoods" parameterType="java.util.HashMap">
+		UPDATE T_DITY_GOODS T SET 
+				T.NAME = #{NAME}, 
+				T.PRICE = #{PRICE},
+				T.INTRDCT = #{INTRDCT}, 
+				T.GOODS_TYPE = #{OWN_ACNT}, 
+				<if test="IMAGE != null and IMAGE !=''">
+					, T.IMAGE = #{IMAGE}
+				</if>
+			WHERE T.ID = #{ID}
+	</update>
+	
+	<delete id="delGoods" parameterType="java.util.HashMap">
+		DELETE FROM T_DITY_GOODS WHERE ID = #{ID}
+	</delete>
+	
+	<update id="setGoodsStatus" parameterType="java.util.HashMap">
+		UPDATE T_DITY_GOODS T SET 
+				T.STATUS = #{STATUS}
+			WHERE T.ID = #{ID}
 	</update>
 </mapper>

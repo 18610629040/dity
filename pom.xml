@@ -3,18 +3,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
   
-	  <groupId>com.program</groupId>
-	  <artifactId>dity</artifactId>
-	  <packaging>war</packaging>
-	  <version>0.0.1-SNAPSHOT</version>
-	  <name>dity Maven Webapp</name>
- 	 <url>http://maven.apache.org</url>
+	<groupId>com.program</groupId>
+	<artifactId>dity</artifactId>
+	<packaging>war</packaging>
   
   	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.1.0.RELEASE</version>
-		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
   
   <!-- 配置字符编码，防止打包出现乱码问题 -->
@@ -25,7 +21,7 @@
 		<spring-boot-admin.version>1.7</spring-boot-admin.version>
 	</properties>
   
-  <repositories>
+  	<repositories>
 		<repository>
 			<id>myRepository</id>
 			<name>my project repository</name>
@@ -39,7 +35,7 @@
 		</repository>
 	</repositories>
   
-  <dependencies>
+  	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -203,6 +199,7 @@
 				</includes>
 			</resource>
 		</resources>
+		<finalName>ROOT</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

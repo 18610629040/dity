@@ -31,11 +31,14 @@
 					<ul class="nav" id="side-menu">
 						<li class="nav-header">
 							<div class="dropdown profile-element">
-								<span><img alt="image" class="img-circle" src="/img/profile_small.jpg" /></span>
+								<span>
+									<img style="max-width: 50%;" alt="image" class="img-circle" 
+										src="/img/timg.jpg" />
+								</span>
 								<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 									<span class="clear">
-										<span class="block m-t-xs"><strong class="font-bold">Beaut-zihan</strong></span>
-										<span class="text-muted text-xs block">超级管理员<b class="caret"></b></span>
+										<span class="block m-t-xs"><strong class="font-bold" id="USER_NAME"></strong></span>
+										<span class="text-muted text-xs block" id="USER_TYPE"><b class="caret"></b></span>
 									</span>
 								</a>
 								<ul class="dropdown-menu animated fadeInRight m-t-xs">
@@ -77,10 +80,10 @@
 							<a class="J_menuItem" target="/dity/webuploader"><i class="fa fa-picture-o"></i> <span class="nav-label">轮播图管理</span></a>
 						</li>
 						<li>
-							<a class="J_menuItem" target="layouts.html"><i class="fa fa-table"></i> <span class="nav-label">秒杀活动管理</span></a>
+							<a class="J_menuItem" target="/dity/formAdvanced"><i class="fa fa-table"></i> <span class="nav-label">秒杀活动管理</span></a>
 						</li>
 						<li>
-							<a class="J_menuItem" target="layouts.html"><i class="fa fa-columns"></i> <span class="nav-label">藏品管理</span></a>
+							<a class="J_menuItem" target="/dity/pdMgt"><i class="fa fa-columns"></i> <span class="nav-label">藏品管理</span></a>
 						</li>
 					</ul>
 				</div>
@@ -227,5 +230,31 @@
 
 		<!-- 第三方插件 -->
 		<script src="/js/plugins/pace/pace.min.js"></script>
+		<script type="text/javascript">
+			layer.ready(function () {
+				
+				$("body").removeClass("skin-2");
+		        $("body").removeClass("skin-3");
+		        $("body").addClass("skin-1");
+		        $.ajax({
+					type:"post",
+					url:"/dity/getUserBySession",
+					data : {},
+					dataType:"json",
+					success:function(data){
+						if(data != undefined){
+							$("#USER_NAME").text(data.USER_NAME);
+							if( data.USER_TYPE == 1){
+								$("#USER_TYPE").text("管理员");
+							}
+						}
+					},
+					error:function(jqXHR){
+						alert("error："+ jqXHR.status);
+					}
+				});
+		        
+			});
+		</script>
 	</body>
 </html>

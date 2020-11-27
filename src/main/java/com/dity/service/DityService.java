@@ -53,4 +53,55 @@ public class DityService {
 	public int editIttonOrder(Map<String, Object> map) {
 		return dityDao.editIttonOrder(map);
 	}
+	
+	
+	public List<Map<String,Object>> qryGoodsMsList(Map<String, Object> map) {
+		return dityDao.qryGoodsMsList(map);
+	}
+	
+	public Map<String,Object> getGoodsMsByID(Map<String, Object> map) {
+		return dityDao.getGoodsMsByID(map);
+	}
+	
+	public int addGoodsMs(Map<String, Object> map) {
+		return dityDao.addGoodsMs(map);
+	}
+	
+	public int editGoodsMs(Map<String, Object> map) {
+		return dityDao.editGoodsMs(map);
+	}
+	
+	public int setGoodsMsStatus(Map<String, Object> map) {
+		return dityDao.setGoodsMsStatus(map);
+	}
+	
+	public int delGoodsMs(Map<String, Object> map) {
+		return dityDao.delGoodsMs(map);
+	}
+	
+	
+
+	public List<Map<String,Object>> qryGoodsList(Map<String, Object> map) {
+		return dityDao.qryGoodsList(map);
+	}
+	
+	public Map<String,Object> getGoodsByID(Map<String, Object> map) {
+		return dityDao.getGoodsByID(map);
+	}
+	
+	public int addGoods(Map<String, Object> map) {
+		return dityDao.addGoods(map);
+	}
+	
+	public int editGoods(Map<String, Object> map) {
+		return dityDao.editGoods(map);
+	}
+	
+	public int setGoodsStatus(Map<String, Object> map) {
+		return dityDao.setGoodsStatus(map);
+	}
+	
+	public int delGoods(Map<String, Object> map) {
+		return dityDao.delGoods(map);
+	}
 }

@@ -173,11 +173,11 @@
 				$(".imgCon").empty();
 				$.each(data,function(i,e){
 					$(".imgCon").append(
-						'<div class="ibox-content-item">'+
+						'<div class="ibox-content-item" style="margin-top: 20px; margin-left: 20px;">'+
 	                    	'<div class="image-panel">'+
 	                    		'<span onclick="delItton(this)"></span>'+
 	                    	'</div>'+
-	                    	'<img alt="image" src="/dity/getRottnChrtImg?ID='+e.ID+'" onclick="editOrder(this)"/>'+
+	                    	'<img style="max-width: 100%;" alt="image" src="/dity/getRottnChrtImg?ID='+e.ID+'" onclick="editOrder(this)"/>'+
 	                    	'<input type="hidden" value="'+e.ID+'"/>'+
 	                   		'<input type="hidden" value="'+e.IMAGE_ORDER+'"/>'+
 						'</div>'		

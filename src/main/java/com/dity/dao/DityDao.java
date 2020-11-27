@@ -64,4 +64,65 @@ public class DityDao {
 		        .selectList("com.dity.dao.DityDaoMapper.qryRottnChrtById", map);
 	}
 	
+	
+	public List<Map<String,Object>> qryGoodsList(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectList("com.dity.dao.DityDaoMapper.qryGoodsList", map);
+	}
+	
+	public Map<String,Object> getGoodsByID(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectOne("com.dity.dao.DityDaoMapper.getGoodsByID", map);
+	}
+	
+	public int addGoods(Map<String, Object> map) {
+		return sqlSessionTemplate
+        .insert("com.dity.dao.DityDaoMapper.addGoods", map);
+	}
+	
+	public int editGoods(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.editGoods", map);
+	}
+	
+	public int setGoodsStatus(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.setGoodsStatus", map);
+	}
+	
+	public int delGoods(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .delete("com.dity.dao.DityDaoMapper.delGoods", map);
+	}
+	
+	
+	public List<Map<String,Object>> qryGoodsMsList(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectList("com.dity.dao.DityDaoMapper.qryGoodsMsList", map);
+	}
+	
+	public Map<String,Object> getGoodsMsByID(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectOne("com.dity.dao.DityDaoMapper.getGoodsMsByID", map);
+	}
+	
+	public int addGoodsMs(Map<String, Object> map) {
+		return sqlSessionTemplate
+        .insert("com.dity.dao.DityDaoMapper.addGoodsMs", map);
+	}
+	
+	public int editGoodsMs(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.editGoodsMs", map);
+	}
+	
+	public int setGoodsMsStatus(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.setGoodsMsStatus", map);
+	}
+	
+	public int delGoodsMs(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .delete("com.dity.dao.DityDaoMapper.delGoodsMs", map);
+	}
 }
