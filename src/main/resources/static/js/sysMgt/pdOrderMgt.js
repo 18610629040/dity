@@ -47,8 +47,8 @@ function initFeePerfGrid(){
 	
     //设置操作按钮
     $("#pdOrder_list").jqGrid('navGrid', '#pdOrder_list_btn', {
-        edit: true,
-        add: true,
+        edit: false,
+        add: false,
         del: false,
         search: false,
         refresh:false
