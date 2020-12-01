@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +16,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONObject;
-import com.dity.common.bootonfig.TokenUtil;
+import com.dity.common.SysProperties;
 import com.dity.common.bootonfig.UserLoginToken;
 import com.dity.common.utils.IDUtils;
+import com.dity.common.utils.SessionUtil;
 import com.dity.service.FeePerfMgtService;
 
 @CrossOrigin
@@ -32,6 +36,9 @@ public class FeePerfMgtController {
 	
 	@Autowired
 	FeePerfMgtService feePerfMgtService;
+	
+	@Autowired
+    SysProperties sysProperties;
 	
 	/**
 	 * 费率管理首页
@@ -106,6 +113,11 @@ public class FeePerfMgtController {
         return "/sysMgt/prdtLbMgt";
     }
 	
+	@RequestMapping(value = "/pdType", method = { RequestMethod.POST, RequestMethod.GET })
+    public String pdType(){
+        return "/sysMgt//pdType";
+    }
+	
 	/**
 	 * 商品类别数据-查询
 	 */
@@ -121,7 +133,47 @@ public class FeePerfMgtController {
 		}
 		return list;
 	}
-
+	
+	@RequestMapping("/addQy")
+	@ResponseBody
+    public Object addQy(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = false) String id,
+            @RequestParam(value = "TYPE_NAME", required = false) String TYPE_NAME,
+            @RequestParam(value = "TYPE_ORDER", required = false) String TYPE_ORDER,
+            @RequestParam(value = "STATUS", required = false) String STATUS,
+            @RequestParam(value = "FILE_URL", required = false) String FILE_URL) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	if(StringUtils.isBlank(FILE_URL)) {
+        		map.put("O_RUNSTATUS", -1);
+                map.put("O_MSG", "请选择图片");
+                return map;
+        	}
+        	if(StringUtils.isBlank(id)) {
+        		map.put("ID",IDUtils.createID());
+        	}else {
+        		map.put("ID",id);
+        	}
+        	map.put("TYPE_NAME",TYPE_NAME);
+        	map.put("TYPE_ORDER",TYPE_ORDER);
+        	map.put("FILE_URL",FILE_URL);
+        	map.put("STATUS",STATUS);
+        	map.put("CRITE_USER",SessionUtil.getUserNo());
+        	if(StringUtils.isBlank(id)) {
+        		feePerfMgtService.addPrdtLbData(map);
+        	}else {
+        		feePerfMgtService.modfyPrdtLbData(map);
+        	}
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/addUser:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+	
 	/**
 	 * 商品类别数据-操作
 	 */
@@ -212,8 +264,11 @@ public class FeePerfMgtController {
 				map.put("ID",String.valueOf(jObj.get("ID")));
 				count = feePerfMgtService.modfyInfoTsData(map);
 			}else if("del".equals(oper)){
-				map.put("ID",String.valueOf(jObj.get("ID")));
-				count = feePerfMgtService.delInfoTsData(map);
+				map.put("O_MSG","APP端信息提示，请勿删除！");
+				map.put("O_RUNSTATUS",-1);
+				return map;
+//				map.put("ID",String.valueOf(jObj.get("ID")));
+//				count = feePerfMgtService.delInfoTsData(map);
 			}
 			map.put("O_RUNSTATUS",count);
 			if(count<1) {

@@ -6,10 +6,13 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -23,12 +26,19 @@ public class DataSourceConfig{
 		return DataSourceBuilder.create().build();
 	}
 	
+	@Value("${mybatis.config-location}")
+    private String myBatisConfig;
+	
+	@Value("${mybatis.mapper-locations}")
+    private String mapperLocations;
+	
 	@Bean("sqlSessionFactory")
 	public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource")DataSource dataSource) throws Exception{
 		SqlSessionFactoryBean bean  =  new SqlSessionFactoryBean();
 		bean.setDataSource(dataSource);
-		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();		
-		bean.setMapperLocations(resolver.getResources("classpath*:com/dity/**/dao/*xml"));
+		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();	
+		bean.setConfigLocation(resolver.getResource(myBatisConfig));
+		bean.setMapperLocations(resolver.getResources(mapperLocations));
 		return bean.getObject();
 		
 	}

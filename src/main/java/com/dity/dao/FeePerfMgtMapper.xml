@@ -22,16 +22,32 @@
 	</delete>
 	
 	<select id="srchPrdtLbData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT *,DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %T') CRITETIME FROM T_DITY_PRODUCT_TYPE T
+		SELECT *,
+			CASE STATUS
+				WHEN 0 THEN
+					'未开放'
+				WHEN 1 THEN
+					'已开放'
+				ELSE
+					STATUS
+			END STATUS_NAME,
+			DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %T') CRITETIME
+		FROM T_DITY_PRODUCT_TYPE T where 1=1
+		<if test="ID != null and ID !=''">
+			and T.ID = #{ID}
+		</if>
+		order by TYPE_ORDER
 	</select>
 	
 	<insert id="addPrdtLbData" parameterType="java.util.HashMap">
-		INSERT INTO T_DITY_PRODUCT_TYPE (ID,TYPE_ORDER,TYPE_NAME,CRITE_TIME,CRITE_USER) VALUES 
-			(#{ID},#{TYPE_ORDER},#{TYPE_NAME},SYSDATE(),#{CRITE_USER})
+		INSERT INTO T_DITY_PRODUCT_TYPE (ID,TYPE_ORDER,TYPE_NAME,STATUS,FILE_URL,CRITE_TIME,CRITE_USER) VALUES 
+			(#{ID},#{TYPE_ORDER},#{TYPE_NAME},#{STATUS},#{FILE_URL},SYSDATE(),#{CRITE_USER})
 	</insert>
 	
 	<update id="modfyPrdtLbData" parameterType="java.util.HashMap">
-		UPDATE T_DITY_PRODUCT_TYPE T SET T.TYPE_ORDER = #{TYPE_ORDER}, T.TYPE_NAME = #{TYPE_NAME},T.CRITE_USER = #{CRITE_USER}, T.CRITE_TIME = SYSDATE()
+		UPDATE T_DITY_PRODUCT_TYPE T SET T.TYPE_ORDER = #{TYPE_ORDER}, T.TYPE_NAME = #{TYPE_NAME},
+			T.STATUS = #{STATUS}, T.FILE_URL = #{FILE_URL},
+			T.CRITE_USER = #{CRITE_USER}, T.CRITE_TIME = SYSDATE()
 			WHERE T.ID = #{ID}
 	</update>
 	

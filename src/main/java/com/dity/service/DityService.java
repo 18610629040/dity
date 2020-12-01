@@ -59,10 +59,6 @@ public class DityService {
 		return dityDao.qryGoodsMsList(map);
 	}
 	
-	public Map<String,Object> getGoodsMsByID(Map<String, Object> map) {
-		return dityDao.getGoodsMsByID(map);
-	}
-	
 	public int addGoodsMs(Map<String, Object> map) {
 		return dityDao.addGoodsMs(map);
 	}
@@ -83,10 +79,6 @@ public class DityService {
 
 	public List<Map<String,Object>> qryGoodsList(Map<String, Object> map) {
 		return dityDao.qryGoodsList(map);
-	}
-	
-	public Map<String,Object> getGoodsByID(Map<String, Object> map) {
-		return dityDao.getGoodsByID(map);
 	}
 	
 	public int addGoods(Map<String, Object> map) {

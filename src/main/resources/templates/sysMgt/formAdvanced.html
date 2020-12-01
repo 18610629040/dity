@@ -137,7 +137,7 @@
 	                        	<label class="col-sm-1 control-label" style="text-align: right;">图片：</label>
                      			<div class="col-md-3">
 	                                <input id="IMAGE" name="IMAGE" type="file" class="form-control">
-		                            <input type="hidden" id="IMAGE_NAME" name="IMAGE_NAME"/>
+		                            <input type="hidden" id="FILE_URL" name="FILE_URL"/>
                      			</div>
 		                    </div>
                         </div>
@@ -218,14 +218,14 @@
 		//初始化上传插件
 		$('#IMAGE').fileupload({
 			//上传地址
-			url:'/dity/uploadGoodsImg',
+			url:'/dity/uploadPdImg',
 			//返回格式
 			dataType: 'json',
 			//e：事件对象
 			//data：图片上传后的对象，通过data.result.picAddr可以获取上传后的图片地址
 			done: function (e, data) {
 				$('#spimg').attr('src',data.result.url);
-				$('#IMAGE_NAME').val(data.result.fileName);
+				$('#FILE_URL').val(data.result.url);
 			}
 		});
 		
@@ -254,7 +254,7 @@
 	        rownumbers: true,
 	        rowNum: 20,
 	        rowList: [10, 20, 30],
-	        colNames: ['ID','商品名称', '价格','简介','买入账号','开始日期', '截止日期','开始时间', '截止时间','状态'],
+	        colNames: ['ID','商品名称', '价格','简介','买入账号','开始日期', '截止日期','开始时间', '截止时间','状态','FILE_URL'],
 	        colModel: [
 	        	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
 	            {name: 'NAME',index: 'NAME', align :"Center",editable: true,width: 220},
@@ -265,7 +265,8 @@
 	            {name: 'WT_DATE',index: 'WT_DATE', align :"Center",editable: true,width: 100},
 	            {name: 'BUY_TIME',index: 'BUY_TIME', align :"Center",editable: true,width: 140},
 	            {name: 'WT_TIME',index: 'WT_TIME', align :"Center",editable: true,width: 100},
-	            {name: 'STATUS_NAME',index: 'STATUS_NAME', align :"Center",editable: true,width: 100}
+	            {name: 'STATUS_NAME',index: 'STATUS_NAME', align :"Center",editable: true,width: 100},
+	            {name: 'FILE_URL',index: 'FILE_URL',editable: true, align :"Center",hidden:true}
 	        ],
 	        loadComplete: function (data) {
 	          　　		console.log(data)
@@ -329,7 +330,8 @@
 	    				$('#WT_TIME').val(rowData.WT_TIME);
 	    				$('#BUY_DATE').val(rowData.BUY_DATE);
 	    				$('#WT_DATE').val(rowData.WT_DATE);
-	    				$('#spimg').attr("src","/dity/getGoodsmsImg?ID="+rowData.ID);
+	    				$('#spimg').attr("src",rowData.FILE_URL);
+	    				$('#FILE_URL').val(rowData.FILE_URL);
 	    				$('#xxxcxxxx').click();
 	    			}
 	    		}, 
@@ -362,7 +364,8 @@
 				$('#WT_TIME').val(rowData.WT_TIME);
 				$('#BUY_DATE').val(rowData.BUY_DATE);
 				$('#WT_DATE').val(rowData.WT_DATE);
-				$('#spimg').attr("src","/dity/getGoodsmsImg?ID="+rowData.ID);
+				$('#spimg').attr("src",rowData.FILE_URL);
+				$('#FILE_URL').val(rowData.FILE_URL);
 				$('#xxxcxxxx').click();
 			}
 		});

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>藏品区域维护</title>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<!-- jqGrid -->
+<link href="/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/font-awesome.css" rel="stylesheet">
+<link href="/css/animate.css" rel="stylesheet">
+<link href="/css/style.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
+<link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
+<script src="/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+<script src="/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="/js/sysMgt/pdType.js"></script>
+<script src="/js/jquery.form.min.js"></script>
+<script src="/js/vendor/jquery.ui.widget.js"></script>
+<script src="/js/jquery.iframe-transport.js"></script>
+<script src="/js/jquery.fileupload.js"></script>
+
+<style>
+  .cover{
+      display: none;
+      position: absolute;
+      top: 0%;
+      left: 0%;
+      width: 100%;
+      height: 100%;
+      background-color: #999c9e;
+      z-index:1001;
+      -moz-opacity: 0.8;
+      opacity:.80;
+      filter: alpha(opacity=88);
+  }
+  .window {
+	display: none;
+	position: absolute;
+	top: 25%;
+	left: 10%;
+	width: 80%;
+	height: 58%;
+	border: 2px solid #777;
+	background-color: #ffffff;
+	z-index: 1002;
+	overflow: auto;
+  }
+</style>
+</head>
+<body>
+	<div>
+        <div class="jqGrid_wrapper" style="margin-top: 15px;">
+            <table id="user_list"></table>
+            <div id="user_list_btn"></div>
+        </div>
+	</div>
+    <div class="cover"></div>
+    <div class="window">
+    	<div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="ibox float-e-margins">
+                        <form method="post" id="user_form" action="/dity/feePerfMgt/addQy" class="form-horizontal" enctype="multipart/form-data">
+                        	<div class="hr-line-dashed"></div>
+                         	<div class="form-group" style="margin-left: 20px;">
+                                <div class="col-sm-10">
+                                    <div class="row">
+                                        <label class="col-sm-2 control-label">区域名称</label>
+                                        <div class="col-md-4">
+                                        	<input id="ID" name="ID" type="hidden">
+                                            <input id="TYPE_NAME" name="TYPE_NAME" type="text" placeholder="请填写名称" class="form-control"
+                                            	required="" aria-required="true">
+                                        </div>
+                                        <label class="col-sm-2 control-label">排序</label>
+                                        <div class="col-md-4">
+                                            <input id="TYPE_ORDER" name="TYPE_ORDER" type="text" placeholder="手机端展示区域的排序，从1开始" class="form-control"
+                                            	required="" aria-required="true">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-left: 20px;">
+                            	<div class="col-sm-10">
+                                    <div class="row">
+                                    	<label class="col-sm-2 control-label" on>区域图片</label>
+                                        <div class="col-md-4">
+                                        	<input id="qyimgFile" type="file" name="qyimgFile">
+                                        	<img style="margin-top: 8px; max-width: 100%;" 
+                                        		id="qyimg" src=""/>
+                                        	<input type="hidden" id="FILE_URL" name="FILE_URL"/>
+                                        </div>
+                                        <label class="col-sm-2 control-label">是否开放</label>
+                                        <div class="col-md-4">
+		                                    <div class="radio radio-info radio-inline">
+		                                        <label>
+		                                            <input type="radio" checked="" value="0" name="STATUS">未开放
+		                                         </label>
+		                                         <label><input type="radio" value="1" name="STATUS">已开放</label>
+		                                    </div>
+		                                </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <div class="col-sm-2" style="float: right;">
+                                	<input id="submitBtn" value="确定" type="submit" class="btn btn-primary"/>
+                                	<input id="celBtn" value="取消" type="button" class="btn btn-white"/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+            </div>
+        </div>
+        
+    	</div>
+    </div>
+</body>
+</html>

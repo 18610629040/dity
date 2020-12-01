@@ -177,7 +177,7 @@
 	                    	'<div class="image-panel">'+
 	                    		'<span onclick="delItton(this)"></span>'+
 	                    	'</div>'+
-	                    	'<img style="max-width: 100%;" alt="image" src="/dity/getRottnChrtImg?ID='+e.ID+'" onclick="editOrder(this)"/>'+
+	                    	'<img style="max-width: 100%;" alt="image" src="'+e.FILE_URL+'" onclick="editOrder(this)"/>'+
 	                    	'<input type="hidden" value="'+e.ID+'"/>'+
 	                   		'<input type="hidden" value="'+e.IMAGE_ORDER+'"/>'+
 						'</div>'		
@@ -222,7 +222,7 @@
 				data : {ID: id,IMAGE_ORDER:val},
 				dataType:"json",
 				success:function(data){
-					/* window.location.reload(); */
+					window.location.reload();
 				},
 				error:function(jqXHR){
 					aler("error："+ jqXHR.status);

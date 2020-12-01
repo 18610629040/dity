@@ -19,15 +19,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
+import com.dity.common.SysProperties;
+import com.dity.common.bootonfig.PassToken;
 import com.dity.common.bootonfig.UserLoginToken;
 import com.dity.common.utils.FileUtils;
 import com.dity.common.utils.IDUtils;
@@ -45,16 +45,12 @@ public class DityController {
 	@Autowired
 	DityService dityService;
 	
+	@Autowired
+    SysProperties sysProperties;
 	
-    @RequestMapping(value = "/index", method = { RequestMethod.POST, RequestMethod.GET })
-    public ModelAndView index(HttpServletRequest request,ModelAndView mv){
-    	mv.addAllObjects(SessionUtil.getUser());
-    	mv.setViewName("/welcom/welcomIndex");
-        return mv;
-    }
-    
     @RequestMapping(value = "/getUserBySession", method = { RequestMethod.POST, RequestMethod.GET })
     @ResponseBody
+    @PassToken
     public Object getUserBySession(){
         return SessionUtil.getUser();
     }
@@ -66,7 +62,7 @@ public class DityController {
     
     @RequestMapping(value = "/qryUserList", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public List<Object> srchFeePerfData(){
+	public List<Object> qryUserList(){
 		Map<String,Object> map = new HashMap<String, Object>();
 		List<Object> list = new ArrayList<>();
 		try {
@@ -80,9 +76,9 @@ public class DityController {
 	@RequestMapping("/addUser")
 	@ResponseBody
     public Object addUser(HttpServletRequest request,HttpServletResponse response, 
-            @RequestParam(value = "ID", required = false) String id,
-            @RequestParam(value = "USER_NO", required = false) String USER_NO,
-            @RequestParam(value = "PASS", required = false) String PASS,
+            @RequestParam(value = "ID", required = true) String id,
+            @RequestParam(value = "USER_NO", required = true) String USER_NO,
+            @RequestParam(value = "PASS", required = true) String PASS,
             @RequestParam(value = "USER_NAME", required = false) String USER_NAME,
             @RequestParam(value = "MOBILE_NO", required = false) String MOBILE_NO,
             @RequestParam(value = "USER_ADD", required = false) String USER_ADD,
@@ -90,24 +86,14 @@ public class DityController {
             @RequestParam(value = "USER_BIRTH", required = false) String USER_BIRTH,
             @RequestParam(value = "USER_TYPE", required = false) String USER_TYPE,
             @RequestParam(value = "BANK_NO", required = false) String BANK_NO,
+            @RequestParam(value = "BANK_NAME", required = false) String BANK_NAME,
+            @RequestParam(value = "REAL_NAME", required = false) String REAL_NAME,
             @RequestParam(value = "WX_NO", required = false) String WX_NO,
             @RequestParam(value = "ZFB_NO", required = false) String ZFB_NO,
-            @RequestParam(value = "wxFileName", required = false) String wxFileName,
-            @RequestParam(value = "zfbFileName", required = false) String zfbFileName) {
+            @RequestParam(value = "WX_FILE_URL", required = false) String WX_FILE_URL,
+            @RequestParam(value = "ZFB_FILE_URL", required = false) String ZFB_FILE_URL) {
         Map<String, Object> map = new HashMap<>();
         try {
-        	if(StringUtils.isBlank(id)) {
-        		map.put("ID",IDUtils.createID());
-        	}else {
-        		map.put("ID",id);
-        	}
-        	map.put("USER_NO",USER_NO);
-        	List<Map<String, Object>> list= dityService.getUserByNo(map);
-        	if(list.size()>0) {
-        		map.put("O_RUNSTATUS", -1);
-            	map.put("O_MSG", "账号重复，请重新输入！");
-            	return map;
-        	}
         	map.put("PASS",PASS);
         	map.put("USER_NAME",USER_NAME);
         	map.put("MOBILE_NO",MOBILE_NO);
@@ -116,22 +102,27 @@ public class DityController {
         	map.put("USER_BIRTH",USER_BIRTH);
         	map.put("USER_TYPE",USER_TYPE);
         	map.put("BANK_NO",BANK_NO);
+        	map.put("BANK_NAME",BANK_NAME);
+        	map.put("REAL_NAME",REAL_NAME);
         	map.put("WX_NO",WX_NO);
         	map.put("ZFB_NO",ZFB_NO);
-        	String path = ResourceUtils.getURL("classpath:static").getPath() + File.separator +"tempFile"+ File.separator;
-        	
-        	if(StringUtils.isNotBlank(wxFileName)) {
-        		File wxFile = new File(path,wxFileName);
-        		map.put("WX_IMAGE",FileUtils.file2byte(wxFile));
-        		new File(path,wxFileName).delete();
-        	}
-			if(StringUtils.isNotBlank(zfbFileName)) {
-				File zfbFile = new File(path,zfbFileName);
-				map.put("ZFB_IMAGE",FileUtils.file2byte(zfbFile));
-				new File(path,zfbFileName).delete();
-			}
-        	map.put("STATUS",1);
+        	map.put("WX_FILE_URL",WX_FILE_URL);
+        	map.put("ZFB_FILE_URL",ZFB_FILE_URL);
         	map.put("CRITE_USER",SessionUtil.getUserNo());
+        	map.put("STATUS",0);
+        	if(StringUtils.isNotBlank(BANK_NO) 
+        			|| StringUtils.isNotBlank(WX_NO) || StringUtils.isNotBlank(WX_FILE_URL)
+        			|| StringUtils.isNotBlank(ZFB_NO) || StringUtils.isNotBlank(ZFB_FILE_URL)) {
+        		map.put("STATUS",1);
+        	}
+        	map.put("ID",id);
+        	map.put("USER_NO",USER_NO);
+        	List<Map<String, Object>> list= dityService.getUserByNo(map);
+        	if(list.size()>0) {
+        		map.put("O_RUNSTATUS", -1);
+            	map.put("O_MSG", "账号重复，请重新输入！");
+            	return map;
+        	}
         	if(StringUtils.isBlank(id)) {
         		dityService.addUser(map);
         	}else {
@@ -165,24 +156,6 @@ public class DityController {
         return map;
     }
 	
-//	@SuppressWarnings("unchecked")
-//	@RequestMapping("/userMgt")
-//	@ResponseBody
-//    public Object userMgt(HttpServletRequest request,HttpServletResponse response, 
-//            @RequestParam(value = "postData", required = false) Object postData) {
-//        Map<String, Object> map = new HashMap<>();
-//        try {
-//        	Map<String, Object> data = (Map<String, Object>)JSON.parse(String.valueOf(postData));
-//        	map.put("O_RUNSTATUS", 1);
-//        	map.put("O_MSG", "操作成功！");
-//        } catch (Exception e) {
-//            logger.error("/login:" + map, e);
-//            map.put("O_RUNSTATUS", -1);
-//            map.put("O_MSG", "system error");
-//        }
-//        return map;
-//    }
-	
 	@RequestMapping(value = "/uploadUserImg", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public Object uploadUserImg(HttpServletRequest request,HttpServletResponse response,
@@ -194,20 +167,26 @@ public class DityController {
         	map.put("O_MSG", "请选择60K以下的二维码图片！");
         	return map;
     	}
+		if(wximg != null) {
+			map.put("url", uplodFile2LocalPath(wximg));
+		}else {
+			map.put("url", uplodFile2LocalPath(zfbimg));
+		}
+		map.put("O_RUNSTATUS", 1);
+    	map.put("O_MSG", "操作成功！");
+    	return map;
+	}
+	
+	public String uplodFile2LocalPath(MultipartFile file){
+		String url = "";
 		InputStream in = null;
 		FileOutputStream os = null;
 		try {
-			String fileName = "";
-			if(wximg != null) {
-				in = wximg.getInputStream();
-				fileName = wximg.getOriginalFilename();
-			}else {
-				in = zfbimg.getInputStream();
-				fileName = zfbimg.getOriginalFilename();
-			}
-			String path = ResourceUtils.getURL("classpath:static").getPath() + File.separator +"tempFile"+ File.separator;
-//			String fileType = fileName.split("\\.")[1];
-			File tempFile = new File(path,fileName);
+			String fileName = file.getOriginalFilename();
+			in = file.getInputStream();
+			String path = sysProperties.getLocation();//都上传到本地目录下
+			String fileId = IDUtils.createID();
+			File tempFile = new File(path,fileId+fileName);
 			tempFile.deleteOnExit();
 			tempFile.createNewFile();
 			os = new FileOutputStream(tempFile);
@@ -216,13 +195,9 @@ public class DityController {
 			while ((size = in.read(temp)) != -1) {
 				os.write(temp, 0, size);
 			}
-			map.put("url", "/tempFile/"+fileName);
-			map.put("fileName", fileName);
-			map.put("O_RUNSTATUS", 1);
-	    	map.put("O_MSG", "操作成功！");
+	    	url = "/tempFile"+File.separator+fileId+fileName;
 		} catch (IOException e) {
 			logger.error("文件上传失败", e);
-			map.put("O_RUNSTATUS", -1);
 		}finally {
 			if(in != null) {
 				try {
@@ -239,38 +214,34 @@ public class DityController {
 				}
 			}
 		}
-    	return map;
+		return url;
 	}
 	
-	@RequestMapping(value = "/getUserFkmImg", method = { RequestMethod.POST, RequestMethod.GET })
+	//不用了，先留的吧
+	@RequestMapping(value = "/getImgByUrl", method = { RequestMethod.POST, RequestMethod.GET })
     @ResponseBody
-    public void getUserFkmImg(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam(value = "USER_NO", required = true) String no,
-            @RequestParam(value = "TYPE", required = true) String type) {
+    public void getQyImg(HttpServletRequest request, HttpServletResponse response,
+            @RequestParam(value = "FILE_URL", required = true) String path) {
         Map<String, Object> map = new HashMap<>();
         OutputStream os = null;
         response.addHeader("Content-Disposition",
-                "inline;filename=" + FileUtils.toUtf8String("付款码") + ".jpeg");
+                "inline;filename=" + FileUtils.toUtf8String("图片") + ".jpeg");
         response.setContentType("image/jpeg");
         InputStream in = null;
         byte[] b = null;
         try {
-            map.put("USER_NO", no);
-            List<Map<String, Object>> list = (List<Map<String, Object>>) dityService.getUserByNo(map);
-            Map<String, Object> result = list.get(0);
-            if (result != null && result.size() > 0) {
-            	if ("WX".equals(type)) {
-            		b=(byte[]) result.get("WX_IMAGE");
-            	} else {
-            		b=(byte[]) result.get("ZFB_IMAGE");
-            	}
-            	in = new ByteArrayInputStream(b);
-                os = response.getOutputStream();
-                int count;
-                while ((count = in.read(b)) > 0) {
-                    os.write(b, 0, count);
-                }
-            }
+        	File qyFile = new File(path);
+        	if(qyFile.exists()) {
+        		b = FileUtils.file2byte(qyFile);
+        	}else{
+        		b = "图片已丢失".getBytes();
+        	}
+        	in = new ByteArrayInputStream(b);
+        	os = response.getOutputStream();
+        	int count;
+        	while ((count = in.read(b)) > 0) {
+        		os.write(b, 0, count);
+        	}
         } catch (Exception e) {
         	logger.error("文件下载失败", e);
             map.put("O_RUNSTATUS", -1);
@@ -292,6 +263,17 @@ public class DityController {
         }
     }
 	
+	@RequestMapping(value = "/uploadQyImg", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public Object uploadQyImg(HttpServletRequest request,HttpServletResponse response,
+			@RequestParam(value = "qyimgFile", required = false) MultipartFile qyimg) throws IOException{
+		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("url", uplodFile2LocalPath(qyimg));
+		map.put("O_RUNSTATUS", 1);
+    	map.put("O_MSG", "操作成功！");
+    	return map;
+	}
+	
 	@RequestMapping(value = "/webuploader", method = { RequestMethod.POST, RequestMethod.GET })
     public String webuploader(){
         return "/sysMgt/webuploader";
@@ -300,21 +282,15 @@ public class DityController {
 	@RequestMapping(value = "/uploadLbtImg", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public Object uploadLbtImg(HttpServletRequest request,HttpServletResponse response,
-			@RequestParam(value = "file", required = false) MultipartFile img){
+			@RequestParam(value = "file", required = false) MultipartFile img) throws IOException{
 		Map<String, Object> map = new HashMap<>();
-		try {
-			String id = IDUtils.createID();
-			String fileName = img.getOriginalFilename();
-			map.put("ID",id);
-//			map.put("IMAGE_ORDER",1);
-			map.put("IMAGE_NAME",fileName);
-			map.put("IMAGE",img.getBytes());
-			dityService.addRottn(map);
-			map.put("O_RUNSTATUS", 1);
-		} catch (IOException e) {
-			logger.error("文件上传失败", e);
-			map.put("O_RUNSTATUS", -1);
-		}
+		String id = IDUtils.createID();
+		String fileName = img.getOriginalFilename();
+		map.put("ID",id);
+		map.put("IMAGE_NAME",fileName);
+		map.put("FILE_URL",uplodFile2LocalPath(img));
+		dityService.addRottn(map);
+		map.put("O_RUNSTATUS", 1);
     	return map;
 	}
 	
@@ -330,49 +306,6 @@ public class DityController {
 		}
  		return list;
 	}
-	
-	@RequestMapping(value = "/getRottnChrtImg", method = { RequestMethod.POST, RequestMethod.GET })
-    @ResponseBody
-    public void getRottnChrtImg(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam(value = "ID", required = true) String id) {
-        Map<String, Object> map = new HashMap<>();
-        OutputStream os = null;
-        response.addHeader("Content-Disposition",
-                "inline;filename=" + FileUtils.toUtf8String("轮播图") + ".jpg");
-        response.setContentType("image/jpg");
-        InputStream in = null;
-        byte[] b = null;
-        try {
-        	map.put("ID",id);
-        	List<Map<String,Object>> list = dityService.qryRottnChrtById(map);
-        	map = list.get(0);
-        	b= (byte[]) map.get("IMAGE");
-    	    in = new ByteArrayInputStream(b);
-            os = response.getOutputStream();
-            int count;
-            while ((count = in.read(b)) > 0) {
-                os.write(b, 0, count);
-            }
-        } catch (Exception e) {
-        	logger.error("文件下载失败", e);
-            map.put("O_RUNSTATUS", -1);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                    in = null;
-                } catch (IOException e) {
-                }
-            }
-            if (os != null) {
-                try {
-                    os.flush();
-                    os.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-    }
 	
 	@RequestMapping("/delItton")
 	@ResponseBody
@@ -437,8 +370,7 @@ public class DityController {
             @RequestParam(value = "WT_TIME", required = false) String wt_time,
             @RequestParam(value = "BUY_DATE", required = false) String buy_date,
             @RequestParam(value = "WT_DATE", required = false) String wt_date,
-            @RequestParam(value = "IMAGE_NAME", required = false) String imageName,
-            @RequestParam(value = "IMAGE", required = false) MultipartFile image) {
+            @RequestParam(value = "FILE_URL", required = false) String FILE_URL) {
         Map<String, Object> map = new HashMap<>();
         try {
         	if(StringUtils.isBlank(id)) {
@@ -453,12 +385,7 @@ public class DityController {
         	map.put("WT_TIME",wt_time);
         	map.put("BUY_DATE",buy_date);
         	map.put("WT_DATE",wt_date);
-        	String path = ResourceUtils.getURL("classpath:static").getPath() + File.separator +"tempFile"+ File.separator;
-        	if(StringUtils.isNotBlank(imageName)) {
-        		File file = new File(path,imageName);
-        		map.put("IMAGE",FileUtils.file2byte(file));
-        		new File(path,imageName).delete();
-        	}
+        	map.put("FILE_URL",FILE_URL);
         	if(StringUtils.isBlank(id)) {
         		map.put("CRITE_USER",SessionUtil.getUserNo());
         		map.put("STATUS",1);
@@ -515,108 +442,21 @@ public class DityController {
     }
 	
 	
-	@RequestMapping(value = "/uploadGoodsImg", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "/uploadPdImg", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public Object uploadGoodsImg(HttpServletRequest request,HttpServletResponse response,
+	public Object uploadPdImg(HttpServletRequest request,HttpServletResponse response,
 			@RequestParam(value = "IMAGE", required = false) MultipartFile image){
 		Map<String,Object> map = new HashMap<String, Object>();
-		if(image!=null && image.getSize() > 16000000) {
-    		map.put("O_RUNSTATUS", -1);
-        	map.put("O_MSG", "请勿选择超过15M，过大的图片！");
-        	return map;
-    	}
-		InputStream in = null;
-		FileOutputStream os = null;
-		try {
-			in = image.getInputStream();
-			String fileName = image.getOriginalFilename();
-			String path = ResourceUtils.getURL("classpath:static").getPath() + File.separator +"tempFile"+ File.separator;
-//			String fileType = fileName.split("\\.")[1];
-			File tempFile = new File(path,fileName);
-			tempFile.deleteOnExit();
-			tempFile.createNewFile();
-			os = new FileOutputStream(tempFile);
-			byte temp[] = new byte[1024];
-			int size = -1;
-			while ((size = in.read(temp)) != -1) {
-				os.write(temp, 0, size);
-			}
-			map.put("url", "/tempFile/"+fileName);
-			map.put("fileName", fileName);
-			map.put("O_RUNSTATUS", 1);
-	    	map.put("O_MSG", "操作成功！");
-		} catch (IOException e) {
-			logger.error("文件上传失败", e);
-			map.put("O_RUNSTATUS", -1);
-		}finally {
-			if(in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if(os != null) {
-				try {
-					os.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		map.put("url",uplodFile2LocalPath(image));
+		map.put("O_RUNSTATUS", 1);
+    	map.put("O_MSG", "操作成功！");
     	return map;
 	}
-	
-	@RequestMapping(value = "/getGoodsmsImg", method = { RequestMethod.POST, RequestMethod.GET })
-    @ResponseBody
-    public void getGoodsmsImg(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam(value = "ID", required = true) String id) {
-        Map<String, Object> map = new HashMap<>();
-        OutputStream os = null;
-        response.addHeader("Content-Disposition",
-                "inline;filename=" + FileUtils.toUtf8String("付款码") + ".jpeg");
-        response.setContentType("image/jpeg");
-        InputStream in = null;
-        byte[] b = null;
-        try {
-            map.put("ID", id);
-            Map<String, Object> result = (Map<String, Object>) dityService.getGoodsMsByID(map);
-            if (result != null && result.size() > 0) {
-            	b=(byte[]) result.get("IMAGE");
-            	in = new ByteArrayInputStream(b);
-                os = response.getOutputStream();
-                int count;
-                while ((count = in.read(b)) > 0) {
-                    os.write(b, 0, count);
-                }
-            }
-        } catch (Exception e) {
-        	logger.error("文件下载失败", e);
-            map.put("O_RUNSTATUS", -1);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                    in = null;
-                } catch (IOException e) {
-                }
-            }
-            if (os != null) {
-                try {
-                    os.flush();
-                    os.close();
-                } catch (IOException e) {
-                }
-            }
-        }
-    }
 	
 	@RequestMapping(value = "/formAdvanced", method = { RequestMethod.POST, RequestMethod.GET })
     public String formAdvanced(){
         return "/sysMgt/formAdvanced";
     }
-	
-	
 
 	
 	@RequestMapping(value = "/pdMgt", method = { RequestMethod.POST, RequestMethod.GET })
@@ -645,8 +485,7 @@ public class DityController {
             @RequestParam(value = "PRICE", required = false) String price,
             @RequestParam(value = "INTRDCT", required = false) String intrdct,
             @RequestParam(value = "GOODS_TYPE", required = false) String goods_type,
-            @RequestParam(value = "IMAGE_NAME", required = false) String imageName,
-            @RequestParam(value = "IMAGE", required = false) MultipartFile image) {
+            @RequestParam(value = "FILE_URL", required = false) String FILE_URL) {
         Map<String, Object> map = new HashMap<>();
         try {
         	if(StringUtils.isBlank(id)) {
@@ -658,12 +497,7 @@ public class DityController {
         	map.put("PRICE",price);
         	map.put("INTRDCT",intrdct);
         	map.put("GOODS_TYPE",goods_type);
-        	String path = ResourceUtils.getURL("classpath:static").getPath() + File.separator +"tempFile"+ File.separator;
-        	if(StringUtils.isNotBlank(imageName)) {
-        		File file = new File(path,imageName);
-        		map.put("IMAGE",FileUtils.file2byte(file));
-        		new File(path,imageName).delete();
-        	}
+        	map.put("FILE_URL",FILE_URL);
         	if(StringUtils.isBlank(id)) {
         		map.put("CRITE_USER",SessionUtil.getUserNo());
         		map.put("STATUS",1);
@@ -717,50 +551,5 @@ public class DityController {
             map.put("O_MSG", "system error");
         }
         return map;
-    }
-	
-	
-	@RequestMapping(value = "/getGoodsImg", method = { RequestMethod.POST, RequestMethod.GET })
-    @ResponseBody
-    public void getGoodsImg(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam(value = "ID", required = true) String id) {
-        Map<String, Object> map = new HashMap<>();
-        OutputStream os = null;
-        response.addHeader("Content-Disposition",
-                "inline;filename=" + FileUtils.toUtf8String("付款码") + ".jpeg");
-        response.setContentType("image/jpeg");
-        InputStream in = null;
-        byte[] b = null;
-        try {
-            map.put("ID", id);
-            Map<String, Object> result = (Map<String, Object>) dityService.getGoodsByID(map);
-            if (result != null && result.size() > 0) {
-            	b=(byte[]) result.get("IMAGE");
-            	in = new ByteArrayInputStream(b);
-                os = response.getOutputStream();
-                int count;
-                while ((count = in.read(b)) > 0) {
-                    os.write(b, 0, count);
-                }
-            }
-        } catch (Exception e) {
-        	logger.error("文件下载失败", e);
-            map.put("O_RUNSTATUS", -1);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                    in = null;
-                } catch (IOException e) {
-                }
-            }
-            if (os != null) {
-                try {
-                    os.flush();
-                    os.close();
-                } catch (IOException e) {
-                }
-            }
-        }
     }
 }

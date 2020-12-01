@@ -4,31 +4,34 @@
 <mapper namespace="com.dity.dao.DityDaoMapper">
 	
 	<select id="qryUserList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT 
-			ID,
-			USER_NO,
-			PASS,
-			USER_NAME,
-			MOBILE_NO,
-			USER_ADD,
-			USER_AGE,
-			USER_BIRTH,
-			USER_TYPE,
-			STATUS,
-			CASE STATUS
-				WHEN 1 THEN
-					'管理员'
-				WHEN 2 THEN
-					'普通用户'
-				ELSE
-					STATUS
-			END STATUS_NAME,
-			BANK_NO,
-			WX_NO,
-			ZFB_NO,
-			DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
-			CRITE_USER 
-		FROM T_DITY_USER T where STATUS=1
+		SELECT  ID,
+				USER_NO,
+				PASS,
+				USER_NAME,
+				MOBILE_NO,
+				USER_ADD,
+				USER_AGE,
+				USER_BIRTH,
+				USER_TYPE,
+				CASE USER_TYPE
+					WHEN 1 THEN
+						'管理员'
+					WHEN 2 THEN
+						'普通用户'
+					ELSE
+						USER_TYPE
+				END USER_TYPE_NAME,
+				STATUS,
+				BANK_NO,
+				BANK_NAME,
+				REAL_NAME,
+				WX_NO,
+				ZFB_NO,
+				WX_FILE_URL,
+				ZFB_FILE_URL,
+				DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
+				CRITE_USER
+		FROM T_DITY_USER T where 1=1
 		<if test="ID != null and ID !=''">
 			and ID = #{ID}
 		</if>
@@ -38,12 +41,43 @@
 		<if test="USER_NO != null and USER_NO !=''">
 			and USER_NO like concat('%',#{USER_NO},'%')
 		</if>
+		order by USER_TYPE
 	</select>
 	
 	<select id="getUserByNo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT * FROM T_DITY_USER T where STATUS=1 and USER_NO=#{USER_NO}
+		SELECT  ID,
+				USER_NO,
+				PASS,
+				USER_NAME,
+				MOBILE_NO,
+				USER_ADD,
+				USER_AGE,
+				USER_BIRTH,
+				USER_TYPE,
+				CASE USER_TYPE
+					WHEN 1 THEN
+						'管理员'
+					WHEN 2 THEN
+						'普通用户'
+					ELSE
+						USER_TYPE
+				END USER_TYPE_NAME,
+				STATUS,
+				BANK_NO,
+				BANK_NAME,
+				REAL_NAME,
+				WX_NO,
+				ZFB_NO,
+				WX_FILE_URL,
+				ZFB_FILE_URL,
+				DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
+				CRITE_USER
+			FROM T_DITY_USER T where 1=1
 		<if test="ID != null and ID !=''">
 			and ID != #{ID}
+		</if>
+		<if test="USER_NO != null and USER_NO !=''">
+			and USER_NO = #{USER_NO}
 		</if>
 	</select>
 	
@@ -60,10 +94,12 @@
 				USER_TYPE,
 				STATUS,
 				BANK_NO,
+				BANK_NAME,
+				REAL_NAME,
 				WX_NO,
 				ZFB_NO,
-				WX_IMAGE,
-				ZFB_IMAGE,
+				WX_FILE_URL,
+				ZFB_FILE_URL,
 				CRITE_TIME,
 				CRITE_USER 
 			) VALUES (
@@ -76,12 +112,14 @@
 				#{USER_AGE},
 				#{USER_BIRTH},
 				#{USER_TYPE},
-				1,
+				#{STATUS},
 				#{BANK_NO},
+				#{BANK_NAME},
+				#{REAL_NAME},
 				#{WX_NO},
 				#{ZFB_NO},
-				#{WX_IMAGE},
-				#{ZFB_IMAGE},
+				#{WX_FILE_URL},
+				#{ZFB_FILE_URL},
 				SYSDATE(),
 				#{CRITE_USER}
 			)
@@ -89,21 +127,54 @@
 	
 	<update id="editUser" parameterType="java.util.HashMap">
 		UPDATE T_DITY_USER T SET 
-				T.USER_NO = #{USER_NO}, 
-				T.PASS = #{PASS},
-				T.USER_NAME = #{USER_NAME}, 
-				T.MOBILE_NO = #{MOBILE_NO}, 
-				T.USER_ADD = #{USER_ADD}, 
-				T.USER_AGE = #{USER_AGE}, 
-				T.USER_TYPE = #{USER_TYPE}, 
-				T.BANK_NO = #{BANK_NO}, 
-				T.WX_NO = #{WX_NO}, 
-				T.ZFB_NO = #{ZFB_NO}
-				<if test="WX_IMAGE != null and WX_IMAGE !=''">
-					, T.WX_IMAGE = #{WX_IMAGE}
+				T.USER_NO = #{USER_NO}
+				<if test="PASS != null and PASS !=''">
+				, T.PASS = #{PASS}
 				</if>
-				<if test="ZFB_IMAGE != null and ZFB_IMAGE !=''">
-					, T.ZFB_IMAGE = #{ZFB_IMAGE}
+				<if test="USER_NAME != null and USER_NAME !=''">
+				, T.USER_NAME = #{USER_NAME}
+				</if>
+				<if test="MOBILE_NO != null and MOBILE_NO !=''">
+				, T.MOBILE_NO = #{MOBILE_NO}
+				</if>
+				<if test="USER_ADD != null and USER_ADD !=''">
+				, T.USER_ADD = #{USER_ADD}
+				</if>
+				<if test="USER_AGE != null and USER_AGE !=''">
+				, T.USER_AGE = #{USER_AGE}
+				</if>
+				<if test="USER_BIRTH != null and USER_BIRTH !=''">
+				, T.USER_BIRTH = #{USER_BIRTH}
+				</if>
+				<if test="USER_TYPE != null and USER_TYPE !=''">
+				, T.USER_TYPE = #{USER_TYPE}
+				</if>
+				<if test="BANK_NO != null and BANK_NO !=''">
+				, T.BANK_NO = #{BANK_NO}
+				</if>
+				<if test="BANK_NAME != null and BANK_NAME !=''">
+				, T.BANK_NAME = #{BANK_NAME}
+				</if>
+				<if test="REAL_NAME != null and REAL_NAME !=''">
+				, T.REAL_NAME = #{REAL_NAME}
+				</if>
+				<if test="WX_NO != null and WX_NO !=''">
+				, T.WX_NO = #{WX_NO}
+				</if>
+				<if test="ZFB_NO != null and ZFB_NO !=''">
+				, T.ZFB_NO = #{ZFB_NO}
+				</if>
+				<if test="WX_FILE_URL != null and WX_FILE_URL !=''">
+				, T.WX_FILE_URL = #{WX_FILE_URL}
+				</if>
+				<if test="ZFB_FILE_URL != null and ZFB_FILE_URL !=''">
+				, T.ZFB_FILE_URL = #{ZFB_FILE_URL}
+				</if>
+				<if test="TX_FILE_URL != null and TX_FILE_URL !=''">
+				, T.TX_FILE_URL = #{TX_FILE_URL}
+				</if>
+				<if test="STATUS != null and STATUS !=''">
+				, T.STATUS = #{STATUS}
 				</if>
 			WHERE T.ID = #{ID}
 	</update>
@@ -117,14 +188,13 @@
 			ID,
 			IMAGE_ORDER,
 			IMAGE_NAME,
-			IMAGE
+			FILE_URL
 		)select #{ID},IFNULL((SELECT max(IMAGE_ORDER) FROM t_dity_rottn_chrt ), 0 ) +1,
-					#{IMAGE_NAME},#{IMAGE} from dual
+					#{IMAGE_NAME},#{FILE_URL} from dual
 	</insert>
 	
 	<select id="qryRottnChrt" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT ID,IMAGE_ORDER,IMAGE_NAME FROM T_DITY_ROTTN_CHRT where 1=1
-		order by IMAGE_ORDER
+		SELECT * FROM T_DITY_ROTTN_CHRT order by IMAGE_ORDER
 	</select>
 	
 	<select id="qryRottnChrtById" parameterType="java.util.HashMap" resultType="java.util.HashMap">
@@ -144,16 +214,7 @@
 	
 	<select id="qryGoodsMsList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 		SELECT
-			ID,
-			NAME,
-			PRICE,
-			INTRDCT,
-			OWN_ACNT,
-			BUY_TIME,
-			WT_TIME,
-			BUY_DATE,
-			WT_DATE,
-			STATUS,
+			*,
 			CASE STATUS
 				WHEN 0 THEN
 					'下架'
@@ -162,8 +223,7 @@
 				ELSE
 					STATUS
 			END STATUS_NAME,
-		 	DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
-		 	CRITE_USER
+		 	DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME
 		FROM T_DITY_GOODS_MS T
 			WHERE 1 = 1
 		<if test="ID != null and ID !=''">
@@ -174,10 +234,6 @@
 		</if>
 	</select>
 	
-	<select id="getGoodsMsByID" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT * FROM T_DITY_GOODS_MS T where ID=#{ID}
-	</select>
-	
 	<insert id="addGoodsMs" parameterType="java.util.HashMap">
 		INSERT INTO T_DITY_GOODS_MS (
 				ID,
@@ -185,7 +241,7 @@
 				PRICE,
 				INTRDCT,
 				OWN_ACNT,
-				IMAGE,
+				FILE_URL,
 				STATUS,
 				BUY_TIME,
 				WT_TIME,
@@ -199,7 +255,7 @@
 				#{PRICE},
 				#{INTRDCT},
 				null,
-				#{IMAGE},
+				#{FILE_URL},
 				1,
 				#{BUY_TIME},
 				#{WT_TIME},
@@ -216,12 +272,10 @@
 				T.PRICE = #{PRICE},
 				T.INTRDCT = #{INTRDCT}, 
 				T.BUY_TIME = #{BUY_TIME}, 
-				T.WT_TIME = #{WT_TIME}
+				T.WT_TIME = #{WT_TIME},
 				T.BUY_DATE = #{BUY_DATE}, 
-				T.WT_DATE = #{WT_DATE}
-				<if test="IMAGE != null and IMAGE !=''">
-					, T.IMAGE = #{IMAGE}
-				</if>
+				T.WT_DATE = #{WT_DATE}, 
+				T.FILE_URL = #{FILE_URL}
 			WHERE T.ID = #{ID}
 	</update>
 	
@@ -237,14 +291,7 @@
 	
 	
 	<select id="qryGoodsList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT
-			ID,
-			NAME,
-			PRICE,
-			INTRDCT,
-			GOODS_TYPE,
-			OWN_ACNT,
-			STATUS,
+		SELECT *,
 			CASE STATUS
 				WHEN 0 THEN
 					'下架'
@@ -253,8 +300,7 @@
 				ELSE
 					STATUS
 			END STATUS_NAME,
-		 	DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
-		 	CRITE_USER
+		 	DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME
 		FROM T_DITY_GOODS T
 			WHERE 1 = 1
 		<if test="ID != null and ID !=''">
@@ -263,10 +309,9 @@
 		<if test="NAME != null and NAME !=''">
 			and NAME like concat('%',#{NAME},'%')
 		</if>
-	</select>
-	
-	<select id="getGoodsByID" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT * FROM T_DITY_GOODS T where ID=#{ID}
+		<if test="GOODS_TYPE != null and GOODS_TYPE !=''">
+			and GOODS_TYPE = #{GOODS_TYPE}
+		</if>
 	</select>
 	
 	<insert id="addGoods" parameterType="java.util.HashMap">
@@ -278,7 +323,7 @@
 				GOODS_TYPE,
 				OWN_ACNT,
 				STATUS,
-				IMAGE,
+				FILE_URL,
 				CRITE_TIME,
 				CRITE_USER
 			) VALUES (
@@ -289,7 +334,7 @@
 				#{GOODS_TYPE},
 				null,
 				1,
-				#{IMAGE},
+				#{FILE_URL},
 				SYSDATE(),
 				#{CRITE_USER}
 			)
@@ -300,10 +345,8 @@
 				T.NAME = #{NAME}, 
 				T.PRICE = #{PRICE},
 				T.INTRDCT = #{INTRDCT}, 
-				T.GOODS_TYPE = #{OWN_ACNT}, 
-				<if test="IMAGE != null and IMAGE !=''">
-					, T.IMAGE = #{IMAGE}
-				</if>
+				T.GOODS_TYPE = #{OWN_ACNT},
+				T.FILE_URL = #{FILE_URL}
 			WHERE T.ID = #{ID}
 	</update>
 	

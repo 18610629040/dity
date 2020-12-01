@@ -24,10 +24,10 @@ function initFeePerfGrid(){
         colNames: ['ID','提示名称', '提示内容', '操作人', '操作时间'],
         colModel: [
         	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
-            {name: 'CONTATE_NAME',index: 'CONTATE_NAME', align :"Center",editable: true,width: '30%'},
-            {name: 'CONTATE_INFO',index: 'CONTATE_INFO', align :"Center",editable: true,width: '30%'},
-            {name: 'CRITE_USER',index: 'CRITE_USER', align :"Center",editable: false,width: '20%'},
-            {name: 'CRITETIME',index: 'CRITETIME', align :"Center",editable: false,width: '20%'},
+            {name: 'CONTATE_NAME',index: 'CONTATE_NAME', align :"Center",editable: true,width: '10%'},
+            {name: 'CONTATE_INFO',index: 'CONTATE_INFO', align :"Center",editable: true,width: '70%'},
+            {name: 'CRITE_USER',index: 'CRITE_USER', align :"Center",editable: false,width: '10%'},
+            {name: 'CRITETIME',index: 'CRITETIME', align :"Center",editable: false,width: '10%'},
         ],
         loadComplete: function (data) {
           　　console.log(data)

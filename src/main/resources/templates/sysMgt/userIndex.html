@@ -42,7 +42,7 @@
 	top: 10%;
 	left: 10%;
 	width: 80%;
-	height: 80%;
+	height: 90%;
 	border: 2px solid #777;
 	background-color: #ffffff;
 	z-index: 1002;
@@ -120,7 +120,6 @@
                                     </div>
                                 </div>
                             </div>
-                            
                             <div class="form-group" style="margin-left: 20px;">
                                 <div class="col-sm-10">
                                     <div class="row">
@@ -140,7 +139,20 @@
                                     </div>
                                 </div>
                             </div>
-                            
+                            <div class="form-group" style="margin-left: 20px;">
+                                <div class="col-sm-10">
+                                    <div class="row">
+                                        <label class="col-sm-2 control-label">开户行</label>
+                                        <div class="col-md-4">
+                                            <input id="BANK_NAME" type="text" name="BANK_NAME" placeholder="" class="form-control">
+                                        </div>
+                                        <label class="col-sm-2 control-label">真实姓名</label>
+                                        <div class="col-md-4">
+                                            <input id="REAL_NO" type="text" name="REAL_NO" placeholder="" class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="form-group" style="margin-left: 20px;">
                                 <div class="col-sm-10">
                                     <div class="row">
@@ -155,8 +167,6 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div class="hr-line-dashed"></div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">寄件地址</label>
                                 <div class="col-sm-10">
@@ -173,14 +183,14 @@
                                         	<input id="wximgFile" type="file" name="wximgFile">
                                         	<img style="margin-top: 8px; max-width: 100%;" 
                                         		id="wximg" src=""/>
-                                        	<input type="hidden" id="wxFileName" name="wxFileName"/>
+                                        	<input type="hidden" id="WX_FILE_URL" name="WX_FILE_URL"/>
                                         </div>
                                         <label class="col-sm-2 control-label">支付宝收款码</label>
                                         <div class="col-md-4">
                                         	<input id="zfbimgFile" type="file" name="zfbimgFile">
                                         	<img style="margin-top: 8px; max-width: 100%;"
                                         		 id="zfbimg" src=""/>
-                                        	<input type="hidden" id="zfbFileName" name="zfbFileName"/>
+                                        	<input type="hidden" id="ZFB_FILE_URL" name="ZFB_FILE_URL"/>
                                         </div>
                                     </div>
                                 </div>

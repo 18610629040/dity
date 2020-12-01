@@ -70,11 +70,6 @@ public class DityDao {
                 .selectList("com.dity.dao.DityDaoMapper.qryGoodsList", map);
 	}
 	
-	public Map<String,Object> getGoodsByID(Map<String, Object> map) {
-		return sqlSessionTemplate
-                .selectOne("com.dity.dao.DityDaoMapper.getGoodsByID", map);
-	}
-	
 	public int addGoods(Map<String, Object> map) {
 		return sqlSessionTemplate
         .insert("com.dity.dao.DityDaoMapper.addGoods", map);
@@ -99,11 +94,6 @@ public class DityDao {
 	public List<Map<String,Object>> qryGoodsMsList(Map<String, Object> map) {
 		return sqlSessionTemplate
                 .selectList("com.dity.dao.DityDaoMapper.qryGoodsMsList", map);
-	}
-	
-	public Map<String,Object> getGoodsMsByID(Map<String, Object> map) {
-		return sqlSessionTemplate
-                .selectOne("com.dity.dao.DityDaoMapper.getGoodsMsByID", map);
 	}
 	
 	public int addGoodsMs(Map<String, Object> map) {

@@ -13,9 +13,9 @@ function initFeePerfGrid(){
 	$("#feePerf_list").jqGrid({
 		url:'/dity/feePerfMgt/srchFeePerfData',
         datatype: "json",
-        autowidth: true,
-        height: 370,
-//        width:1030,
+        autowidth: false,
+        height: 270,
+        width:800,
         shrinkToFit: true,
         rownumbers: true,
         rowNum: 20,

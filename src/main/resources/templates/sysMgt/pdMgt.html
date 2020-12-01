@@ -134,7 +134,7 @@
 	                        	<label class="col-sm-1 control-label" style="text-align: right;">图片：</label>
                      			<div class="col-md-3">
 	                                <input id="IMAGE" name="IMAGE" type="file" class="form-control">
-		                            <input type="hidden" id="IMAGE_NAME" name="IMAGE_NAME"/>
+		                            <input type="hidden" id="FILE_URL" name="FILE_URL"/>
                      			</div>
 		                    </div>
                         </div>
@@ -200,14 +200,14 @@
 		//初始化上传插件
 		$('#IMAGE').fileupload({
 			//上传地址
-			url:'/dity/uploadGoodsImg',
+			url:'/dity/uploadPdImg',
 			//返回格式
 			dataType: 'json',
 			//e：事件对象
 			//data：图片上传后的对象，通过data.result.picAddr可以获取上传后的图片地址
 			done: function (e, data) {
 				$('#spimg').attr('src',data.result.url);
-				$('#IMAGE_NAME').val(data.result.fileName);
+				$('#FILE_URL').val(data.result.url);
 			}
 		});
 		
@@ -236,7 +236,7 @@
 	        rownumbers: true,
 	        rowNum: 20,
 	        rowList: [10, 20, 30],
-	        colNames: ['ID','藏品名称','类别', '价格', '简介','买入账号','状态'],
+	        colNames: ['ID','藏品名称','类别', '价格', '简介','买入账号','状态','FILE_URL'],
 	        colModel: [
 	        	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
 	            {name: 'NAME',index: 'NAME', align :"Center",editable: true,width: 220},
@@ -244,7 +244,8 @@
 	            {name: 'PRICE',index: 'PRICE', align :"Center",editable: true,width: 100},
 	            {name: 'INTRDCT',index: 'INTRDCT', align :"Center",editable: true,width: 500},
 	            {name: 'OWN_ACNT',index: 'OWN_ACNT', align :"Center",editable: true,width: 120},
-	            {name: 'STATUS_NAME',index: 'STATUS_NAME', align :"Center",editable: true,width: 100}
+	            {name: 'STATUS_NAME',index: 'STATUS_NAME', align :"Center",editable: true,width: 100},
+	            {name: 'FILE_URL',index: 'FILE_URL',editable: true, align :"Center",hidden:true}
 	        ],
 	        loadComplete: function (data) {
 	          　　		console.log(data)
@@ -305,7 +306,8 @@
 	    				$("input[name='GOODS_TYPE'][value='"+rowData.GOODS_TYPE+"']").prop("checked","checked");
 	    				$('#PRICE').val(rowData.PRICE);
 	    				$('#INTRDCT').val(rowData.INTRDCT);
-	    				$('#spimg').attr("src","/dity/getGoodsImg?ID="+rowData.ID);
+	    				$('#spimg').attr("src",rowData.FILE_URL);
+	    				$('#FILE_URL').val(rowData.FILE_URL);
 	    				$('#xxxcxxxx').click();
 	    			}
 	    		}, 
@@ -335,7 +337,8 @@
 				$("input[name='GOODS_TYPE'][value='"+rowData.GOODS_TYPE+"']").prop("checked","checked");
 				$('#PRICE').val(rowData.PRICE);
 				$('#INTRDCT').val(rowData.INTRDCT);
-				$('#spimg').attr("src","/dity/getGoodsImg?ID="+rowData.ID);
+				$('#spimg').attr("src",rowData.FILE_URL);
+				$('#FILE_URL').val(rowData.FILE_URL);
 				$('#xxxcxxxx').click();
 			}
 		});

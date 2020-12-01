@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.dity.dao.AuthDaoMapper">
+<mapper namespace="com.dity.dao.MobileMapper">
 	
-	<select id="getUserInfo" parameterType="HashMap" resultType="HashMap">
+	<select id="getUserByNo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 		SELECT 	ID,
 				USER_NO,
 				PASS,
@@ -31,27 +31,14 @@
 				ZFB_FILE_URL,
 				DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
 				CRITE_USER 
-		 FROM T_Dity_USER T
-		 WHERE T.USER_NO = #{USER_NO}
+			FROM T_DITY_USER T where USER_NO=#{USER_NO}
+		<if test="ID != null and ID !=''">
+			and ID != #{ID}
+		</if>
 	</select>
 	
-	<insert id="saveUser" parameterType="java.util.HashMap">
-		INSERT INTO T_DITY_USER (
-				ID,
-				USER_NO,
-				PASS,
-				USER_NAME,
-				USER_TYPE,
-				STATUS,
-				CRITE_TIME
-			) VALUES (
-				#{ID},
-				#{USER_NO},
-				#{PASS},
-				#{USER_NAME},
-				#{USER_TYPE},
-				#{STATUS},
-				SYSDATE()
-			)
-	</insert>
+	<select id="qryRottnImage" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT ID,IMAGE_NAME,IMAGE_ORDER FROM T_DITY_ROTTN_CHRT order by IMAGE_ORDER
+	</select>
+	
 </mapper>

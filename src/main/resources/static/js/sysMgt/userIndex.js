@@ -11,6 +11,14 @@ function initBtn(){
 		url:'/dity/uploadUserImg',
 		//返回格式
 		dataType: 'json',
+		add: function(e, data) {
+			var acceptFileTypes = /(\.|\/)(gif|jpe?g|png)$/i;
+			if(data.originalFiles[0]['type'].length && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+				alert('请上传图片格式的二维码！')
+			} else {
+				data.submit();
+			}
+		},
 		//e：事件对象
 		//data：图片上传后的对象，通过data.result.picAddr可以获取上传后的图片地址
 		done: function (e, data) {
@@ -18,7 +26,7 @@ function initBtn(){
 				alert(data.result.O_MSG);
 			}else{
 				$('#wximg').attr('src',data.result.url);
-				$('#wxFileName').val(data.result.fileName);
+				$('#WX_FILE_URL').val(data.result.url);
 			}
 		}
 	});
@@ -29,11 +37,19 @@ function initBtn(){
 		url:'/dity/uploadUserImg',
 		//返回格式
 		dataType: 'json',
+		add: function(e, data) {
+			var acceptFileTypes = /(\.|\/)(gif|jpe?g|png)$/i;
+			if(data.originalFiles[0]['type'].length && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+				alert('请上传图片格式的二维码！')
+			} else {
+				data.submit();
+			}
+		},
 		//e：事件对象
 		//data：图片上传后的对象，通过data.result.picAddr可以获取上传后的图片地址
 		done: function (e, data) {
 			$('#zfbimg').attr('src',data.result.url);
-			$('#zfbFileName').val(data.result.fileName);
+			$('#ZFB_FILE_URL').val(data.result.url);
 		}
 	});
 	
@@ -55,16 +71,16 @@ function initFeePerfGrid(){
 		url:'/dity/qryUserList',
         datatype: "json",
         autowidth: true,
-        height: 620,
+        height: 520,
 //        width:1030,
         shrinkToFit: true,
         rownumbers: true,
         rowNum: 20,
         rowList: [10, 20, 30],
         colNames: ['ID','账号', '密码','用户姓名','手机号',
-        	'地址', '年龄','生日','账户类型',
-        	'银行卡号信息', '微信号','支付宝账号','创建时间',
-        	'创建人'],
+        	'地址', '年龄','生日','账户类型','USER_TYPE',
+        	'银行卡号','开户行','真实姓名', '微信号','支付宝账号','创建时间',
+        	'创建人','WX_FILE_URL','ZFB_FILE_URL'],
         colModel: [
         	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
             {name: 'USER_NO',index: 'USER_NO', align :"Center",editable: true,width: 120},
@@ -74,12 +90,17 @@ function initFeePerfGrid(){
             {name: 'USER_ADD',index: 'USER_ADD', align :"Center",editable: true,width: 140},
             {name: 'USER_AGE',index: 'USER_AGE', align :"Center",editable: true,width: 100},
             {name: 'USER_BIRTH',index: 'USER_BIRTH', align :"Center",editable: true,width: 100},
-            {name: 'USER_TYPE',index: 'USER_TYPE', align :"Center",editable: true,width: 100},
+            {name: 'USER_TYPE_NAME',index: 'USER_TYPE_NAME', align :"Center",editable: true,width: 100},
+            {name: 'USER_TYPE',index: 'USER_TYPE',editable: true, align :"Center",hidden:true},
             {name: 'BANK_NO',index: 'BANK_NO', align :"Center",editable: true,width: 120},
+            {name: 'BANK_NAME',index: 'BANK_NAME', align :"Center",editable: true,width: 120},
+            {name: 'REAL_NAME',index: 'REAL_NAME', align :"Center",editable: true,width: 120},
             {name: 'WX_NO',index: 'WX_NO', align :"Center",editable: true,width: 100},
             {name: 'ZFB_NO',index: 'ZFB_NO', align :"Center",editable: true,width: 100},
             {name: 'CRITE_TIME',index: 'CRITE_TIME', align :"Center",editable: true,width: 120},
-            {name: 'CRITE_USER',index: 'CRITE_USER', align :"Center",editable: true,width: 100}
+            {name: 'CRITE_USER',index: 'CRITE_USER', align :"Center",editable: true,width: 100},
+            {name: 'WX_FILE_URL',index: 'WX_FILE_URL',editable: true, align :"Center",hidden:true},
+            {name: 'ZFB_FILE_URL',index: 'ZFB_FILE_URL',editable: true, align :"Center",hidden:true}
         ],
         loadComplete: function (data) {
           　　		console.log(data)
@@ -181,10 +202,14 @@ function initFeePerfGrid(){
     				$('#USER_BIRTH').val(rowData.USER_BIRTH);
     				$("input[name='USER_TYPE'][value='"+rowData.USER_TYPE+"']").prop("checked","checked");
     				$('#BANK_NO').val(rowData.BANK_NO);
+    				$('#BANK_NAME').val(rowData.BANK_NAME);
+    				$('#REAL_NAME').val(rowData.REAL_NAME);
     				$('#WX_NO').val(rowData.WX_NO);
     				$('#ZFB_NO').val(rowData.ZFB_NO);
-    				$('#wximg').attr("src","/dity/getUserFkmImg?TYPE=WX&USER_NO="+rowData.USER_NO);
-    				$('#zfbimg').attr("src","/dity/getUserFkmImg?TYPE=ZFB&USER_NO="+rowData.USER_NO);
+    				$('#wximg').attr("src",rowData.WX_FILE_URL);
+    				$('#zfbimg').attr("src",rowData.ZFB_FILE_URL);
+    				$('#WX_FILE_URL').val(rowData.WX_FILE_URL);
+    				$('#ZFB_FILE_URL').val(rowData.ZFB_FILE_URL);
     				$(".window").show();
     				$(".cover").show();
     			}

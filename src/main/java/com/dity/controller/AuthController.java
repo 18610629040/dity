@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ import com.dity.service.AuthService;
 
 @CrossOrigin
 @Controller
-@RequestMapping("/dity/auth")
+@RequestMapping({"/dity/auth", "/dity/mobile/auth"})
 public class AuthController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -58,10 +59,10 @@ public class AuthController {
         return rmap;
     }
     
-    @UserLoginToken
     @RequestMapping("/getMessage")
     @ResponseBody
     @Log(content="验证session")
+    @UserLoginToken
 	public Object getMessage(HttpServletRequest request) {
     	Map<String, Object> rmap = new HashMap<>();
     	HttpSession session = request.getSession();
@@ -115,10 +116,11 @@ public class AuthController {
     @Log(content="注册")
 	@ResponseBody
     public Object register(HttpServletRequest request,HttpServletResponse response, 
-            @RequestParam(value = "userno", required = false) String userno,
-            @RequestParam(value = "username", required = false) String name,
-            @RequestParam(value = "userpass", required = false) String pass,
-            @RequestParam(value = "userpass1", required = false) String pass1) {
+            @RequestParam(value = "userno", required = true) String userno,
+            @RequestParam(value = "username", required = true) String name,
+            @RequestParam(value = "userpass", required = true) String pass,
+            @RequestParam(value = "userpass1", required = true) String pass1,
+            @RequestParam(value = "type", required = false) String type) {
         Map<String, Object> map = new HashMap<>();
         try {
             if(!pass.equals(pass1)) {
@@ -136,6 +138,11 @@ public class AuthController {
             	map.put("O_MSG", "账号重复，请重新填写！");
                 return map;
             }
+            if(StringUtils.isBlank(type)) {
+            	type = "2";
+            }
+            map.put("STATUS", 0);
+            map.put("USER_TYPE", type);
             map.put("O_RUNSTATUS", authService.saveUser(map));
             map.put("O_MSG", "注册成功");
         } catch (Exception e) {
