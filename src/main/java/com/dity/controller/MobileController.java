@@ -32,6 +32,8 @@ import com.dity.service.DityService;
 import com.dity.service.FeePerfMgtService;
 import com.dity.service.MobileService;
 
+import net.coobird.thumbnailator.Thumbnails;
+
 @CrossOrigin
 @Controller
 @RequestMapping("/dity/mobile")
@@ -254,11 +256,14 @@ public class MobileController {
 		String url = "";
 		InputStream in = null;
 		FileOutputStream os = null;
+		String fileName = "";
+		String path = "";
+		String fileId = "";
 		try {
-			String fileName = file.getOriginalFilename();
+			fileName = file.getOriginalFilename();
 			in = file.getInputStream();
-			String path = sysProperties.getLocation();//都上传到本地目录下
-			String fileId = IDUtils.createID();
+			path = sysProperties.getLocation();//都上传到本地目录下
+			fileId = IDUtils.createID();
 			File tempFile = new File(path,fileId+fileName);
 			tempFile.deleteOnExit();
 			tempFile.createNewFile();
@@ -268,7 +273,7 @@ public class MobileController {
 			while ((size = in.read(temp)) != -1) {
 				os.write(temp, 0, size);
 			}
-	    	url = "/tempFile"+File.separator+fileId+fileName;
+	    	url = "/tempFile"+File.separator+"small"+fileId;
 		} catch (IOException e) {
 			logger.error("文件上传失败", e);
 		}finally {
@@ -286,6 +291,11 @@ public class MobileController {
 					e.printStackTrace();
 				}
 			}
+		}
+		try {
+			Thumbnails.of(path+File.separator+fileId+fileName).scale(1f).outputQuality(0.25f).toFile(path+File.separator+"small"+fileId+fileName);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return url;
 	}
