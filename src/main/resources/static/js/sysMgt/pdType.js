@@ -42,6 +42,41 @@ function initBtn(){
 		window.location.reload();
 	});
 	
+	$("#updtStat").click(function(){
+		var rowid = $("#user_list").getGridParam("selrow");
+		var rowData = $("#user_list").getRowData(rowid);
+		if(rowid == null){
+			parent.layer.msg('请选择数据！', {shift: 6});
+		}else{
+			var statNm = rowData.STATUS_NAME;
+			var lbNm = rowData.TYPE_NAME;
+			parent.layer.confirm('【'+lbNm+'】当前状态为【'+statNm+'】，确定更改开放状态？', {
+				btn: ['确定','取消'],
+			    shade: false //不显示遮罩
+			}, function(){
+				var postData = {ID:rowData.ID, oper:'updtStat'};
+				//更改开放状态
+				$.ajax({
+			        type:'POST',
+			        data:{postData:JSON.stringify(postData)},
+			        url: '/dity/feePerfMgt/optPrdtLbData',
+			        dataType:"json", 
+			        success:function(data){
+			        	parent.layer.alert(data.O_MSG);
+    			        if((data.O_MSG).indexOf('成功') != -1){
+    			        	$("#user_list").trigger("reloadGrid");
+    			        }
+			        },
+			        error:function(jqXHR){
+			        	parent.layer.alert("服务器发生错误："+ jqXHR.status);
+			        }
+				});
+				
+			}, function(){
+			    parent.layer.close();
+			});
+		}
+	});
 }
 
 function initFeePerfGrid(){
@@ -63,7 +98,7 @@ function initFeePerfGrid(){
             {name: 'STATUS',index: 'STATUS',editable: true, align :"Center",hidden:true},
             {name: 'STATUS_NAME',index: 'STATUS_NAME', align :"Center",editable: true,width: '30%'},
             {name: 'FILE_URL',index: 'FILE_URL',editable: true, align :"Center",hidden:true},
-            {name: 'CRITE_USER',index: 'CRITE_USER', align :"Center",editable: false,width: '20%'},
+            {name: 'USER_NAME',index: 'USER_NAME', align :"Center",editable: false,width: '20%'},
             {name: 'CRITETIME',index: 'CRITETIME', align :"Center",editable: false,width: '20%'},
         ],
         loadComplete: function (data) {
@@ -186,7 +221,7 @@ function initFeePerfGrid(){
     			$(".window").show();
     			$(".cover").show();
     		}, 
-    		position: "first", title:"新增区域", cursor: "pointer"}
+    		position: "first", title:"新增商品类别", cursor: "pointer"}
     );
     
 

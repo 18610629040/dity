@@ -14,20 +14,20 @@ function initFeePerfGrid(){
 	$("#infoTsMgt_list").jqGrid({
 		url:'/dity/feePerfMgt/srchInfoTsData',
         datatype: "json",
-        autowidth: true,
+        autowidth: false,
+        shrinkToFit: false,
         height: 370,
 //        width:1030,
-        shrinkToFit: true,
         rownumbers: true,
         rowNum: 20,
         rowList: [10, 20, 30],
         colNames: ['ID','提示名称', '提示内容', '操作人', '操作时间'],
         colModel: [
         	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
-            {name: 'CONTATE_NAME',index: 'CONTATE_NAME', align :"Center",editable: true,width: '10%'},
-            {name: 'CONTATE_INFO',index: 'CONTATE_INFO', align :"Center",editable: true,width: '70%'},
-            {name: 'CRITE_USER',index: 'CRITE_USER', align :"Center",editable: false,width: '10%'},
-            {name: 'CRITETIME',index: 'CRITETIME', align :"Center",editable: false,width: '10%'},
+            {name: 'CONTATE_NAME',index: 'CONTATE_NAME', align :"Center",editable: true,width: 120},
+            {name: 'CONTATE_INFO',index: 'CONTATE_INFO', align :"Center",editable: true,width: 740},
+            {name: 'USER_NAME',index: 'USER_NAME', align :"Center",editable: false,width: 120},
+            {name: 'CRITETIME',index: 'CRITETIME', align :"Center",editable: false,width: 140},
         ],
         loadComplete: function (data) {
           　　console.log(data)

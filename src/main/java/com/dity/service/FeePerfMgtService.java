@@ -64,4 +64,8 @@ public class FeePerfMgtService {
 	public List<Object> srchPdOrderData(Map<String, Object> map) {
 		return feePerfMgtDao.srchPdOrderData(map);
 	}
+
+	public int updtPrdtLbStatData(Map<String, Object> map) {
+		return feePerfMgtDao.updtPrdtLbStatData(map);
+	}
 }

@@ -247,10 +247,10 @@
 		$("#user_list").jqGrid({
 			url:'/dity/qryGoodsMsList',
 	        datatype: "json",
-	        autowidth: true,
+	        autowidth: false,
+	        shrinkToFit: false,
 	        height: 620,
 //	        width:1030,
-	        shrinkToFit: true,
 	        rownumbers: true,
 	        rowNum: 20,
 	        rowList: [10, 20, 30],
@@ -262,8 +262,8 @@
 	            {name: 'INTRDCT',index: 'INTRDCT', align :"Center",editable: true,width: 500},
 	            {name: 'OWN_ACNT',index: 'OWN_ACNT', align :"Center",editable: true,width: 120},
 	            {name: 'BUY_DATE',index: 'BUY_DATE', align :"Center",editable: true,width: 140},
-	            {name: 'WT_DATE',index: 'WT_DATE', align :"Center",editable: true,width: 100},
-	            {name: 'BUY_TIME',index: 'BUY_TIME', align :"Center",editable: true,width: 140},
+	            {name: 'WT_DATE',index: 'WT_DATE', align :"Center",editable: true,width: 140},
+	            {name: 'BUY_TIME',index: 'BUY_TIME', align :"Center",editable: true,width: 100},
 	            {name: 'WT_TIME',index: 'WT_TIME', align :"Center",editable: true,width: 100},
 	            {name: 'STATUS_NAME',index: 'STATUS_NAME', align :"Center",editable: true,width: 100},
 	            {name: 'FILE_URL',index: 'FILE_URL',editable: true, align :"Center",hidden:true}

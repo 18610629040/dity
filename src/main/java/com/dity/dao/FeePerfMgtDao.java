@@ -78,4 +78,9 @@ public class FeePerfMgtDao {
 		return sqlSessionTemplate
                 .selectList("com.dity.dao.FeePerfMgtDaoMapper.srchPdOrderData", map);
 	}
+
+	public int updtPrdtLbStatData(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .update("com.dity.dao.FeePerfMgtDaoMapper.updtPrdtLbStatData", map);
+	}
 }

@@ -4,7 +4,10 @@
 <mapper namespace="com.dity.dao.FeePerfMgtDaoMapper">
 	
 	<select id="srchFeePerfData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT *,DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %T') CRITETIME FROM T_DITY_RATE T
+		SELECT T.*,DATE_FORMAT(T.CRITE_TIME,'%Y-%m-%d %T') CRITETIME,USR.USER_NAME 
+			FROM T_DITY_RATE T
+			LEFT JOIN T_DITY_USER USR
+			ON T.CRITE_USER = USR.USER_NO
 	</select>
 	
 	<insert id="addFeePerfData" parameterType="java.util.HashMap">
@@ -22,21 +25,24 @@
 	</delete>
 	
 	<select id="srchPrdtLbData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT *,
-			CASE STATUS
+		SELECT T.*,USR.USER_NAME,
+			CASE T.STATUS
 				WHEN 0 THEN
 					'未开放'
 				WHEN 1 THEN
 					'已开放'
 				ELSE
-					STATUS
+					T.STATUS
 			END STATUS_NAME,
-			DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %T') CRITETIME
-		FROM T_DITY_PRODUCT_TYPE T where 1=1
+			DATE_FORMAT(T.CRITE_TIME,'%Y-%m-%d %T') CRITETIME
+		FROM T_DITY_PRODUCT_TYPE T 
+		LEFT JOIN T_DITY_USER USR
+		ON T.CRITE_USER = USR.USER_NO
+		where 1=1
 		<if test="ID != null and ID !=''">
 			and T.ID = #{ID}
 		</if>
-		order by TYPE_ORDER
+		order by T.TYPE_ORDER
 	</select>
 	
 	<insert id="addPrdtLbData" parameterType="java.util.HashMap">
@@ -55,8 +61,26 @@
 		DELETE FROM T_DITY_PRODUCT_TYPE WHERE ID IN (${ID})
 	</delete>
 	
+	<update id="updtPrdtLbStatData" parameterType="map">
+		UPDATE T_DITY_PRODUCT_TYPE
+			SET STATUS = 
+			CASE
+			WHEN STATUS = 0 THEN
+				1
+			WHEN STATUS = 1 THEN
+				0
+			ELSE
+				STATUS
+			END,CRITE_USER = #{CRITE_USER},CRITE_TIME = SYSDATE()
+			WHERE
+				ID =  #{ID}
+	</update>
+	
 	<select id="srchInfoTsData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT *,DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %T') CRITETIME FROM T_DITY_CONTATE_INFO T
+		SELECT T.*,DATE_FORMAT(T.CRITE_TIME,'%Y-%m-%d %T') CRITETIME,USR.USER_NAME
+		FROM T_DITY_CONTATE_INFO T
+		LEFT JOIN T_DITY_USER USR
+		ON T.CRITE_USER = USR.USER_NO
 	</select>
 	
 	<insert id="addInfoTsData" parameterType="java.util.HashMap">
@@ -74,6 +98,9 @@
 	</delete>
 	
 	<select id="srchPdOrderData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT *,DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %T') CRITETIME FROM T_DITY_ORDER T
+		SELECT T.*,DATE_FORMAT(T.OPTION_TIME,'%Y-%m-%d %T') CRITETIME,USR.USER_NAME
+		FROM T_DITY_ORDER T
+		LEFT JOIN T_DITY_USER USR
+		ON T.OPTION_USER = USR.USER_NO
 	</select>
 </mapper>

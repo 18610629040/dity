@@ -81,7 +81,7 @@ public class FeePerfMgtController {
 		try {
 			map.put("RATE_NAME",RATE_NAME);
 			map.put("RATE_VAL",RATE_VAL);
-			map.put("CRITE_USER","admin");
+			map.put("CRITE_USER",SessionUtil.getUserNo());
 			if("add".equals(oper)){
 				map.put("ID",IDUtils.createID());
 				count = feePerfMgtService.addFeePerfData(map);
@@ -191,7 +191,7 @@ public class FeePerfMgtController {
 		try {
 			map.put("TYPE_ORDER",TYPE_ORDER);
 			map.put("TYPE_NAME",TYPE_NAME);
-			map.put("CRITE_USER","admin");
+			map.put("CRITE_USER",SessionUtil.getUserNo());
 			if("add".equals(oper)){
 				map.put("ID",IDUtils.createID());
 				count = feePerfMgtService.addPrdtLbData(map);
@@ -201,6 +201,9 @@ public class FeePerfMgtController {
 			}else if("del".equals(oper)){
 				map.put("ID",String.valueOf(jObj.get("ID")));
 				count = feePerfMgtService.delPrdtLbData(map);
+			}else if("updtStat".equals(oper)) {
+				map.put("ID",String.valueOf(jObj.get("ID")));
+				count = feePerfMgtService.updtPrdtLbStatData(map);
 			}
 			map.put("O_RUNSTATUS",count);
 			if(count<1) {
@@ -256,7 +259,7 @@ public class FeePerfMgtController {
 		try {
 			map.put("CONTATE_NAME",CONTATE_NAME);
 			map.put("CONTATE_INFO",CONTATE_INFO);
-			map.put("CRITE_USER","admin");
+			map.put("CRITE_USER",SessionUtil.getUserNo());
 			if("add".equals(oper)){
 				map.put("ID",IDUtils.createID());
 				count = feePerfMgtService.addInfoTsData(map);

@@ -25,7 +25,7 @@ function initFeePerfGrid(){
         	{name: 'ID',index: 'ID',editable: true, align :"center",hidden:true},
             {name: 'RATE_NAME',index: 'RATE_NAME', align :"center",editable: true,width: '30%'},
             {name: 'RATE_VAL',index: 'RATE_VAL', align :"center",editable: true,width: '30%'},
-            {name: 'CRITE_USER',index: 'CRITE_USER', align :"Center",editable: false,width: '20%'},
+            {name: 'USER_NAME',index: 'USER_NAME', align :"Center",editable: false,width: '20%'},
             {name: 'CRITETIME',index: 'CRITETIME', align :"Center",editable: false,width: '20%'},
         ],
         pager: "#feePerf_list_btn",

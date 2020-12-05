@@ -26,7 +26,7 @@ function initFeePerfGrid(){
         	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
             {name: 'TYPE_ORDER',index: 'TYPE_ORDER', align :"Center",editable: true,width: '30%'},
             {name: 'TYPE_NAME',index: 'TYPE_NAME', align :"Center",editable: true,width: '30%'},
-            {name: 'CRITE_USER',index: 'CRITE_USER', align :"Center",editable: false,width: '20%'},
+            {name: 'USER_NAME',index: 'USER_NAME', align :"Center",editable: false,width: '20%'},
             {name: 'CRITETIME',index: 'CRITETIME', align :"Center",editable: false,width: '20%'},
         ],
         loadComplete: function (data) {
