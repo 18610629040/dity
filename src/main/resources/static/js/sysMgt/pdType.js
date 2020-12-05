@@ -72,7 +72,7 @@ function initFeePerfGrid(){
         pager: "#user_list_btn",
         viewrecords: true,
         emptyrecords: "暂无数据",//viewrecords: true时生效
-        caption: "用户列表",
+        caption: "商品类别维护管理",
         add: true,
         edit: true,
         editurl :'/dity/feePerfMgt/addQy',

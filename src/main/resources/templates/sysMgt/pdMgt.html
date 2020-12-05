@@ -91,9 +91,9 @@
                         <div class="hr-line-dashed"></div>
                        	<div class="row">
                         	<label class="col-sm-1 control-label" style="text-align: right;">分类：</label>
-                        	<div class="col-md-8" id="FieldsetID">
-	                            <fieldset>
-	                                <div class="radio radio-info radio-inline">
+                        	<div class="col-md-8">
+	                            <fieldset id="FieldsetID">
+	                                <!-- <div class="radio radio-info radio-inline">
 	                                    <input type="radio" value="1" name="GOODS_TYPE" checked="">
 	                                    <label> 玉石区 </label>
 	                                </div>
@@ -112,7 +112,7 @@
 	                                <div class="radio radio-info radio-inline">
 	                                    <input type="radio" value="5" name="GOODS_TYPE" checked="">
 	                                    <label> xxx区 </label>
-	                                </div>
+	                                </div> -->
 	                            </fieldset>
                         	</div>
                         </div>
@@ -227,6 +227,29 @@
 			window.location.reload();
 		});
 		
+		$.ajax({
+			type:"post",
+			url:"/dity/feePerfMgt/srchPrdtLbData",
+			dataType:"json",
+			success:function(data){
+				if(data != null && data.length > 0){
+					var html = '';
+					$.each(data,function(i,e){
+						console.log(e)
+						html += '<div class="radio radio-info radio-inline">'
+                             +'<input type="radio" value="'+e.ID+'" name="GOODS_TYPE">'
+                             +'<label> '+e.TYPE_NAME+' </label>'
+                             +'</div>';
+					});
+					$("#FieldsetID").html(html);
+					$("input[name='GOODS_TYPE']").eq(0).prop("checked","checked");
+				}
+			},
+			error:function(jqXHR){
+				aler("error："+ jqXHR.status);
+			}
+		});
+		
 	}
 
 	function initFeePerfGrid(){
@@ -240,11 +263,12 @@
 	        rownumbers: true,
 	        rowNum: 20,
 	        rowList: [10, 20, 30],
-	        colNames: ['ID','藏品名称','类别', '价格', '简介','买入账号','状态','FILE_URL'],
+	        colNames: ['ID','GOODS_TYPE','藏品名称','类别', '价格', '简介','买入账号','状态','FILE_URL'],
 	        colModel: [
 	        	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
+	        	{name: 'GOODS_TYPE',index: 'GOODS_TYPE',editable: true, align :"Center",hidden:true},
 	            {name: 'NAME',index: 'NAME', align :"Center",editable: true,width: 220},
-	            {name: 'GOODS_TYPE',index: 'GOODS_TYPE', align :"Center",editable: true,width: 100},
+	            {name: 'TYPE_NAME',index: 'TYPE_NAME', align :"Center",editable: true,width: 100},
 	            {name: 'PRICE',index: 'PRICE', align :"Center",editable: true,width: 100},
 	            {name: 'INTRDCT',index: 'INTRDCT', align :"Center",editable: true,width: 500},
 	            {name: 'OWN_ACNT',index: 'OWN_ACNT', align :"Center",editable: true,width: 120},
@@ -344,6 +368,8 @@
 				$('#spimg').attr("src",rowData.FILE_URL);
 				$('#FILE_URL').val(rowData.FILE_URL);
 				$('#xxxcxxxx').click();
+			}else{
+				parent.layer.msg('请选择数据！', {shift: 6});
 			}
 		});
 	    
