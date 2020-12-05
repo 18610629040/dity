@@ -4,47 +4,50 @@
 <mapper namespace="com.dity.dao.DityDaoMapper">
 	
 	<select id="qryUserList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT  ID,
-				USER_NO,
-				PASS,
-				USER_NAME,
-				MOBILE_NO,
-				USER_ADD,
-				USER_AGE,
-				USER_BIRTH,
-				USER_TYPE,
-				CASE USER_TYPE
+		SELECT  T.ID,
+				T.USER_NO,
+				T.PASS,
+				T.USER_NAME,
+				T.MOBILE_NO,
+				T.USER_ADD,
+				T.USER_AGE,
+				T.USER_BIRTH,
+				T.USER_TYPE,
+				CASE T.USER_TYPE
 					WHEN 1 THEN
 						'管理员'
 					WHEN 2 THEN
 						'普通用户'
 					ELSE
-						USER_TYPE
+						T.USER_TYPE
 				END USER_TYPE_NAME,
-				STATUS,
-				BANK_NO,
-				BANK_NAME,
-				REAL_NAME,
-				WX_NO,
-				ZFB_NO,
-				WX_FILE_URL,
-				ZFB_FILE_URL,
-				DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
-				CRITE_USER
-		FROM T_DITY_USER T where 1=1
+				T.STATUS,
+				T.BANK_NO,
+				T.BANK_NAME,
+				T.REAL_NAME,
+				T.WX_NO,
+				T.ZFB_NO,
+				T.WX_FILE_URL,
+				T.ZFB_FILE_URL,
+				DATE_FORMAT(T.CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
+				T.CRITE_USER,USR.USER_NAME CRITENM
+		FROM T_DITY_USER T 
+		LEFT JOIN T_DITY_USER USR
+		ON T.CRITE_USER = USR.USER_NO
+		WHERE 1=1
 		<if test="ID != null and ID !=''">
-			and ID = #{ID}
+			AND T.ID = #{ID}
 		</if>
 		<if test="USER_NAME != null and USER_NAME !=''">
-			and USER_NAME like concat('%',#{USER_NAME},'%')
+			AND T.USER_NAME like concat('%',#{USER_NAME},'%')
 		</if>
 		<if test="USER_NO != null and USER_NO !=''">
-			and USER_NO like concat('%',#{USER_NO},'%')
+			AND T.USER_NO like concat('%',#{USER_NO},'%')
 		</if>
 		<if test="USER_TYPE != null and USER_TYPE !=''">
-			and USER_TYPE = #{USER_TYPE}
+			AND T.USER_TYPE = #{USER_TYPE}
 		</if>
-		order by USER_TYPE
+		ORDER BY T.USER_TYPE
 	</select>
 	
 	<select id="getUserByNo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
@@ -458,28 +461,75 @@
 	</insert>
 	
 	<select id="qryOrder" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT ID,
-			ORDER_NO,
-			ORDER_PD,
-			ORDER_PD_NAME,
-			ORDER_PRICE,
-			ORDER_CVAL,
-			ORDER_CFEE,
-			ORDER_INCOM,
-			ORDER_EXPRESS,
-			ORDER_USER_NO,
-			STATUS,
-			DATE_FORMAT(OPTION_TIME,'%Y-%m-%d %H:%i:%s') OPTION_TIME
-			OPTION_USER 
-		FROM t_dity_order where 1=1
+		SELECT t.ID,
+			t.ORDER_NO,
+			t.ORDER_PD,
+			t.ORDER_PD_NAME,
+			t.ORDER_PD_TYPE,
+			CASE T.ORDER_PD_TYPE
+				WHEN 0 THEN
+					'非秒杀商品订单'
+				WHEN 1 THEN
+					'秒杀商品订单'
+				ELSE
+					T.ORDER_PD_TYPE
+			END ORDER_PD_TYPE_NAME,
+			t.ORDER_PRICE,
+			t.ORDER_CVAL,
+			t.ORDER_CFEE,
+			t.ORDER_INCOM,
+			t.ORDER_EXPRESS,
+			t.ORDER_USER_SEL_NO,
+			u.USER_NAME ORDER_USER_SEL_NAME,
+			t.ORDER_USER_BUY_NO,
+			uu.USER_NAME ORDER_USER_BUY_NAME,
+			t.STATUS,
+			CASE T.STATUS
+				WHEN 0 THEN
+					'未确认付款'
+				WHEN 1 THEN
+					'买家已确认付款'
+				WHEN 2 THEN
+					'卖家已确认收款'
+				WHEN 3 THEN
+					'卖家已发货'
+				WHEN 4 THEN
+					'买家发起委托，待管理员确认委托'
+				WHEN 5 THEN
+					'管理员已确认委托'
+				ELSE
+					T.STATUS
+			END STATUS_NAME,
+			DATE_FORMAT(t.OPTION_TIME,'%Y-%m-%d %H:%i:%s') OPTION_TIME,
+			t.OPTION_USER 
+		FROM t_dity_order t left join t_dity_user u
+		 on t.ORDER_USER_SEL_NO=u.USER_NO
+		left join t_dity_user uu
+		 on t.ORDER_USER_BUY_NO=uu.USER_NO
+		where 1=1
 		<if test="ID != null and ID !=''">
 			and ID = #{ID}
 		</if>
-		<if test="ORDER_USER_NO != null and ORDER_USER_NO !=''">
-			and ORDER_USER_NO = #{ORDER_USER_NO}
+		<if test="TYPE =='1'">
+			and STATUS = 0 and ORDER_USER_BUY_NO = #{USER_NO}
+		</if>
+		<if test="TYPE =='2'">
+			and STATUS = 1 and ORDER_USER_SEL_NO = #{USER_NO}
+		</if>
+		<if test="TYPE =='3'">
+			and STATUS = 3 and ORDER_USER_BUY_NO = #{USER_NO}
+		</if>
+		<if test="TYPE =='4'">
+			and STATUS = 2 and ORDER_USER_BUY_NO = #{USER_NO}
+		</if>
+		<if test="TYPE =='5'">
+			and STATUS != 1 and ORDER_USER_SEL_NO = #{USER_NO}
+		</if>
+		<if test="ORDER_PD != null and ORDER_PD !=''">
+			and ORDER_PD = #{ORDER_PD}
 		</if>
 		<if test="STATUS != null and STATUS !=''">
-			and STATUS = #{STATUS}
+			and STATUS = #{STATUS} 
 		</if>
 	</select>
 	
@@ -493,4 +543,22 @@
 		DELETE FROM t_dity_order WHERE ID = #{ID}
 	</delete>
 	
+	<update id="editGoodsMsOwnAcnt" parameterType="java.util.HashMap">
+		update T_DITY_GOODS_MS t set 
+			t.OWN_ACNT=(select a.ORDER_USER_BUY_NO 
+				from t_dity_order a where a.id=#{ORDERID})
+	</update>
+	
+	<update id="editGoodsOwnAcnt" parameterType="java.util.HashMap">
+		update T_DITY_GOODS t set 
+			t.OWN_ACNT=(select a.ORDER_USER_BUY_NO 
+				from t_dity_order a where a.id=#{ORDERID})
+	</update>
+	
+	<update id="setOrderExpress" parameterType="java.util.HashMap">
+		UPDATE t_dity_order T SET 
+				T.STATUS = #{STATUS}
+				,T.ORDER_EXPRESS = #{ORDER_EXPRESS}
+			WHERE T.ID = #{ID}
+	</update>
 </mapper>

@@ -136,4 +136,16 @@ public class DityService {
 	public int delOrder(Map<String, Object> map) {
 		return dityDao.delOrder(map);
 	}
+	
+	public int editGoodsMsOwnAcnt(Map<String, Object> map) {
+		return dityDao.editGoodsMsOwnAcnt(map);
+	}
+	
+	public int editGoodsOwnAcnt(Map<String, Object> map) {
+		return dityDao.editGoodsOwnAcnt(map);
+	}
+	
+	public int setOrderExpress(Map<String, Object> map) {
+		return dityDao.setOrderExpress(map);
+	}
 }

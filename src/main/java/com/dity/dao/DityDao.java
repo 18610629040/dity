@@ -165,4 +165,19 @@ public class DityDao {
 		return sqlSessionTemplate
 		        .delete("com.dity.dao.DityDaoMapper.delOrder", map);
 	}
+	
+	public int editGoodsMsOwnAcnt(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.editGoodsMsOwnAcnt", map);
+	}
+	
+	public int editGoodsOwnAcnt(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.editGoodsOwnAcnt", map);
+	}
+	
+	public int setOrderExpress(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.setOrderExpress", map);
+	}
 }

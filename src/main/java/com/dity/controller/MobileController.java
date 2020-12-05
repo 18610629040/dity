@@ -521,4 +521,218 @@ public class MobileController {
 		return map;
 	}
     
+    @RequestMapping(value = "/qryOrderList", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public Map<String, Object> qryOrderList(HttpServletRequest request,
+            @RequestParam(value = "TYPE", required = true) String type,
+            @RequestParam(value = "USER_NO", required = true) String userNo){
+		Map<String,Object> map = new HashMap<String, Object>();
+		try {
+			
+			/**
+			 * STATUS 
+			 * 
+			 *  0 买家刚下单，草稿状态的，这时候买家可以点击（已确认付款按钮）
+			 * 
+			 * 	买家点击确认付款按钮后，订单状态变为1，卖家可以对这条订单去确认收款（点击确认已收款）
+			 * 	
+			 * 	卖家确认收款完后，status 变为2   表示买家买下的藏品，卖家已确认收款，当前藏品持有人变成了买家
+			 * 	买家可以发起委托  或者 卖家去点击发货
+			 * 
+			 * 	① 卖家点发货按钮，填写了发货信息，状态status变为3。这件藏品已发货了，订单结束了
+			 * 
+			 * 	② 买家还可以不让卖家发货，发起委托（点击委托按钮），status状态变成4，（待确认委托）
+			 * 	管理员操作确认委托，状态变成5  
+			 * 	（代表买家买下的藏品，卖家不用发货、这件藏品重新上架到藏品列表里卖，订单流程结束）
+			 */
+			List<Map<String,Object>> list = new ArrayList<>();
+			map.put("TYPE",type);
+			map.put("USER_NO",userNo);
+			switch (type) {
+			case "1":
+				//付款确认页签，查当前人下完的单，Status 0的订单
+				list = dityService.qryOrder(map);
+				break;
+			case "2":
+				//收款确认
+				list = dityService.qryOrder(map);
+				break;
+			case "3":
+				//下的单已发货的
+				list = dityService.qryOrder(map);
+				break;
+			case "4":
+				//下的单,已付款的
+				list = dityService.qryOrder(map);
+				break;
+			case "5":
+				//已卖出的订单
+				list = dityService.qryOrder(map);
+				break;
+			case "6":
+				//粉丝订单
+//				list = dityService.qryOrder(map);
+				break;
+			default:
+				break;
+			}
+			map.put("O_DATA",list);
+			map.put("O_RUNSTATUS",1);
+			map.put("O_MSG","success");
+		} catch (Exception e) {
+			logger.error("qryOrderList:"+map,e);
+			map.put("O_RUNSTATUS",0);
+			map.put("O_MSG","system error");
+		}
+		return map;
+	}
+    
+    //买家确认已付款
+    @RequestMapping("/comfirmPay")
+	@ResponseBody
+    public Object comfirmPay(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = false) String id) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID",id);
+        	List<Map<String,Object>> list = dityService.qryOrder(map);
+        	Map<String,Object> order = list.get(0);
+        	String ORDER_PD = String.valueOf(order.get("ORDER_PD"));
+        	
+        	map.clear();
+        	map.put("STATUS",2);
+        	map.put("ORDER_PD",ORDER_PD);
+        	List<Map<String,Object>> list2 = dityService.qryOrder(map);
+        	if(list2.size()>0) {
+        		 map.put("O_RUNSTATUS", -1);
+                 map.put("O_MSG", "该商品已被其他买家购得，请联系卖家发起退款！");
+                 return map;
+        	}
+        	
+        	map.clear();
+        	map.put("ID",id);
+        	map.put("STATUS",1);
+        	dityService.setOrder(map);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/comfirmPay:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+    
+    //卖家确认已收款
+    @RequestMapping("/comfirmIncom")
+	@ResponseBody
+    public Object comfirmIncom(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = false) String id) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	//改变商品所属人
+        	map.put("ID",id);
+        	List<Map<String,Object>> list = dityService.qryOrder(map);
+        	Map<String,Object> order = list.get(0);
+        	String ORDER_PD = String.valueOf(order.get("ORDER_PD"));
+        	
+        	map.clear();
+        	map.put("STATUS",2);
+        	map.put("ORDER_PD",ORDER_PD);
+        	List<Map<String,Object>> list2 = dityService.qryOrder(map);
+        	if(list2.size()>0) {
+        		 map.put("O_RUNSTATUS", -1);
+                 map.put("O_MSG", "您的此商品已卖出，请勿重复收款！");
+                 return map;
+        	}
+        	
+        	map.clear();
+        	map.put("ID",id);
+        	map.put("STATUS",2);
+        	dityService.setOrder(map);
+        	String ORDER_PD_TYPE = String.valueOf(order.get("ORDER_PD_TYPE"));
+        	if("1".equals(ORDER_PD_TYPE)) {
+//        		秒杀商品的订单
+        		map.clear();
+        		map.put("ORDERID",id);
+        		dityService.editGoodsMsOwnAcnt(map);
+        	}else {
+        		map.clear();
+        		map.put("ORDERID",id);
+        		dityService.editGoodsOwnAcnt(map);
+        	}
+        	
+        	map.put("ID",id);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/comfirmPay:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+    
+    //发起委托
+    @RequestMapping("/fqwt")
+	@ResponseBody
+    public Object fqwt(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = false) String id) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("STATUS",4);
+        	map.put("ID",id);
+        	dityService.setOrder(map);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/comfirmPay:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+    
+    //确认委托
+    @RequestMapping("/qrfqwt")
+	@ResponseBody
+    public Object qrfqwt(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = true) String id) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("STATUS",5);
+        	map.put("ID",id);
+        	dityService.setOrder(map);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/comfirmPay:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+    
+    //发货
+    @RequestMapping("/setOrderExpress")
+	@ResponseBody
+    public Object setOrderExpress(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = true) String id,
+            @RequestParam(value = "ORDER_EXPRESS", required = false) String ORDER_EXPRESS) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("STATUS",3);
+        	map.put("ID",id);
+        	map.put("ORDER_EXPRESS",ORDER_EXPRESS);
+        	dityService.setOrder(map);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/comfirmPay:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+    
 }
