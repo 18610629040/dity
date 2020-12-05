@@ -116,7 +116,7 @@ public class MobileController {
 				map.put("O_MSG","用户不存在！");
 			}
 		} catch (Exception e) {
-			logger.error("qryUserList:"+map,e);
+			logger.error("getUserByNo:"+map,e);
 			map.put("O_RUNSTATUS",-1);
 			map.put("O_MSG","system error");
 		}
@@ -131,7 +131,6 @@ public class MobileController {
             @RequestParam(value = "PASS", required = false) String PASS,
             @RequestParam(value = "USER_NAME", required = false) String USER_NAME,
             @RequestParam(value = "MOBILE_NO", required = false) String MOBILE_NO,
-            @RequestParam(value = "USER_ADD", required = false) String USER_ADD,
             @RequestParam(value = "USER_AGE", required = false) String USER_AGE,
             @RequestParam(value = "USER_BIRTH", required = false) String USER_BIRTH,
             @RequestParam(value = "BANK_NO", required = false) String BANK_NO,
@@ -144,24 +143,19 @@ public class MobileController {
             @RequestParam(value = "TX_FILE_URL", required = false) String TX_FILE_URL) {
         Map<String, Object> map = new HashMap<>();
         try {
-        	if(StringUtils.isBlank(USER_NO) || StringUtils.isBlank(PASS)) {
-        		map.put("O_RUNSTATUS", -1);
-            	map.put("O_MSG", "账号密码不可为空！");
-            	return map;
-        	}
-        	
         	map.put("ID",id);
         	map.put("USER_NO",USER_NO);
-        	List<Map<String, Object>> list= dityService.getUserByNo(map);
-        	if(list.size()>0) {
-        		map.put("O_RUNSTATUS", -1);
-            	map.put("O_MSG", "账号重复，请重新输入！");
-            	return map;
+        	if(StringUtils.isNotBlank(USER_NO)) {
+        		List<Map<String, Object>> list= dityService.getUserByNo(map);
+            	if(list.size()>0) {
+            		map.put("O_RUNSTATUS", -1);
+                	map.put("O_MSG", "账号重复，请重新输入！");
+                	return map;
+            	}
         	}
         	map.put("PASS",PASS);
         	map.put("USER_NAME",USER_NAME);
         	map.put("MOBILE_NO",MOBILE_NO);
-        	map.put("USER_ADD",USER_ADD);
         	map.put("USER_AGE",USER_AGE);
         	map.put("USER_BIRTH",USER_BIRTH);
         	map.put("BANK_NO",BANK_NO);
@@ -251,8 +245,8 @@ public class MobileController {
     
     @Autowired
     SysProperties sysProperties;
-
     public String uplodFile2LocalPath(MultipartFile file){
+		
 		String url = "";
 		InputStream in = null;
 		FileOutputStream os = null;
@@ -273,7 +267,7 @@ public class MobileController {
 			while ((size = in.read(temp)) != -1) {
 				os.write(temp, 0, size);
 			}
-	    	url = "/tempFile"+File.separator+"small"+fileId;
+	    	url = "/tempFile"+File.separator+"small"+fileId+fileName;
 		} catch (IOException e) {
 			logger.error("文件上传失败", e);
 		}finally {
@@ -295,8 +289,236 @@ public class MobileController {
 		try {
 			Thumbnails.of(path+File.separator+fileId+fileName).scale(1f).outputQuality(0.25f).toFile(path+File.separator+"small"+fileId+fileName);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("error:",e);
+			url = "/tempFile"+File.separator+fileId+fileName;
 		}
 		return url;
+    }
+    
+    @RequestMapping(value = "/qryUserDz", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public Map<String, Object> qryUserDz(HttpServletRequest request,
+			@RequestParam(value = "USER_NO", required = false) String USER_NO,
+            @RequestParam(value = "ID", required = false) String id){
+		Map<String,Object> map = new HashMap<String, Object>();
+		try {
+			map.put("ID",id);
+			map.put("USER_NO",USER_NO);
+			List<Map<String,Object>> list = dityService.qryUserDz(map);
+			map.put("O_DATA",list);
+			map.put("O_RUNSTATUS",1);
+			map.put("O_MSG","success");
+		} catch (Exception e) {
+			logger.error("qryUserDz:"+map,e);
+			map.put("O_RUNSTATUS",0);
+			map.put("O_MSG","system error");
+		}
+		return map;
 	}
+    
+    @RequestMapping("/addUserDz")
+	@ResponseBody
+    public Object addUserDz(HttpServletRequest request,HttpServletResponse response, 
+    		@RequestParam(value = "ID", required = false) String ID,
+    		@RequestParam(value = "USER_NO", required = false) String USER_NO,
+            @RequestParam(value = "SH_NAME", required = false) String SH_NAME,
+            @RequestParam(value = "PHTONENO", required = false) String PHTONENO,
+            @RequestParam(value = "DIQU", required = false) String DIQU,
+            @RequestParam(value = "XXDZ", required = false) String XXDZ,
+            @RequestParam(value = "ISMOREN", required = false) String ISMOREN,
+            @RequestParam(value = "YOUBIAN", required = false) String YOUBIAN) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID",ID);
+        	if(StringUtils.isEmpty(ID)) {
+        		map.put("ID",IDUtils.createID());
+        	}
+        	map.put("USER_NO",USER_NO);
+        	map.put("SH_NAME",SH_NAME);
+        	map.put("PHTONENO",PHTONENO);
+        	map.put("DIQU",DIQU);
+        	map.put("XXDZ",XXDZ);
+        	map.put("YOUBIAN",YOUBIAN);
+        	map.put("ISMOREN",ISMOREN);
+        	if(StringUtils.isEmpty(ID)) {
+        		map.put("O_RUNSTATUS", dityService.addUserDz(map));
+        	}else {
+        		map.put("O_RUNSTATUS", dityService.editUserDz(map));
+        	}
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/addUserDz:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+    
+    @RequestMapping("/setUserDzMr")
+	@ResponseBody
+    public Object setUserDzMr(HttpServletRequest request,HttpServletResponse response, 
+    		@RequestParam(value = "ID", required = false) String ID,
+    		@RequestParam(value = "USER_NO", required = false) String USER_NO) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID",ID);
+        	map.put("USER_NO",USER_NO);
+        	dityService.setUserDzMr2(map);
+        	map.put("O_RUNSTATUS", dityService.setUserDzMr(map));
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/setUserDzMr:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+    
+    @RequestMapping("/delUserDz")
+	@ResponseBody
+    public Object delUserDz(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = false) String ID) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID",ID);
+        	map.put("O_RUNSTATUS", dityService.delUserDz(map));
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/delUserDz:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+    
+    
+    @RequestMapping(value = "/qryFeePerf", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public Map<String, Object> qryFeePerf(){
+		Map<String,Object> map = new HashMap<String, Object>();
+		try {
+			List<Object> list = feePerfMgtService.srchFeePerfData(map);
+			map.put("O_DATA",list);
+			map.put("O_RUNSTATUS",1);
+			map.put("O_MSG","success");
+		} catch (Exception e) {
+			logger.error("qryFeePerf:"+map,e);
+			map.put("O_RUNSTATUS",0);
+			map.put("O_MSG","system error");
+		}
+		return map;
+	}
+    
+    @RequestMapping(value = "/qryOrder", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public Map<String, Object> qryOrder(HttpServletRequest request,
+			@RequestParam(value = "STATUS", required = false) String STATUS,
+			@RequestParam(value = "ORDER_USER_NO", required = false) String ORDER_USER_NO,
+            @RequestParam(value = "ID", required = false) String id){
+		Map<String,Object> map = new HashMap<String, Object>();
+		try {
+			map.put("ID",id);
+			map.put("ORDER_USER_NO",ORDER_USER_NO);
+			map.put("STATUS",STATUS);
+			List<Map<String,Object>> list = dityService.qryOrder(map);
+			map.put("O_DATA",list);
+			map.put("O_RUNSTATUS",1);
+			map.put("O_MSG","success");
+		} catch (Exception e) {
+			logger.error("qryOrder:"+map,e);
+			map.put("O_RUNSTATUS",0);
+			map.put("O_MSG","system error");
+		}
+		return map;
+	}
+    
+    @RequestMapping("/addOrder")
+	@ResponseBody
+    public Object addOrder(HttpServletRequest request,HttpServletResponse response, 
+    		@RequestParam(value = "ORDER_NO", required = false) String ORDER_NO,
+    		@RequestParam(value = "ORDER_PD", required = false) String ORDER_PD,
+            @RequestParam(value = "ORDER_PD_NAME", required = false) String ORDER_PD_NAME,
+            @RequestParam(value = "ORDER_PRICE", required = false) String ORDER_PRICE,
+            @RequestParam(value = "ORDER_CVAL", required = false) String ORDER_CVAL,
+            @RequestParam(value = "ORDER_CFEE", required = false) String ORDER_CFEE,
+            @RequestParam(value = "ORDER_INCOM", required = false) String ORDER_INCOM,
+            @RequestParam(value = "ORDER_EXPRESS", required = false) String ORDER_EXPRESS,
+            @RequestParam(value = "ORDER_USER_NO", required = false) String ORDER_USER_NO,
+            @RequestParam(value = "STATUS", required = false) String STATUS) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID",IDUtils.createID());
+        	map.put("ORDER_NO",ORDER_NO);
+        	map.put("ORDER_PD",ORDER_PD);
+        	map.put("ORDER_PD_NAME",ORDER_PD_NAME);
+        	map.put("ORDER_PRICE",ORDER_PRICE);
+        	map.put("ORDER_CVAL",ORDER_CVAL);
+        	map.put("ORDER_CFEE",ORDER_CFEE);
+        	map.put("ORDER_INCOM",ORDER_INCOM);
+        	map.put("ORDER_EXPRESS",ORDER_EXPRESS);
+        	map.put("ORDER_USER_NO",ORDER_USER_NO);
+        	map.put("STATUS",STATUS);
+        	map.put("O_RUNSTATUS", dityService.addOrder(map));
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/addOrder:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+    
+    @RequestMapping("/setOrder")
+	@ResponseBody
+    public Object setOrder(HttpServletRequest request,HttpServletResponse response, 
+    		@RequestParam(value = "ID", required = false) String ID,
+            @RequestParam(value = "STATUS", required = false) String STATUS) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID",ID);
+        	map.put("STATUS",STATUS);
+        	map.put("O_RUNSTATUS", dityService.setOrder(map));
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/setOrder:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+    
+    @RequestMapping("/delOrder")
+	@ResponseBody
+    public Object delOrder(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = false) String ID) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID",ID);
+        	map.put("O_RUNSTATUS", dityService.delOrder(map));
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/delOrder:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+    
+    @RequestMapping(value = "/qryInfoTs", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public Map<String, Object> qryInfoTs(){
+		Map<String,Object> map = new HashMap<String, Object>();
+		try {
+			List<Object> list = feePerfMgtService.srchInfoTsData(map);
+			map.put("O_DATA",list);
+			map.put("O_RUNSTATUS",1);
+			map.put("O_MSG","success");
+		} catch (Exception e) {
+			logger.error("qryInfoTs:"+map,e);
+			map.put("O_RUNSTATUS",0);
+			map.put("O_MSG","system error");
+		}
+		return map;
+	}
+    
 }

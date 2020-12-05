@@ -64,8 +64,10 @@ public class DityController {
     
     @RequestMapping(value = "/qryUserList", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public List<Object> qryUserList(){
+	public List<Object> qryUserList(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "USER_TYPE", required = false) String type){
 		Map<String,Object> map = new HashMap<String, Object>();
+		map.put("USER_TYPE",type);
 		List<Object> list = new ArrayList<>();
 		try {
 			list = dityService.qryUserList(map);
@@ -200,7 +202,7 @@ public class DityController {
 			while ((size = in.read(temp)) != -1) {
 				os.write(temp, 0, size);
 			}
-	    	url = "/tempFile"+File.separator+"small"+fileId;
+	    	url = "/tempFile"+File.separator+"small"+fileId+fileName;
 		} catch (IOException e) {
 			logger.error("文件上传失败", e);
 		}finally {
@@ -222,7 +224,8 @@ public class DityController {
 		try {
 			Thumbnails.of(path+File.separator+fileId+fileName).scale(1f).outputQuality(0.25f).toFile(path+File.separator+"small"+fileId+fileName);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("error:",e);
+			url = "/tempFile"+File.separator+fileId+fileName;
 		}
 		return url;
 	}

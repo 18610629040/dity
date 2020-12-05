@@ -41,6 +41,9 @@
 		<if test="USER_NO != null and USER_NO !=''">
 			and USER_NO like concat('%',#{USER_NO},'%')
 		</if>
+		<if test="USER_TYPE != null and USER_TYPE !=''">
+			and USER_TYPE = #{USER_TYPE}
+		</if>
 		order by USER_TYPE
 	</select>
 	
@@ -50,7 +53,6 @@
 				PASS,
 				USER_NAME,
 				MOBILE_NO,
-				USER_ADD,
 				USER_AGE,
 				USER_BIRTH,
 				USER_TYPE,
@@ -88,7 +90,6 @@
 				PASS,
 				USER_NAME,
 				MOBILE_NO,
-				USER_ADD,
 				USER_AGE,
 				USER_BIRTH,
 				USER_TYPE,
@@ -108,7 +109,6 @@
 				#{PASS},
 				#{USER_NAME},
 				#{MOBILE_NO},
-				#{USER_ADD},
 				#{USER_AGE},
 				#{USER_BIRTH},
 				#{USER_TYPE},
@@ -127,7 +127,10 @@
 	
 	<update id="editUser" parameterType="java.util.HashMap">
 		UPDATE T_DITY_USER T SET 
-				T.USER_NO = #{USER_NO}
+				T.ID = #{ID}
+				<if test="USER_NO != null and USER_NO !=''">
+				, T.USER_NO = #{USER_NO}
+				</if>
 				<if test="PASS != null and PASS !=''">
 				, T.PASS = #{PASS}
 				</if>
@@ -345,7 +348,7 @@
 				T.NAME = #{NAME}, 
 				T.PRICE = #{PRICE},
 				T.INTRDCT = #{INTRDCT}, 
-				T.GOODS_TYPE = #{OWN_ACNT},
+				T.GOODS_TYPE = #{GOODS_TYPE},
 				T.FILE_URL = #{FILE_URL}
 			WHERE T.ID = #{ID}
 	</update>
@@ -359,4 +362,133 @@
 				T.STATUS = #{STATUS}
 			WHERE T.ID = #{ID}
 	</update>
+	
+	
+	<select id="qryUserDz" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT * FROM T_DITY_USERDZ 
+		<if test="ID != null and ID !=''">
+			where ID = #{ID}
+		</if>
+		<if test="USER_NO != null and USER_NO !=''">
+			where USER_NO = #{USER_NO}
+		</if>
+	</select>
+	
+	<insert id="addUserDz" parameterType="java.util.HashMap">
+		INSERT INTO T_DITY_USERDZ (
+				ID,
+				USER_NO,
+				SH_NAME,
+				PHTONENO,
+				DIQU,
+				XXDZ,
+				ISMOREN,
+				YOUBIAN
+			) VALUES (
+				#{ID},
+				#{USER_NO},
+				#{SH_NAME},
+				#{PHTONENO},
+				#{DIQU},
+				#{XXDZ},
+				#{ISMOREN},
+				#{YOUBIAN}
+			)
+	</insert>
+	
+	<update id="editUserDz" parameterType="java.util.HashMap">
+		UPDATE T_DITY_USERDZ T SET 
+				T.SH_NAME = #{SH_NAME},
+				T.PHTONENO = #{PHTONENO},
+				T.DIQU = #{DIQU},
+				T.XXDZ = #{XXDZ},
+				T.ISMOREN = #{ISMOREN},
+				T.YOUBIAN = #{YOUBIAN}
+			WHERE T.ID = #{ID}
+	</update>
+	
+	<update id="setUserDzMr" parameterType="java.util.HashMap">
+		UPDATE T_DITY_USERDZ T SET 
+				T.ISMOREN = 1
+			WHERE T.ID = #{ID}
+	</update>
+	
+	<update id="setUserDzMr2" parameterType="java.util.HashMap">
+		UPDATE T_DITY_USERDZ T SET 
+				T.ISMOREN = 0
+			WHERE T.USER_NO = #{USER_NO}
+	</update>
+	
+	<delete id="delUserDz" parameterType="java.util.HashMap">
+		DELETE FROM T_DITY_USERDZ WHERE ID = #{ID}
+	</delete>
+	
+	<insert id="addOrder" parameterType="java.util.HashMap">
+		INSERT INTO t_dity_order (
+				ID,
+				ORDER_NO,
+				ORDER_PD,
+				ORDER_PD_NAME,
+				ORDER_PRICE,
+				ORDER_CVAL,
+				ORDER_CFEE,
+				ORDER_INCOM,
+				ORDER_EXPRESS,
+				ORDER_USER_NO,
+				STATUS,
+				OPTION_TIME,
+				OPTION_USER
+			) VALUES (
+				#{ID},
+				#{ORDER_NO},
+				#{ORDER_PD},
+				#{ORDER_PD_NAME},
+				#{ORDER_PRICE},
+				#{ORDER_CVAL},
+				#{ORDER_CFEE},
+				#{ORDER_INCOM},
+				#{ORDER_EXPRESS},
+				#{ORDER_USER_NO},
+				#{STATUS},
+				SYSDATE(),
+				#{OPTION_USER}
+			)
+	</insert>
+	
+	<select id="qryOrder" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT ID,
+			ORDER_NO,
+			ORDER_PD,
+			ORDER_PD_NAME,
+			ORDER_PRICE,
+			ORDER_CVAL,
+			ORDER_CFEE,
+			ORDER_INCOM,
+			ORDER_EXPRESS,
+			ORDER_USER_NO,
+			STATUS,
+			DATE_FORMAT(OPTION_TIME,'%Y-%m-%d %H:%i:%s') OPTION_TIME
+			OPTION_USER 
+		FROM t_dity_order where 1=1
+		<if test="ID != null and ID !=''">
+			and ID = #{ID}
+		</if>
+		<if test="ORDER_USER_NO != null and ORDER_USER_NO !=''">
+			and ORDER_USER_NO = #{ORDER_USER_NO}
+		</if>
+		<if test="STATUS != null and STATUS !=''">
+			and STATUS = #{STATUS}
+		</if>
+	</select>
+	
+	<update id="setOrder" parameterType="java.util.HashMap">
+		UPDATE t_dity_order T SET 
+				T.STATUS = #{STATUS}
+			WHERE T.ID = #{ID}
+	</update>
+	
+	<delete id="delOrder" parameterType="java.util.HashMap">
+		DELETE FROM t_dity_order WHERE ID = #{ID}
+	</delete>
+	
 </mapper>

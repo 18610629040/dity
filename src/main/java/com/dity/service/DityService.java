@@ -96,4 +96,44 @@ public class DityService {
 	public int delGoods(Map<String, Object> map) {
 		return dityDao.delGoods(map);
 	}
+	
+	
+	public List<Map<String,Object>> qryUserDz(Map<String, Object> map) {
+		return dityDao.qryUserDz(map);
+	}
+	
+	public int addUserDz(Map<String, Object> map) {
+		return dityDao.addUserDz(map);
+	}
+	
+	public int editUserDz(Map<String, Object> map) {
+		return dityDao.editUserDz(map);
+	}
+	
+	public int setUserDzMr(Map<String, Object> map) {
+		return dityDao.setUserDzMr(map);
+	}
+	public void setUserDzMr2(Map<String, Object> map) {
+		dityDao.setUserDzMr2(map);
+	}
+	
+	public int delUserDz(Map<String, Object> map) {
+		return dityDao.delUserDz(map);
+	}
+	
+	public List<Map<String,Object>> qryOrder(Map<String, Object> map) {
+		return dityDao.qryOrder(map);
+	}
+
+	public int addOrder(Map<String, Object> map) {
+		return dityDao.addOrder(map);
+	}
+
+	public int setOrder(Map<String, Object> map) {
+		return dityDao.setOrder(map);
+	}
+
+	public int delOrder(Map<String, Object> map) {
+		return dityDao.delOrder(map);
+	}
 }

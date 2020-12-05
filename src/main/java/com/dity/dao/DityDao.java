@@ -115,4 +115,54 @@ public class DityDao {
 		return sqlSessionTemplate
 		        .delete("com.dity.dao.DityDaoMapper.delGoodsMs", map);
 	}
+	
+	public List<Map<String,Object>> qryUserDz(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectList("com.dity.dao.DityDaoMapper.qryUserDz", map);
+	}
+	
+	public int addUserDz(Map<String, Object> map) {
+		return sqlSessionTemplate
+        .insert("com.dity.dao.DityDaoMapper.addUserDz", map);
+	}
+	
+	public int editUserDz(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.editUserDz", map);
+	}
+	
+	public int setUserDzMr(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.setUserDzMr", map);
+	}
+	
+	public void setUserDzMr2(Map<String, Object> map) {
+		sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.setUserDzMr2", map);
+	}
+	
+	public int delUserDz(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .delete("com.dity.dao.DityDaoMapper.delUserDz", map);
+	}
+	
+	public List<Map<String,Object>> qryOrder(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectList("com.dity.dao.DityDaoMapper.qryOrder", map);
+	}
+	
+	public int addOrder(Map<String, Object> map) {
+		return sqlSessionTemplate
+        .insert("com.dity.dao.DityDaoMapper.addOrder", map);
+	}
+	
+	public int setOrder(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.setOrder", map);
+	}
+	
+	public int delOrder(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .delete("com.dity.dao.DityDaoMapper.delOrder", map);
+	}
 }
