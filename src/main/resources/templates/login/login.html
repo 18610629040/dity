@@ -47,6 +47,12 @@
 
 	<script type="text/javascript">
 	$(function(){
+		$('.m-t').bind('keyup', function(event) {
+    	　　if (event.keyCode == "13") {
+    	　　　　//回车执行查询
+    	　　　　$('#submit').click();
+    	　　}
+    	});
 	    $('#submit').click(function(){
 	         $.ajax({
 	             type: "POST",
