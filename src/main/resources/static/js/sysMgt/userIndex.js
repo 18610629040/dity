@@ -71,15 +71,21 @@ function initFeePerfGrid(){
 	$("#user_list").jqGrid({
 		url:'/dity/qryUserList?USER_TYPE=1',
         datatype: "json",
-        autowidth: false,
-        autoScroll: false,
-        shrinkToFit: false,
+        mtype:'post',
         height: 220,
-//        width:1030,
-        rownumbers: true,
-        rowNum: 20,
-        rowList: [10, 20, 30],
-        colNames: ['ID','账号', '密码','用户姓名','手机号',
+        loadonce:true,//前台分页,页面刷新不走请求了
+        rowNum:50, 
+        rowList:[10,50,200],   
+	    altRows: true, 
+	    rownumbers:true,
+		multiselect: false,  
+		multiboxonly:true,
+		sortorder: "asc",     
+		autowidth:true,
+		shrinkToFit:false,  
+		autoScroll: true,
+		loadtext: "卖力加载中...",
+        colNames: ['ID','账号', '密码','用户名','手机号',
         	'地址', '年龄','生日','账户类型','USER_TYPE',
         	'银行卡号','开户行','真实姓名', '微信号','支付宝账号','创建时间',
         	'创建人','WX_FILE_URL','ZFB_FILE_URL'],
@@ -105,7 +111,7 @@ function initFeePerfGrid(){
             {name: 'ZFB_FILE_URL',index: 'ZFB_FILE_URL',editable: true, align :"Center",hidden:true}
         ],
         loadComplete: function (data) {
-          　　		console.log(data)
+          　　		/*console.log(data)*/
       　　	},
         pager: "#user_list_btn",
         viewrecords: true,
@@ -244,17 +250,23 @@ function closeWindow(){
 function initFeePerfGrid2(){
 	$("#user_list2").jqGrid({
 		url:'/dity/qryUserList?USER_TYPE=2',
-        datatype: "json",
-        autowidth: false,
-        autoScroll: false,
-        shrinkToFit: false,
+		datatype: "json",
+        mtype:'post',
         height: 320,
-//        width:1030,
-        rownumbers: true,
-        rowNum: 20,
-        rowList: [10, 20, 30],
-        colNames: ['ID','账号', '密码','用户姓名','手机号',
-        	'地址', '年龄','生日','账户类型','USER_TYPE',
+        loadonce:true,//前台分页,页面刷新不走请求了
+        rowNum:50, 
+        rowList:[10,50,200],   
+	    altRows: true, 
+	    rownumbers:true,
+		multiselect: false,  
+		multiboxonly:true,
+		sortorder: "asc",     
+		autowidth:true,
+		shrinkToFit:false,  
+		autoScroll: true,
+		loadtext: "卖力加载中...",
+        colNames: ['ID','账号', '密码','用户名','手机号',
+        	'地址', '年龄','生日','USER_TYPE','账户类型',
         	'银行卡号','开户行','真实姓名', '微信号','支付宝账号','创建时间',
         	'创建人','WX_FILE_URL','ZFB_FILE_URL'],
         colModel: [
@@ -263,16 +275,16 @@ function initFeePerfGrid2(){
             {name: 'PASS',index: 'PASS', align :"Center",editable: true,width: 100},
             {name: 'USER_NAME',index: 'USER_NAME', align :"Center",editable: true,width: 100},
             {name: 'MOBILE_NO',index: 'MOBILE_NO', align :"Center",editable: true,width: 120},
-            {name: 'USER_ADD',index: 'USER_ADD', align :"Center",editable: true,width: 200},
+            {name: 'USER_ADD',index: 'USER_ADD', align :"Center",editable: true,width: 200,hidden:true},
             {name: 'USER_AGE',index: 'USER_AGE', align :"Center",editable: true,width: 100},
             {name: 'USER_BIRTH',index: 'USER_BIRTH', align :"Center",editable: true,width: 100},
-            {name: 'USER_TYPE_NAME',index: 'USER_TYPE_NAME', align :"Center",editable: true,width: 100},
             {name: 'USER_TYPE',index: 'USER_TYPE',editable: true, align :"Center",hidden:true},
-            {name: 'BANK_NO',index: 'BANK_NO', align :"Center",editable: true,width: 120},
+            {name: 'USER_TYPE_NAME',index: 'USER_TYPE_NAME', align :"Center",editable: true,width: 100,hidden:true},
+            {name: 'BANK_NO',index: 'BANK_NO', align :"Center",editable: true,width: 150},
             {name: 'BANK_NAME',index: 'BANK_NAME', align :"Center",editable: true,width: 120},
             {name: 'REAL_NAME',index: 'REAL_NAME', align :"Center",editable: true,width: 120},
-            {name: 'WX_NO',index: 'WX_NO', align :"Center",editable: true,width: 100},
-            {name: 'ZFB_NO',index: 'ZFB_NO', align :"Center",editable: true,width: 100},
+            {name: 'WX_NO',index: 'WX_NO', align :"Center",editable: true,width: 120},
+            {name: 'ZFB_NO',index: 'ZFB_NO', align :"Center",editable: true,width: 120},
             {name: 'CRITE_TIME',index: 'CRITE_TIME', align :"Center",editable: true,width: 140},
             {name: 'CRITENM',index: 'CRITENM', align :"Center",editable: true,width: 100},
             {name: 'WX_FILE_URL',index: 'WX_FILE_URL',editable: true, align :"Center",hidden:true},
@@ -296,7 +308,7 @@ function initFeePerfGrid2(){
         edit: false,
         add: false,
         del: false,
-        search: false
+        search: true
     });
     
     //改变列宽

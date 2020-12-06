@@ -227,7 +227,7 @@
 			USR.USER_NAME OWN_ACNT_NAME,
 			CASE t.STATUS
 				WHEN 0 THEN
-					'下架'
+					'已下架'
 				WHEN 1 THEN
 					'正常'
 				ELSE
@@ -310,7 +310,7 @@
 			USR.USER_NAME OWN_ACNT_NAME,
 			CASE T.STATUS
 				WHEN 0 THEN
-					'下架'
+					'已下架'
 				WHEN 1 THEN
 					'正常'
 				ELSE
@@ -524,29 +524,30 @@
 		 on t.ORDER_USER_BUY_NO=uu.USER_NO
 		where 1=1
 		<if test="ID != null and ID !=''">
-			and ID = #{ID}
+			and T.ID = #{ID}
 		</if>
 		<if test="TYPE =='0'">
-			and STATUS = 0 and ORDER_USER_BUY_NO = #{USER_NO}
+			and T.STATUS = 0 and T.ORDER_USER_BUY_NO = #{USER_NO}
 		</if>
 		<if test="TYPE =='1'">
-			and STATUS = 1 and ORDER_USER_SEL_NO = #{USER_NO}
+			and T.STATUS = 1 and T.ORDER_USER_SEL_NO = #{USER_NO}
 		</if>
 		<if test="TYPE =='2'">
-			and STATUS = 3 and ORDER_USER_BUY_NO = #{USER_NO}
+			and T.STATUS = 3 and T.ORDER_USER_BUY_NO = #{USER_NO}
 		</if>
 		<if test="TYPE =='3'">
-			and STATUS = 2 and ORDER_USER_BUY_NO = #{USER_NO}
+			and T.STATUS = 2 and T.ORDER_USER_BUY_NO = #{USER_NO}
 		</if>
 		<if test="TYPE =='4'">
-			and STATUS != 1 and ORDER_USER_SEL_NO = #{USER_NO}
+			and T.STATUS != 1 and T.ORDER_USER_SEL_NO = #{USER_NO}
 		</if>
 		<if test="ORDER_PD != null and ORDER_PD !=''">
-			and ORDER_PD = #{ORDER_PD}
+			and T.ORDER_PD = #{ORDER_PD}
 		</if>
 		<if test="STATUS != null and STATUS !=''">
-			and STATUS = #{STATUS} 
+			and T.STATUS = #{STATUS} 
 		</if>
+		order by T.OPTION_TIME desc
 	</select>
 	
 	<select id="qryFsOrder" parameterType="java.util.HashMap" resultType="java.util.HashMap">

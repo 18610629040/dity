@@ -42,6 +42,13 @@
     margin-left: -5px;
     margin-right: -5px;
 	}
+	.ui-jqgrid .ui-jqgrid-bdiv { 
+	    border-top: 1px solid #E1E1E1; 
+	    overflow-x: auto; 
+	} 
+	.frozen-div, .frozen-bdiv {
+	    background-color: #E4E6E9;/*与网页背景色一致*/ */
+	} 
 </style>
 
 </head>
@@ -50,8 +57,8 @@
 	<div class="wrapper wrapper-content animated fadeInRight" >
 		<div style="float:right;">
 			<button id="xxxcxxxx" class="btn btn-primary" data-toggle="modal" data-target="#myModal">新增</button>
-			<button class="btn btn-default" id="ccccxcccc">修改</button>
-			<button class="btn btn-link" id="dddddd">下架</button>
+			<button class="btn btn-warning" id="ccccxcccc">修改</button>
+			<button class="btn btn-default" id="dddddd">下架</button>
 		</div>
         <div class="jqGrid_wrapper" style="margin-top: 40px;">
             <table id="user_list"></table>
@@ -246,30 +253,37 @@
 	function initFeePerfGrid(){
 		$("#user_list").jqGrid({
 			url:'/dity/qryGoodsMsList',
-	        datatype: "json",
-	        autowidth: false,
-	        shrinkToFit: false,
-	        height: 620,
-//	        width:1030,
-	        rownumbers: true,
-	        rowNum: 20,
-	        rowList: [10, 20, 30],
-	        colNames: ['ID','商品名称', '价格','简介','买入账号','开始日期', '截止日期','开始时间', '截止时间','状态','FILE_URL'],
+			datatype: "json",
+	        mtype:'post',
+	        height: 520,
+	        loadonce:true,//前台分页,页面刷新不走请求了
+	        rowNum:50, 
+	        rowList:[10,50,200],   
+		    altRows: true, 
+		    rownumbers:true,
+			multiselect: false,  
+			multiboxonly:true,
+			sortorder: "asc",     
+			autowidth:true,
+			shrinkToFit:false,  
+			autoScroll: true,
+			loadtext: "卖力加载中...",
+	        colNames: ['ID','商品名称', '价格','所属人账号','开始日期', '截止日期','开始时间', '截止时间','状态','简介','FILE_URL'],
 	        colModel: [
 	        	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
 	            {name: 'NAME',index: 'NAME', align :"Center",editable: true,width: 220},
 	            {name: 'PRICE',index: 'PRICE', align :"Center",editable: true,width: 100},
-	            {name: 'INTRDCT',index: 'INTRDCT', align :"Center",editable: true,width: 500},
 	            {name: 'OWN_ACNT',index: 'OWN_ACNT', align :"Center",editable: true,width: 120},
 	            {name: 'BUY_DATE',index: 'BUY_DATE', align :"Center",editable: true,width: 140},
 	            {name: 'WT_DATE',index: 'WT_DATE', align :"Center",editable: true,width: 140},
 	            {name: 'BUY_TIME',index: 'BUY_TIME', align :"Center",editable: true,width: 100},
 	            {name: 'WT_TIME',index: 'WT_TIME', align :"Center",editable: true,width: 100},
 	            {name: 'STATUS_NAME',index: 'STATUS_NAME', align :"Center",editable: true,width: 100},
+	            {name: 'INTRDCT',index: 'INTRDCT', align :"left",editable: true,width: 1050},
 	            {name: 'FILE_URL',index: 'FILE_URL',editable: true, align :"Center",hidden:true}
 	        ],
 	        loadComplete: function (data) {
-	          　　		console.log(data)
+	          　　		/* console.log(data) */
 	      　　	},
 	        pager: "#user_list_btn",
 	        viewrecords: true,
@@ -286,7 +300,7 @@
 	        edit: false,
 	        add: false,
 	        del: false,
-	        search: false
+	        search: true
 	    });
 	    $("#user_list").jqGrid('navButtonAdd', '#user_list_btn',
 	    		{caption:"", 

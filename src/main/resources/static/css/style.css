@@ -7910,3 +7910,11 @@ body {
     text-align: left;  
     width: 60%;  
 }
+
+	.ui-jqgrid .ui-jqgrid-bdiv { 
+	    border-top: 1px solid #E1E1E1; 
+	    overflow-x: auto; 
+	} 
+	.frozen-div, .frozen-bdiv {
+	    background-color: #E4E6E9;/*ÓëÍøÒ³±³¾°É«Ò»ÖÂ*/ */
+	} 

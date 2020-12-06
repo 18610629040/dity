@@ -24,6 +24,7 @@ import com.dity.common.SysProperties;
 import com.dity.common.bootonfig.UserLoginToken;
 import com.dity.common.utils.IDUtils;
 import com.dity.common.utils.SessionUtil;
+import com.dity.service.DityService;
 import com.dity.service.FeePerfMgtService;
 
 @CrossOrigin
@@ -36,6 +37,9 @@ public class FeePerfMgtController {
 	
 	@Autowired
 	FeePerfMgtService feePerfMgtService;
+	
+	@Autowired
+	DityService dityService;
 	
 	@Autowired
     SysProperties sysProperties;
@@ -299,11 +303,11 @@ public class FeePerfMgtController {
 	 */
 	@RequestMapping(value = "/srchPdOrderData", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public List<Object> srchPdOrderData(){
+	public List<Map<String, Object>> srchPdOrderData(){
 		Map<String,Object> map = new HashMap<String, Object>();
-		List<Object> list = new ArrayList<>();
+		List<Map<String, Object>> list = new ArrayList<>();
 		try {
-			list = feePerfMgtService.srchPdOrderData(map);
+			list = dityService.qryOrder(map);
 		} catch (Exception e) {
 			logger.error("/dity/feePerfMgt/srchPdOrderData:"+map,e);
 		}

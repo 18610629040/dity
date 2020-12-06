@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dity.common.SysProperties;
 import com.dity.common.bootonfig.UserLoginToken;
-import com.dity.common.utils.FileUtils;
 import com.dity.common.utils.IDUtils;
 import com.dity.common.utils.QRCodeUtil;
 import com.dity.common.utils.SessionUtil;

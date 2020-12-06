@@ -255,28 +255,35 @@
 	function initFeePerfGrid(){
 		$("#user_list").jqGrid({
 			url:'/dity/qryGoodsList',
-	        datatype: "json",
-	        autowidth: true,
-	        height: 620,
-//	        width:1030,
-	        shrinkToFit: true,
-	        rownumbers: true,
-	        rowNum: 20,
-	        rowList: [10, 20, 30],
-	        colNames: ['ID','GOODS_TYPE','藏品名称','类别', '价格', '简介','买入账号','状态','FILE_URL'],
+			datatype: "json",
+	        mtype:'post',
+	        height: 520,
+	        loadonce:true,//前台分页,页面刷新不走请求了
+	        rowNum:50, 
+	        rowList:[10,50,200],   
+		    altRows: true, 
+		    rownumbers:true,
+			multiselect: false,  
+			multiboxonly:true,
+			sortorder: "asc",     
+			autowidth:true,
+			shrinkToFit:false,  
+			autoScroll: true,
+			loadtext: "卖力加载中...",
+	        colNames: ['ID','GOODS_TYPE','藏品名称','类别', '价格', '持有人账号','状态','简介','FILE_URL'],
 	        colModel: [
 	        	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
 	        	{name: 'GOODS_TYPE',index: 'GOODS_TYPE',editable: true, align :"Center",hidden:true},
 	            {name: 'NAME',index: 'NAME', align :"Center",editable: true,width: 220},
 	            {name: 'TYPE_NAME',index: 'TYPE_NAME', align :"Center",editable: true,width: 100},
 	            {name: 'PRICE',index: 'PRICE', align :"Center",editable: true,width: 100},
-	            {name: 'INTRDCT',index: 'INTRDCT', align :"Center",editable: true,width: 500},
 	            {name: 'OWN_ACNT',index: 'OWN_ACNT', align :"Center",editable: true,width: 120},
 	            {name: 'STATUS_NAME',index: 'STATUS_NAME', align :"Center",editable: true,width: 100},
+	            {name: 'INTRDCT',index: 'INTRDCT', align :"left",editable: true,width:830},
 	            {name: 'FILE_URL',index: 'FILE_URL',editable: true, align :"Center",hidden:true}
 	        ],
 	        loadComplete: function (data) {
-	          　　		console.log(data)
+	          　　		/* console.log(data) */
 	      　　	},
 	        pager: "#user_list_btn",
 	        viewrecords: true,
@@ -293,7 +300,7 @@
 	        edit: false,
 	        add: false,
 	        del: false,
-	        search: false
+	        search: true
 	    });
 	    $("#user_list").jqGrid('navButtonAdd', '#user_list_btn',
 	    		{caption:"", 
