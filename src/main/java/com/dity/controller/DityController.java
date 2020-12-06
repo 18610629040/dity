@@ -570,4 +570,42 @@ public class DityController {
         }
         return map;
     }
+	
+	@RequestMapping("/setOrder")
+	@ResponseBody
+    public Object setOrder(HttpServletRequest request,HttpServletResponse response, 
+    		@RequestParam(value = "ID", required = false) String ID,
+            @RequestParam(value = "STATUS", required = false) String STATUS) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID",ID);
+        	map.put("STATUS",STATUS);
+        	map.put("O_RUNSTATUS", dityService.setOrder(map));
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/setOrder:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+	
+	@RequestMapping(value = "/qryOrder", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public List<Map<String, Object>> qryOrder(HttpServletRequest request,
+			@RequestParam(value = "STATUS", required = false) String STATUS,
+			@RequestParam(value = "ORDER_USER_NO", required = false) String ORDER_USER_NO,
+            @RequestParam(value = "ID", required = false) String id){
+		Map<String,Object> map = new HashMap<String, Object>();
+		List<Map<String,Object>> list = new ArrayList<Map<String, Object>>();
+		try {
+			map.put("ID",id);
+			map.put("ORDER_USER_NO",ORDER_USER_NO);
+			map.put("STATUS",STATUS);
+			list = dityService.qryOrder(map);
+		} catch (Exception e) {
+			logger.error("qryOrder:"+map,e);
+		}
+		return list;
+	}
 }

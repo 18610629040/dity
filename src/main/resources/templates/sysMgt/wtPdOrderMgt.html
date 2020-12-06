@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>订单管理</title>
+<title>委托订单管理</title>
 
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
@@ -14,16 +14,16 @@
 <link href="/css/style.css" rel="stylesheet">
 <script src="/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
 <script src="/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
-<script src="/js/sysMgt/pdOrderMgt.js"></script>
+<script src="/js/sysMgt/wtPdOrderMgt.js"></script>
 </head>
 <body>
 	<div class="wrapper wrapper-content animated fadeInRight" >
-		<!-- <div style="float:right;">
-			<button id="xxxcxxxx" class="btn btn-primary" data-toggle="modal" data-target="#myModal">处理订单</button>
-			<button class="btn btn-warning" id="ccccxcccc">修改</button>
-			<button class="btn btn-default" id="dddddd">下架</button>
-		</div> -->
-        <div class="jqGrid_wrapper">
+		<div style="float:right;">
+			<button id="qrwtBtn" class="btn btn-primary" data-toggle="modal" data-target="#myModal">确认委托</button>
+			<!-- <button class="btn btn-warning" id="ccccxcccc">修改</button>
+			<button class="btn btn-default" id="dddddd">下架</button> -->
+		</div>
+        <div class="jqGrid_wrapper" style="margin-top: 40px;">
             <table id="pdOrder_list"></table>
             <div id="pdOrder_list_btn"></div>
         </div>

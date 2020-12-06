@@ -291,11 +291,19 @@ public class FeePerfMgtController {
 	}
 	
 	/**
-	 * 订单管理首页
+	 * 全部订单
 	 */
 	@RequestMapping(value = "/pdOrderIndex", method = { RequestMethod.POST, RequestMethod.GET })
     public String pdOrderIndex(){
         return "/sysMgt/pdOrderMgt";
+    } 
+	
+	/**
+	 * 委托订单
+	 */
+	@RequestMapping(value = "/wtPdOrderMgt", method = { RequestMethod.POST, RequestMethod.GET })
+    public String wtPdOrderMgt(){
+        return "/sysMgt/wtPdOrderMgt";
     } 
 	
 	/**

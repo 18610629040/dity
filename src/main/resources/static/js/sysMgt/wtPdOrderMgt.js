@@ -5,13 +5,48 @@ $(document).ready(function () {
 });
 
 function initBtn(){
-	
+	$("#qrwtBtn").click(function(){
+		var rowid = $("#pdOrder_list").getGridParam("selrow");
+		var rowData = $("#pdOrder_list").getRowData(rowid);
+		if(rowid == null){
+			parent.layer.msg('请选择数据！', {shift: 6});
+		}else{
+			var saleNm = rowData.ORDER_USER_SEL_NO;
+			var buyNm = rowData.ORDER_USER_BUY_NO;
+			var pdNm = rowData.ORDER_PD_NAME;
+			var orderNo = rowData.ORDER_NO;
+			parent.layer.confirm('确定确认买家【'+buyNm+'】卖家【'+saleNm+'】商品【'+pdNm+'】订单号【'+orderNo+'】的委托？', {
+				btn: ['确定','取消'],
+			    shade: false //不显示遮罩
+			}, function(){
+				$.ajax({
+			        type:'POST',
+			        data:{ID:rowData.ID, STATUS:5},
+			        url: '/dity/setOrder',
+			        dataType:"json", 
+			        success:function(data){
+			        	parent.layer.alert(data.O_MSG);
+			           if((data.O_MSG).indexOf('成功') != -1){
+//			        	   $("#pdOrder_list").trigger("reloadGrid");
+			        	   window.location.reload();
+			           }
+			        },
+			        error:function(jqXHR){
+			        	parent.layer.alert("服务器发生错误："+ jqXHR.status);
+			        }
+				});
+				
+			}, function(){
+			    parent.layer.close();
+			});
+		}
+	});
 }
 
 var actulID;
 function initFeePerfGrid(){
 	$("#pdOrder_list").jqGrid({
-		url:'/dity/qryOrder',
+		url:'/dity/qryOrder?STATUS=4',
         datatype: "json",
         mtype:'post',
         height: 520,
