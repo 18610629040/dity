@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,7 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dity.common.SysProperties;
 import com.dity.common.bootonfig.UserLoginToken;
+import com.dity.common.utils.FileUtils;
 import com.dity.common.utils.IDUtils;
+import com.dity.common.utils.QRCodeUtil;
 import com.dity.common.utils.SessionUtil;
 import com.dity.service.DityService;
 import com.dity.service.FeePerfMgtService;
@@ -188,9 +192,11 @@ public class MobileController {
     
     @RequestMapping(value = "/qryGoodsMsList", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public Map<String, Object> qryGoodsMsList(){
+	public Map<String, Object> qryGoodsMsList(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = false) String id){
 		Map<String,Object> map = new HashMap<String, Object>();
 		try {
+			map.put("ID",id);
 			List<Map<String,Object>> list = dityService.qryGoodsMsList(map);
 			map.put("O_DATA",list);
 			map.put("O_RUNSTATUS",1);
@@ -226,10 +232,12 @@ public class MobileController {
     @RequestMapping(value = "/qryGoodsList", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public Map<String, Object> qryGoodsList(HttpServletRequest request,
-            @RequestParam(value = "GOODS_TYPE", required = true) String id){
+            @RequestParam(value = "GOODS_TYPE", required = true) String type,
+            @RequestParam(value = "ID", required = true) String id){
 		Map<String,Object> map = new HashMap<String, Object>();
 		try {
-			map.put("GOODS_TYPE",id);
+			map.put("GOODS_TYPE",type);
+			map.put("ID",id);
 			List<Map<String,Object>> list = dityService.qryGoodsList(map);
 			map.put("O_DATA",list);
 			map.put("O_RUNSTATUS",1);
@@ -436,34 +444,46 @@ public class MobileController {
 	@ResponseBody
     public Object addOrder(HttpServletRequest request,HttpServletResponse response, 
     		@RequestParam(value = "ORDER_NO", required = false) String ORDER_NO,
+    		@RequestParam(value = "WTF", required = false) String WTF,
+    		@RequestParam(value = "YJSY", required = false) String YJSY,
+    		@RequestParam(value = "DDXJ", required = false) String DDXJ,
     		@RequestParam(value = "ORDER_PD", required = false) String ORDER_PD,
-            @RequestParam(value = "ORDER_PD_NAME", required = false) String ORDER_PD_NAME,
-            @RequestParam(value = "ORDER_PRICE", required = false) String ORDER_PRICE,
-            @RequestParam(value = "ORDER_CVAL", required = false) String ORDER_CVAL,
-            @RequestParam(value = "ORDER_CFEE", required = false) String ORDER_CFEE,
-            @RequestParam(value = "ORDER_INCOM", required = false) String ORDER_INCOM,
-            @RequestParam(value = "ORDER_EXPRESS", required = false) String ORDER_EXPRESS,
-            @RequestParam(value = "ORDER_USER_NO", required = false) String ORDER_USER_NO,
-            @RequestParam(value = "STATUS", required = false) String STATUS) {
+            @RequestParam(value = "USER_NO", required = false) String USER_NO,
+            @RequestParam(value = "ORDER_PD_TYPE", required = false) String ORDER_PD_TYPE) {
         Map<String, Object> map = new HashMap<>();
         try {
         	map.put("ID",IDUtils.createID());
         	map.put("ORDER_NO",ORDER_NO);
         	map.put("ORDER_PD",ORDER_PD);
-        	map.put("ORDER_PD_NAME",ORDER_PD_NAME);
-        	map.put("ORDER_PRICE",ORDER_PRICE);
-        	map.put("ORDER_CVAL",ORDER_CVAL);
-        	map.put("ORDER_CFEE",ORDER_CFEE);
-        	map.put("ORDER_INCOM",ORDER_INCOM);
-        	map.put("ORDER_EXPRESS",ORDER_EXPRESS);
-        	map.put("ORDER_USER_NO",ORDER_USER_NO);
-        	map.put("STATUS",STATUS);
+        	map.put("ORDER_PD_TYPE",ORDER_PD_TYPE);
+        	if("1".equals(ORDER_PD_TYPE)) {
+        		Map<String, Object> param = new HashMap<>();
+        		param.put("ID",ORDER_PD);
+        		List<Map<String,Object>> list = dityService.qryGoodsMsList(param);
+        		if(list.size()>0) {
+        			Map<String,Object> pd = list.get(0);
+        			map.put("ORDER_PD_NAME",pd.get("NAME"));
+        		}
+        	}else {
+        		Map<String, Object> param = new HashMap<>();
+        		param.put("ID",ORDER_PD);
+        		List<Map<String,Object>> list = dityService.qryGoodsList(param);
+        		if(list.size()>0) {
+        			Map<String,Object> pd = list.get(0);
+        			map.put("ORDER_PD_NAME",pd.get("NAME"));
+        		}
+        	}        	
+        	map.put("ORDER_USER_BUY_NO",USER_NO);
+        	map.put("ORDER_CVAL",YJSY);
+        	map.put("ORDER_CFEE",WTF);
+        	map.put("ORDER_INCOM",DDXJ);
+        	map.put("OPTION_USER",USER_NO);
         	map.put("O_RUNSTATUS", dityService.addOrder(map));
         	map.put("O_MSG", "操作成功！");
         } catch (Exception e) {
             logger.error("/addOrder:" + map, e);
             map.put("O_RUNSTATUS", -1);
-            map.put("O_MSG", "system error");
+            map.put("O_MSG", "下单失败，请重试！");
         }
         return map;
     }
@@ -549,29 +569,29 @@ public class MobileController {
 			map.put("TYPE",type);
 			map.put("USER_NO",userNo);
 			switch (type) {
-			case "1":
+			case "0":
 				//付款确认页签，查当前人下完的单，Status 0的订单
 				list = dityService.qryOrder(map);
 				break;
-			case "2":
+			case "1":
 				//收款确认
 				list = dityService.qryOrder(map);
 				break;
-			case "3":
+			case "2":
 				//下的单已发货的
 				list = dityService.qryOrder(map);
 				break;
-			case "4":
+			case "3":
 				//下的单,已付款的
 				list = dityService.qryOrder(map);
 				break;
-			case "5":
+			case "4":
 				//已卖出的订单
 				list = dityService.qryOrder(map);
 				break;
-			case "6":
+			case "5":
 				//粉丝订单
-//				list = dityService.qryOrder(map);
+				list = dityService.qryFsOrder(map);
 				break;
 			default:
 				break;
@@ -735,4 +755,45 @@ public class MobileController {
         return map;
     }
     
+    /**
+     * 根据 url 生成二维码
+     */
+    @RequestMapping(value = "/createLogoQRCode")
+    public void createLogoQRCode(HttpServletRequest request, HttpServletResponse response,
+            @RequestParam(value = "URL", required = true) String url) throws Exception {
+        ServletOutputStream stream = null;
+        try {
+            stream = response.getOutputStream();
+            String logoPath = Thread.currentThread().getContextClassLoader().getResource("").getPath() 
+                    + "static" + File.separator + "img" + File.separator + "wweew.png";
+            //使用工具类生成二维码
+            QRCodeUtil.encode(url, logoPath, stream, true);
+        } catch (Exception e) {
+            e.getStackTrace();
+        } finally {
+            if (stream != null) {
+                stream.flush();
+                stream.close();
+            }
+        }
+    }
+    
+    @RequestMapping(value = "/qryFsUser", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public Map<String, Object> qryFsUser(HttpServletRequest request,
+            @RequestParam(value = "USER_NO", required = true) String userNo){
+		Map<String,Object> map = new HashMap<String, Object>();
+		try {
+			map.put("USER_NO",userNo);
+			List<Map<String,Object>> list = dityService.qryFsUser(map);
+			map.put("O_DATA",list);
+			map.put("O_RUNSTATUS",1);
+			map.put("O_MSG","success");
+		} catch (Exception e) {
+			logger.error("qryFsUser:"+map,e);
+			map.put("O_RUNSTATUS",0);
+			map.put("O_MSG","system error");
+		}
+		return map;
+	}
 }

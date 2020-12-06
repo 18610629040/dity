@@ -42,6 +42,7 @@
 				USER_NAME,
 				USER_TYPE,
 				STATUS,
+				PARENT_NO,
 				CRITE_TIME
 			) VALUES (
 				#{ID},
@@ -50,6 +51,7 @@
 				#{USER_NAME},
 				#{USER_TYPE},
 				#{STATUS},
+				#{PARENT_NO},
 				SYSDATE()
 			)
 	</insert>

@@ -124,6 +124,10 @@ public class DityService {
 	public List<Map<String,Object>> qryOrder(Map<String, Object> map) {
 		return dityDao.qryOrder(map);
 	}
+	
+	public List<Map<String,Object>> qryFsOrder(Map<String, Object> map) {
+		return dityDao.qryFsOrder(map);
+	}
 
 	public int addOrder(Map<String, Object> map) {
 		return dityDao.addOrder(map);
@@ -147,5 +151,9 @@ public class DityService {
 	
 	public int setOrderExpress(Map<String, Object> map) {
 		return dityDao.setOrderExpress(map);
+	}
+	
+	public List<Map<String,Object>> qryFsUser(Map<String, Object> map) {
+		return dityDao.qryFsUser(map);
 	}
 }

@@ -151,6 +151,11 @@ public class DityDao {
                 .selectList("com.dity.dao.DityDaoMapper.qryOrder", map);
 	}
 	
+	public List<Map<String,Object>> qryFsOrder(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectList("com.dity.dao.DityDaoMapper.qryFsOrder", map);
+	}
+	
 	public int addOrder(Map<String, Object> map) {
 		return sqlSessionTemplate
         .insert("com.dity.dao.DityDaoMapper.addOrder", map);
@@ -179,5 +184,10 @@ public class DityDao {
 	public int setOrderExpress(Map<String, Object> map) {
 		return sqlSessionTemplate
 		        .update("com.dity.dao.DityDaoMapper.setOrderExpress", map);
+	}
+	
+	public List<Map<String,Object>> qryFsUser(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectList("com.dity.dao.DityDaoMapper.qryFsUser", map);
 	}
 }

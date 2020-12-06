@@ -220,23 +220,29 @@
 	
 	<select id="qryGoodsMsList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 		SELECT
-			*,
-			CASE STATUS
+			((select t.RATE_VAL from t_dity_rate t where t.RATE_NAME='委托费') * t.PRICE) WTF,
+		    ((select t.RATE_VAL from t_dity_rate t where t.RATE_NAME='预计收益') * t.PRICE) YJSY,
+			t.PRICE,
+			t.*,
+			USR.USER_NAME OWN_ACNT_NAME,
+			CASE t.STATUS
 				WHEN 0 THEN
 					'下架'
 				WHEN 1 THEN
 					'正常'
 				ELSE
-					STATUS
+					t.STATUS
 			END STATUS_NAME,
-		 	DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME
-		FROM T_DITY_GOODS_MS T
+		 	DATE_FORMAT(t.CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME
+		FROM T_DITY_GOODS_MS T 
+		LEFT JOIN T_DITY_USER USR
+		ON T.OWN_ACNT = USR.USER_NO
 			WHERE 1 = 1
 		<if test="ID != null and ID !=''">
-			and ID = #{ID}
+			and t.ID = #{ID}
 		</if>
 		<if test="NAME != null and NAME !=''">
-			and NAME like concat('%',#{NAME},'%')
+			and t.NAME like concat('%',#{NAME},'%')
 		</if>
 	</select>
 	
@@ -260,7 +266,7 @@
 				#{NAME},
 				#{PRICE},
 				#{INTRDCT},
-				null,
+				#{CRITE_USER},
 				#{FILE_URL},
 				1,
 				#{BUY_TIME},
@@ -297,7 +303,11 @@
 	
 	
 	<select id="qryGoodsList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT T.*,TYPE.TYPE_NAME,
+		SELECT T.*,
+			((select t.RATE_VAL from t_dity_rate t where t.RATE_NAME='委托费') * t.PRICE) WTF,
+		  	((select t.RATE_VAL from t_dity_rate t where t.RATE_NAME='预计收益') * t.PRICE) YJSY,
+			TYPE.TYPE_NAME,
+			USR.USER_NAME OWN_ACNT_NAME,
 			CASE T.STATUS
 				WHEN 0 THEN
 					'下架'
@@ -310,15 +320,17 @@
 		FROM T_DITY_GOODS T
 		LEFT JOIN t_dity_product_type TYPE
 		ON T.GOODS_TYPE = TYPE.ID
+		LEFT JOIN T_DITY_USER USR
+		ON T.OWN_ACNT = USR.USER_NO
 			WHERE 1 = 1
 		<if test="ID != null and ID !=''">
-			and ID = #{ID}
+			and t.ID = #{ID}
 		</if>
 		<if test="NAME != null and NAME !=''">
-			and NAME like concat('%',#{NAME},'%')
+			and t.NAME like concat('%',#{NAME},'%')
 		</if>
 		<if test="GOODS_TYPE != null and GOODS_TYPE !=''">
-			and GOODS_TYPE = #{GOODS_TYPE}
+			and t.GOODS_TYPE = #{GOODS_TYPE}
 		</if>
 	</select>
 	
@@ -340,7 +352,7 @@
 				#{PRICE},
 				#{INTRDCT},
 				#{GOODS_TYPE},
-				null,
+				#{CRITE_USER},
 				1,
 				#{FILE_URL},
 				SYSDATE(),
@@ -434,12 +446,14 @@
 				ORDER_NO,
 				ORDER_PD,
 				ORDER_PD_NAME,
+				ORDER_PD_TYPE,
 				ORDER_PRICE,
 				ORDER_CVAL,
 				ORDER_CFEE,
 				ORDER_INCOM,
 				ORDER_EXPRESS,
-				ORDER_USER_NO,
+				ORDER_USER_SEL_NO,
+				ORDER_USER_BUY_NO,
 				STATUS,
 				OPTION_TIME,
 				OPTION_USER
@@ -448,13 +462,15 @@
 				#{ORDER_NO},
 				#{ORDER_PD},
 				#{ORDER_PD_NAME},
+				#{ORDER_PD_TYPE},
 				#{ORDER_PRICE},
 				#{ORDER_CVAL},
 				#{ORDER_CFEE},
 				#{ORDER_INCOM},
-				#{ORDER_EXPRESS},
-				#{ORDER_USER_NO},
-				#{STATUS},
+				null,
+				#{ORDER_USER_SEL_NO},
+				#{ORDER_USER_BUY_NO},
+				0,
 				SYSDATE(),
 				#{OPTION_USER}
 			)
@@ -486,7 +502,7 @@
 			t.STATUS,
 			CASE T.STATUS
 				WHEN 0 THEN
-					'未确认付款'
+					'买家未确认付款'
 				WHEN 1 THEN
 					'买家已确认付款'
 				WHEN 2 THEN
@@ -494,7 +510,7 @@
 				WHEN 3 THEN
 					'卖家已发货'
 				WHEN 4 THEN
-					'买家发起委托，待管理员确认委托'
+					'买家已发起委托，待管理员确认委托'
 				WHEN 5 THEN
 					'管理员已确认委托'
 				ELSE
@@ -510,19 +526,19 @@
 		<if test="ID != null and ID !=''">
 			and ID = #{ID}
 		</if>
-		<if test="TYPE =='1'">
+		<if test="TYPE =='0'">
 			and STATUS = 0 and ORDER_USER_BUY_NO = #{USER_NO}
 		</if>
-		<if test="TYPE =='2'">
+		<if test="TYPE =='1'">
 			and STATUS = 1 and ORDER_USER_SEL_NO = #{USER_NO}
 		</if>
-		<if test="TYPE =='3'">
+		<if test="TYPE =='2'">
 			and STATUS = 3 and ORDER_USER_BUY_NO = #{USER_NO}
 		</if>
-		<if test="TYPE =='4'">
+		<if test="TYPE =='3'">
 			and STATUS = 2 and ORDER_USER_BUY_NO = #{USER_NO}
 		</if>
-		<if test="TYPE =='5'">
+		<if test="TYPE =='4'">
 			and STATUS != 1 and ORDER_USER_SEL_NO = #{USER_NO}
 		</if>
 		<if test="ORDER_PD != null and ORDER_PD !=''">
@@ -531,6 +547,55 @@
 		<if test="STATUS != null and STATUS !=''">
 			and STATUS = #{STATUS} 
 		</if>
+	</select>
+	
+	<select id="qryFsOrder" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT t.ID,
+			t.ORDER_NO,
+			t.ORDER_PD,
+			t.ORDER_PD_NAME,
+			t.ORDER_PD_TYPE,
+			CASE T.ORDER_PD_TYPE
+				WHEN 0 THEN
+					'非秒杀商品订单'
+				WHEN 1 THEN
+					'秒杀商品订单'
+				ELSE
+					T.ORDER_PD_TYPE
+			END ORDER_PD_TYPE_NAME,
+			t.ORDER_PRICE,
+			t.ORDER_CVAL,
+			t.ORDER_CFEE,
+			t.ORDER_INCOM,
+			t.ORDER_EXPRESS,
+			t.ORDER_USER_SEL_NO,
+			u.USER_NAME ORDER_USER_SEL_NAME,
+			t.ORDER_USER_BUY_NO,
+			uu.USER_NAME ORDER_USER_BUY_NAME,
+			t.STATUS,
+			CASE T.STATUS
+				WHEN 0 THEN
+					'买家未确认付款'
+				WHEN 1 THEN
+					'买家已确认付款'
+				WHEN 2 THEN
+					'卖家已确认收款'
+				WHEN 3 THEN
+					'卖家已发货'
+				WHEN 4 THEN
+					'买家已发起委托，待管理员确认委托'
+				WHEN 5 THEN
+					'管理员已确认委托'
+				ELSE
+					T.STATUS
+			END STATUS_NAME,
+			DATE_FORMAT(t.OPTION_TIME,'%Y-%m-%d %H:%i:%s') OPTION_TIME,
+			t.OPTION_USER 
+		FROM t_dity_order t left join t_dity_user u
+		 on t.ORDER_USER_SEL_NO=u.USER_NO
+		left join t_dity_user uu
+		 on t.ORDER_USER_BUY_NO=uu.USER_NO
+		where ORDER_USER_BUY_NO in( select USER_NO from t_dity_user where PARENT_NO=#{USER_NO} )
 	</select>
 	
 	<update id="setOrder" parameterType="java.util.HashMap">
@@ -561,4 +626,39 @@
 				,T.ORDER_EXPRESS = #{ORDER_EXPRESS}
 			WHERE T.ID = #{ID}
 	</update>
+	
+	
+	<select id="qryFsUser" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT  T.ID,
+				T.USER_NO,
+				T.PASS,
+				T.USER_NAME,
+				T.MOBILE_NO,
+				T.USER_ADD,
+				T.USER_AGE,
+				T.USER_BIRTH,
+				T.USER_TYPE,
+				CASE T.USER_TYPE
+					WHEN 1 THEN
+						'管理员'
+					WHEN 2 THEN
+						'普通用户'
+					ELSE
+						T.USER_TYPE
+				END USER_TYPE_NAME,
+				T.STATUS,
+				T.BANK_NO,
+				T.BANK_NAME,
+				T.REAL_NAME,
+				T.WX_NO,
+				T.ZFB_NO,
+				T.WX_FILE_URL,
+				T.ZFB_FILE_URL,
+				DATE_FORMAT(T.CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
+				T.CRITE_USER,USR.USER_NAME CRITENM
+		FROM T_DITY_USER T 
+		LEFT JOIN T_DITY_USER USR
+		ON T.CRITE_USER = USR.USER_NO
+		WHERE PARENT_NO= #{USER_NO}
+	</select>
 </mapper>

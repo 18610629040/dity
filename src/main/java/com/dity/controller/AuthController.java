@@ -120,6 +120,7 @@ public class AuthController {
             @RequestParam(value = "username", required = true) String name,
             @RequestParam(value = "userpass", required = true) String pass,
             @RequestParam(value = "userpass1", required = true) String pass1,
+            @RequestParam(value = "PARENT_NO", required = true) String PARENT_NO,
             @RequestParam(value = "type", required = false) String type) {
         Map<String, Object> map = new HashMap<>();
         try {
@@ -143,6 +144,7 @@ public class AuthController {
             }
             map.put("STATUS", 0);
             map.put("USER_TYPE", type);
+            map.put("PARENT_NO", PARENT_NO);
             map.put("O_RUNSTATUS", authService.saveUser(map));
             map.put("O_MSG", "注册成功");
         } catch (Exception e) {
