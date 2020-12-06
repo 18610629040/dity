@@ -16,7 +16,7 @@
 	</insert>
 	
 	<update id="modfyFeePerfData" parameterType="java.util.HashMap">
-		UPDATE T_DITY_RATE T SET T.RATE_NAME = #{RATE_NAME}, T.RATE_VAL = #{RATE_VAL},T.CRITE_USER = #{CRITE_USER}, T.CRITE_TIME = SYSDATE()
+		UPDATE T_DITY_RATE T SET T.RATE_VAL = #{RATE_VAL},T.CRITE_USER = #{CRITE_USER}, T.CRITE_TIME = SYSDATE()
 			WHERE T.ID = #{ID}
 	</update>
 	

@@ -21,10 +21,10 @@ function initFeePerfGrid(){
         rownumbers: true,
         rowNum: 20,
         rowList: [10, 20, 30],
-        colNames: ['ID','提示名称', '提示内容', '操作人', '操作时间'],
+        colNames: ['ID','名称', '内容', '操作人', '操作时间'],
         colModel: [
         	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
-            {name: 'CONTATE_NAME',index: 'CONTATE_NAME', align :"Center",editable: true,width: 120},
+            {name: 'CONTATE_NAME',index: 'CONTATE_NAME', align :"Center",editable: false,width: 120},
             {name: 'CONTATE_INFO',index: 'CONTATE_INFO', align :"Center",editable: true,width: 740},
             {name: 'USER_NAME',index: 'USER_NAME', align :"Center",editable: false,width: 120},
             {name: 'CRITETIME',index: 'CRITETIME', align :"Center",editable: false,width: 140},
@@ -47,7 +47,7 @@ function initFeePerfGrid(){
     //设置操作按钮
     $("#infoTsMgt_list").jqGrid('navGrid', '#infoTsMgt_list_btn', {
         edit: true,
-        add: true,
+        add: false,
         del: false,
         search: false
     }, {
@@ -87,7 +87,7 @@ function initFeePerfGrid(){
 		    }
    	 	}
     });
-    //自定义删除按钮
+    /*//自定义删除按钮
     $("#infoTsMgt_list").jqGrid('navButtonAdd', '#infoTsMgt_list_btn',
     		{caption:"", 
     		buttonicon:"glyphicon glyphicon-trash", 
@@ -125,7 +125,7 @@ function initFeePerfGrid(){
 				}
     		}, 
     		position: "last", title:"删除所选数据", cursor: "pointer"}
-    );
+    );*/
 
     //改变列宽
     $(window).bind('resize', function () {

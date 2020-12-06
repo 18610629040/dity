@@ -18,12 +18,12 @@ function initFeePerfGrid(){
         width:800,
         shrinkToFit: true,
         rownumbers: true,
-        rowNum: 20,
-        rowList: [10, 20, 30],
-        colNames: ['ID','费率名称', '费率值', '操作人', '操作时间'],
+        rowNum: 50,
+        rowList: [10, 50, 200],
+        colNames: ['ID','费率名称', '费率值（%）', '操作人', '操作时间'],
         colModel: [
         	{name: 'ID',index: 'ID',editable: true, align :"center",hidden:true},
-            {name: 'RATE_NAME',index: 'RATE_NAME', align :"center",editable: true,width: '30%'},
+            {name: 'RATE_NAME',index: 'RATE_NAME', align :"center",editable: false,width: '30%'},
             {name: 'RATE_VAL',index: 'RATE_VAL', align :"center",editable: true,width: '30%'},
             {name: 'USER_NAME',index: 'USER_NAME', align :"Center",editable: false,width: '20%'},
             {name: 'CRITETIME',index: 'CRITETIME', align :"Center",editable: false,width: '20%'},
@@ -41,7 +41,7 @@ function initFeePerfGrid(){
     //设置操作按钮
     $("#feePerf_list").jqGrid('navGrid', '#feePerf_list_btn', {
         edit: true,
-        add: true,
+        add: false,
         del: false,
         search: false,
         refresh:false
@@ -82,7 +82,7 @@ function initFeePerfGrid(){
 		    }
    	 	}
     });
-    //自定义删除按钮
+    /*//自定义删除按钮
     $("#feePerf_list").jqGrid('navButtonAdd', '#feePerf_list_btn',
     		{caption:"", 
     		buttonicon:"glyphicon glyphicon-trash", 
@@ -120,7 +120,7 @@ function initFeePerfGrid(){
 				}
     		}, 
     		position: "last", title:"删除所选数据", cursor: "pointer"}
-    );
+    );*/
 
     //改变列宽
     $(window).bind('resize', function () {

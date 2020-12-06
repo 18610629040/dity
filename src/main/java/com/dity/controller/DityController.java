@@ -62,6 +62,11 @@ public class DityController {
         return "/sysMgt/userIndex";
     }
     
+    @RequestMapping(value = "/userMgt", method = { RequestMethod.POST, RequestMethod.GET })
+    public String userMgt(){
+        return "/sysMgt/userMgt";
+    }
+    
     @RequestMapping(value = "/qryUserList", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public List<Object> qryUserList(HttpServletRequest request,HttpServletResponse response, 

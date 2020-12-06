@@ -88,8 +88,8 @@ function initFeePerfGrid(){
 //        width:1030,
         shrinkToFit: true,
         rownumbers: true,
-        rowNum: 20,
-        rowList: [10, 20, 30],
+        rowNum: 50,
+        rowList: [10, 50, 200],
         colNames: ['ID','排序', '类型名称','STATUS','是否开放','FILE_URL', '操作人', '操作时间'],
         colModel: [
         	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},

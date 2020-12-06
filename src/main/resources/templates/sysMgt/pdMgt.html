@@ -308,23 +308,33 @@
 	    		onClickButton:function(){   
 	    			var rowid = $("#user_list").getGridParam("selrow");
 	    			if(rowid != null){
-	    				var rowData = $("#user_list").getRowData(rowid);
-	    				$.ajax({
-	    					type:"post",
-	    					url:"/dity/delGoods",
-	    					data : {ID: rowData.ID},
-	    					dataType:"json",
-	    					success:function(data){
-	    						if(data.O_RUNSTATUS == 1){
-	    							window.location.reload();
-	    						}else{
-	    							alert(data.O_MSG);
-	    						}
-	    					},
-	    					error:function(jqXHR){
-	    						aler("error："+ jqXHR.status);
-	    					}
-	    				});
+	    				parent.layer.confirm('确定删除所选数据？', {
+		    				btn: ['确定','取消'],
+		    			    shade: false //不显示遮罩
+		    			}, function(){
+		    				var rowData = $("#user_list").getRowData(rowid);
+		    				$.ajax({
+		    					type:"post",
+		    					url:"/dity/delGoods",
+		    					data : {ID: rowData.ID},
+		    					dataType:"json",
+		    					success:function(data){
+		    						if(data.O_RUNSTATUS == 1){
+		    							window.location.reload();
+		    						}else{
+		    							alert(data.O_MSG);
+		    						}
+		    					},
+		    					error:function(jqXHR){
+		    						aler("error："+ jqXHR.status);
+		    					}
+		    				});
+		    				
+		    			}, function(){
+		    			    parent.layer.close();
+		    			});
+	    			}else{
+	    				parent.layer.msg('请选择数据！', {shift: 6});
 	    			}
 	    		}, 
 	    		position: "first", title:"删除所选数据", cursor: "pointer"}
