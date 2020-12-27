@@ -65,6 +65,11 @@ public class DityDao {
 	}
 	
 	
+	public int qryGoodsListCt(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectOne("com.dity.dao.DityDaoMapper.qryGoodsListCt", map);
+	}
+	
 	public List<Map<String,Object>> qryGoodsList(Map<String, Object> map) {
 		return sqlSessionTemplate
                 .selectList("com.dity.dao.DityDaoMapper.qryGoodsList", map);
@@ -88,32 +93,6 @@ public class DityDao {
 	public int delGoods(Map<String, Object> map) {
 		return sqlSessionTemplate
 		        .delete("com.dity.dao.DityDaoMapper.delGoods", map);
-	}
-	
-	
-	public List<Map<String,Object>> qryGoodsMsList(Map<String, Object> map) {
-		return sqlSessionTemplate
-                .selectList("com.dity.dao.DityDaoMapper.qryGoodsMsList", map);
-	}
-	
-	public int addGoodsMs(Map<String, Object> map) {
-		return sqlSessionTemplate
-        .insert("com.dity.dao.DityDaoMapper.addGoodsMs", map);
-	}
-	
-	public int editGoodsMs(Map<String, Object> map) {
-		return sqlSessionTemplate
-		        .update("com.dity.dao.DityDaoMapper.editGoodsMs", map);
-	}
-	
-	public int setGoodsMsStatus(Map<String, Object> map) {
-		return sqlSessionTemplate
-		        .update("com.dity.dao.DityDaoMapper.setGoodsMsStatus", map);
-	}
-	
-	public int delGoodsMs(Map<String, Object> map) {
-		return sqlSessionTemplate
-		        .delete("com.dity.dao.DityDaoMapper.delGoodsMs", map);
 	}
 	
 	public List<Map<String,Object>> qryUserDz(Map<String, Object> map) {
@@ -166,14 +145,19 @@ public class DityDao {
 		        .update("com.dity.dao.DityDaoMapper.setOrder", map);
 	}
 	
+	public int setGoodPrice(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.setGoodPrice", map);
+	}
+	
 	public int delOrder(Map<String, Object> map) {
 		return sqlSessionTemplate
 		        .delete("com.dity.dao.DityDaoMapper.delOrder", map);
 	}
 	
-	public int editGoodsMsOwnAcnt(Map<String, Object> map) {
+	public int editGoodsYsc(Map<String, Object> map) {
 		return sqlSessionTemplate
-		        .update("com.dity.dao.DityDaoMapper.editGoodsMsOwnAcnt", map);
+		        .update("com.dity.dao.DityDaoMapper.editGoodsYsc", map);
 	}
 	
 	public int editGoodsOwnAcnt(Map<String, Object> map) {
@@ -186,8 +170,71 @@ public class DityDao {
 		        .update("com.dity.dao.DityDaoMapper.setOrderExpress", map);
 	}
 	
+	public int editGoodsMsPdStatus(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.editGoodsMsPdStatus", map);
+	}
+	
+	public int editGoodsPdStatus(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.editGoodsPdStatus", map);
+	}
+	
 	public List<Map<String,Object>> qryFsUser(Map<String, Object> map) {
 		return sqlSessionTemplate
                 .selectList("com.dity.dao.DityDaoMapper.qryFsUser", map);
 	}
+	
+	public List<Map<String,Object>> qryMyOrder(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectList("com.dity.dao.DityDaoMapper.qryMyOrder", map);
+	}
+	
+	public int setUserWtsk(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.setUserWtsk", map);
+	}
+	
+	public int clearUserWtsk(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.clearUserWtsk", map);
+	}
+	
+	public List<Map<String,Object>> qryWtSkInfo(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectList("com.dity.dao.DityDaoMapper.qryWtSkInfo", map);
+	}
+	
+	public List<Map<String,Object>> qryOrderSkInfo(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectList("com.dity.dao.DityDaoMapper.qryOrderSkInfo", map);
+	}
+	
+	public List<Map<String,Object>> checkOrder(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectList("com.dity.dao.DityDaoMapper.checkOrder", map);
+	}
+	
+	public int clearUserSk(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.clearUserSk", map);
+	}
+	
+	public List<Map<String,Object>> getYjInfo(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectList("com.dity.dao.DityDaoMapper.getYjInfo", map);
+	}
+	public List<Map<String,Object>> getYjList(Map<String, Object> map) {
+		return sqlSessionTemplate
+                .selectList("com.dity.dao.DityDaoMapper.getYjList", map);
+	}
+	public int addYJ(Map<String, Object> map) {
+		return sqlSessionTemplate
+        .insert("com.dity.dao.DityDaoMapper.addYJ", map);
+	}
+	public int updateYjStatus(Map<String, Object> map) {
+		return sqlSessionTemplate
+		        .update("com.dity.dao.DityDaoMapper.updateYjStatus", map);
+	}
+	
 }

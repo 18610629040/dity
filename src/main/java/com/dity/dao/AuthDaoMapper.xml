@@ -40,18 +40,22 @@
 				USER_NO,
 				PASS,
 				USER_NAME,
+				MOBILE_NO,
 				USER_TYPE,
 				STATUS,
 				PARENT_NO,
+				IS_WTSK,
 				CRITE_TIME
 			) VALUES (
 				#{ID},
 				#{USER_NO},
 				#{PASS},
 				#{USER_NAME},
+				#{MOBILE_NO},
 				#{USER_TYPE},
 				#{STATUS},
 				#{PARENT_NO},
+				#{IS_WTSK},
 				SYSDATE()
 			)
 	</insert>

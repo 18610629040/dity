@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -25,7 +28,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.dity.common.SysProperties;
+import com.dity.common.aop.annotation.Log;
+import com.dity.common.bootonfig.PassToken;
 import com.dity.common.bootonfig.UserLoginToken;
 import com.dity.common.utils.IDUtils;
 import com.dity.common.utils.QRCodeUtil;
@@ -168,12 +176,6 @@ public class MobileController {
         	map.put("WX_FILE_URL",WX_FILE_URL);
         	map.put("ZFB_FILE_URL",ZFB_FILE_URL);
         	map.put("TX_FILE_URL",TX_FILE_URL);
-        	map.put("STATUS",0);
-        	if(StringUtils.isNotBlank(BANK_NO) 
-        			|| StringUtils.isNotBlank(WX_NO) || StringUtils.isNotBlank(WX_FILE_URL)
-        			|| StringUtils.isNotBlank(ZFB_NO) || StringUtils.isNotBlank(ZFB_FILE_URL)) {
-        		map.put("STATUS",1);
-        	}
         	map.put("CRITE_USER",SessionUtil.getUserNo());
         	dityService.editUser(map);
         	map.put("O_RUNSTATUS", 1);
@@ -185,27 +187,6 @@ public class MobileController {
         }
         return map;
     }
-    
-    
-    
-    @RequestMapping(value = "/qryGoodsMsList", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public Map<String, Object> qryGoodsMsList(HttpServletRequest request,HttpServletResponse response, 
-            @RequestParam(value = "ID", required = false) String id){
-		Map<String,Object> map = new HashMap<String, Object>();
-		try {
-			map.put("ID",id);
-			List<Map<String,Object>> list = dityService.qryGoodsMsList(map);
-			map.put("O_DATA",list);
-			map.put("O_RUNSTATUS",1);
-			map.put("O_MSG","success");
-		} catch (Exception e) {
-			logger.error("qryGoodsMsList:"+map,e);
-			map.put("O_RUNSTATUS",0);
-			map.put("O_MSG","system error");
-		}
-		return map;
-	}
     
     /**
 	 * 商品类别数据-查询
@@ -227,25 +208,76 @@ public class MobileController {
 		return map;
 	}
     
-    @RequestMapping(value = "/qryGoodsList", method = { RequestMethod.POST, RequestMethod.GET })
+    @SuppressWarnings("unchecked")
+	@RequestMapping(value = "/qryGoodsList", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public Map<String, Object> qryGoodsList(HttpServletRequest request,
-            @RequestParam(value = "GOODS_TYPE", required = true) String type,
-            @RequestParam(value = "ID", required = true) String id){
+            @RequestParam(value = "GOODS_TYPE", required = false) String type,
+            @RequestParam(value = "ID", required = false) String id,
+            @RequestParam(value = "PAGENUM", required = false) String pagenum,
+            @RequestParam(value = "PAGESIZE", required = false) String pagesize){
 		Map<String,Object> map = new HashMap<String, Object>();
+		Map<String,Object> rmap = new HashMap<String, Object>();
 		try {
 			map.put("GOODS_TYPE",type);
 			map.put("ID",id);
+			if(StringUtils.isNotBlank(pagenum) && StringUtils.isNotBlank(pagesize)){
+				map.put("PAGENUM",Integer.parseInt(pagenum));
+				map.put("PAGESIZE",Integer.parseInt(pagesize));
+			}
 			List<Map<String,Object>> list = dityService.qryGoodsList(map);
-			map.put("O_DATA",list);
-			map.put("O_RUNSTATUS",1);
-			map.put("O_MSG","success");
+			if(StringUtils.isNotBlank(pagenum) && StringUtils.isNotBlank(pagesize)) {
+				int count = dityService.qryGoodsListCt(map);
+				rmap.put("O_COUNT",count);
+			}
+			map.clear();
+			if(StringUtils.isNotEmpty(id) && StringUtils.isEmpty(type)) {
+				Map<String,Object> pd= list.get(0);
+				String typeId = String.valueOf(pd.get("GOODS_TYPE"));
+				
+				map.put("ID",typeId);
+				List<Object> tpList = feePerfMgtService.srchPrdtLbData(map);
+				Map<String,Object> tp = (Map<String, Object>) tpList.get(0);
+				String status = String.valueOf(tp.get("STATUS"));
+				if("2".equals(status)) {
+					Long timestemp = (long) 0;
+					String flag = "活动未开始";
+					
+					String bgnTime = String.valueOf(tp.get("BGN_TIME"));
+					Date now = new Date();
+					SimpleDateFormat df = new SimpleDateFormat( "yyyy-MM-dd") ;
+					String nowStr = df.format(new Date());
+					String bgn = nowStr +" "+ bgnTime +":00";
+					String endTime = String.valueOf(tp . get("END_TIME"));
+					String end = nowStr +" "+ endTime +":00";
+					SimpleDateFormat df2 = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss");
+					Date bDate = df2.parse(bgn);
+					Date eDate = df2.parse(end);
+					
+					if(now.before(bDate)) {
+						//活动还未开始，计算出剩余毫秒数
+						timestemp = bDate.getTime( )-now.getTime();
+					} else if(now.after(eDate)){
+						flag = "活动已结束";
+					} else {
+						flag = "活动进行中";
+						timestemp = eDate.getTime( )-now.getTime();
+					}
+					for (Map<String, Object> good : list) {
+						good.put("HD_FLAG",flag);
+						good.put("TIMESTEMP",timestemp);
+					}
+				}
+			}
+			rmap.put("O_DATA",list);
+			rmap.put("O_RUNSTATUS",1);
+			rmap.put("O_MSG","success");
 		} catch (Exception e) {
 			logger.error("srchPrdtLbData:"+map,e);
-			map.put("O_RUNSTATUS",0);
-			map.put("O_MSG","system error");
+			rmap.put("O_RUNSTATUS",0);
+			rmap.put("O_MSG","system error");
 		}
-		return map;
+		return rmap;
 	}
     
     
@@ -370,6 +402,7 @@ public class MobileController {
         	map.put("ID",ID);
         	map.put("USER_NO",USER_NO);
         	dityService.setUserDzMr2(map);
+        	dityService.setUserDzMr(map);
         	map.put("O_RUNSTATUS", dityService.setUserDzMr(map));
         	map.put("O_MSG", "操作成功！");
         } catch (Exception e) {
@@ -445,38 +478,48 @@ public class MobileController {
     		@RequestParam(value = "WTF", required = false) String WTF,
     		@RequestParam(value = "YJSY", required = false) String YJSY,
     		@RequestParam(value = "DDXJ", required = false) String DDXJ,
-    		@RequestParam(value = "ORDER_PD", required = false) String ORDER_PD,
-            @RequestParam(value = "USER_NO", required = false) String USER_NO,
+    		@RequestParam(value = "ORDER_PD", required = true) String ORDER_PD,
+            @RequestParam(value = "USER_NO", required = true) String USER_NO,
             @RequestParam(value = "ORDER_PD_TYPE", required = false) String ORDER_PD_TYPE) {
         Map<String, Object> map = new HashMap<>();
         try {
+        	Map<String, Object> param = new HashMap<>();
+    		param.put("ID",ORDER_PD);
+    		List<Map<String,Object>> list = dityService.qryGoodsList(param);
+    		if(list.size()>0) {
+    			Map<String,Object> pd = list.get(0);
+    			if(!"1".equals(String.valueOf(pd.get("STATUS")))) {
+            		map.put("O_RUNSTATUS", -1);
+        			map.put("O_MSG", "该商品已售出、或已下架，暂时无法购买！");
+        			return map;
+            	}
+    			map.put("ORDER_PRICE",pd.get("PRICE"));
+    			map.put("ORDER_USER_SEL_NO",pd.get("OWN_ACNT"));
+    			map.put("ORDER_PD_NAME",pd.get("NAME"));
+    			map.put("PD_FILE_URL",pd.get("FILE_URL"));
+    		}else {
+    			map.put("O_RUNSTATUS", -1);
+                map.put("O_MSG", "该藏品已被下架或删除，无法继续下单！");
+                return map;
+    		}
+        	
         	map.put("ID",IDUtils.createID());
         	map.put("ORDER_NO",ORDER_NO);
         	map.put("ORDER_PD",ORDER_PD);
         	map.put("ORDER_PD_TYPE",ORDER_PD_TYPE);
-        	if("1".equals(ORDER_PD_TYPE)) {
-        		Map<String, Object> param = new HashMap<>();
-        		param.put("ID",ORDER_PD);
-        		List<Map<String,Object>> list = dityService.qryGoodsMsList(param);
-        		if(list.size()>0) {
-        			Map<String,Object> pd = list.get(0);
-        			map.put("ORDER_PD_NAME",pd.get("NAME"));
-        		}
-        	}else {
-        		Map<String, Object> param = new HashMap<>();
-        		param.put("ID",ORDER_PD);
-        		List<Map<String,Object>> list = dityService.qryGoodsList(param);
-        		if(list.size()>0) {
-        			Map<String,Object> pd = list.get(0);
-        			map.put("ORDER_PD_NAME",pd.get("NAME"));
-        		}
-        	}        	
+        	
         	map.put("ORDER_USER_BUY_NO",USER_NO);
         	map.put("ORDER_CVAL",YJSY);
         	map.put("ORDER_CFEE",WTF);
         	map.put("ORDER_INCOM",DDXJ);
         	map.put("OPTION_USER",USER_NO);
-        	map.put("O_RUNSTATUS", dityService.addOrder(map));
+        	dityService.addOrder(map);
+        	
+        	Map<String, Object> map2 = new HashMap<>();
+        	map2.put("ID",ORDER_PD);
+        	dityService.editGoodsYsc(map2);
+        	
+        	map.put("O_RUNSTATUS", 1);
         	map.put("O_MSG", "操作成功！");
         } catch (Exception e) {
             logger.error("/addOrder:" + map, e);
@@ -546,23 +589,6 @@ public class MobileController {
             @RequestParam(value = "USER_NO", required = true) String userNo){
 		Map<String,Object> map = new HashMap<String, Object>();
 		try {
-			
-			/**
-			 * STATUS 
-			 * 
-			 *  0 买家刚下单，草稿状态的，这时候买家可以点击（已确认付款按钮）
-			 * 
-			 * 	买家点击确认付款按钮后，订单状态变为1，卖家可以对这条订单去确认收款（点击确认已收款）
-			 * 	
-			 * 	卖家确认收款完后，status 变为2   表示买家买下的藏品，卖家已确认收款，当前藏品持有人变成了买家
-			 * 	买家可以发起委托  或者 卖家去点击发货
-			 * 
-			 * 	① 卖家点发货按钮，填写了发货信息，状态status变为3。这件藏品已发货了，订单结束了
-			 * 
-			 * 	② 买家还可以不让卖家发货，发起委托（点击委托按钮），status状态变成4，（待确认委托）
-			 * 	管理员操作确认委托，状态变成5  
-			 * 	（代表买家买下的藏品，卖家不用发货、这件藏品重新上架到藏品列表里卖，订单流程结束）
-			 */
 			List<Map<String,Object>> list = new ArrayList<>();
 			map.put("TYPE",type);
 			map.put("USER_NO",userNo);
@@ -570,13 +596,19 @@ public class MobileController {
 			case "0":
 				//付款确认页签，查当前人下完的单，Status 0的订单
 				list = dityService.qryOrder(map);
+				for (Map<String, Object> map2 : list) {
+					map2.put("STATUS_NAME","待我确认已付款");
+				}
 				break;
 			case "1":
 				//收款确认
 				list = dityService.qryOrder(map);
+				for (Map<String, Object> map2 : list) {
+					map2.put("STATUS_NAME","待我确认已收款");
+				}
 				break;
 			case "2":
-				//下的单已发货的
+				//下的单已委托的
 				list = dityService.qryOrder(map);
 				break;
 			case "3":
@@ -586,10 +618,17 @@ public class MobileController {
 			case "4":
 				//已卖出的订单
 				list = dityService.qryOrder(map);
+				for (Map<String, Object> map2 : list) {
+					map2.put("STATUS_NAME","已卖出");
+				}
 				break;
 			case "5":
 				//粉丝订单
 				list = dityService.qryFsOrder(map);
+				break;
+			case "6":
+				//全部订单
+				list = dityService.qryMyOrder(map);
 				break;
 			default:
 				break;
@@ -613,22 +652,6 @@ public class MobileController {
         Map<String, Object> map = new HashMap<>();
         try {
         	map.put("ID",id);
-        	List<Map<String,Object>> list = dityService.qryOrder(map);
-        	Map<String,Object> order = list.get(0);
-        	String ORDER_PD = String.valueOf(order.get("ORDER_PD"));
-        	
-        	map.clear();
-        	map.put("STATUS",2);
-        	map.put("ORDER_PD",ORDER_PD);
-        	List<Map<String,Object>> list2 = dityService.qryOrder(map);
-        	if(list2.size()>0) {
-        		 map.put("O_RUNSTATUS", -1);
-                 map.put("O_MSG", "该商品已被其他买家购得，请联系卖家发起退款！");
-                 return map;
-        	}
-        	
-        	map.clear();
-        	map.put("ID",id);
         	map.put("STATUS",1);
         	dityService.setOrder(map);
         	map.put("O_RUNSTATUS", 1);
@@ -650,35 +673,11 @@ public class MobileController {
         try {
         	//改变商品所属人
         	map.put("ID",id);
-        	List<Map<String,Object>> list = dityService.qryOrder(map);
-        	Map<String,Object> order = list.get(0);
-        	String ORDER_PD = String.valueOf(order.get("ORDER_PD"));
-        	
-        	map.clear();
-        	map.put("STATUS",2);
-        	map.put("ORDER_PD",ORDER_PD);
-        	List<Map<String,Object>> list2 = dityService.qryOrder(map);
-        	if(list2.size()>0) {
-        		 map.put("O_RUNSTATUS", -1);
-                 map.put("O_MSG", "您的此商品已卖出，请勿重复收款！");
-                 return map;
-        	}
-        	
-        	map.clear();
-        	map.put("ID",id);
         	map.put("STATUS",2);
         	dityService.setOrder(map);
-        	String ORDER_PD_TYPE = String.valueOf(order.get("ORDER_PD_TYPE"));
-        	if("1".equals(ORDER_PD_TYPE)) {
-//        		秒杀商品的订单
-        		map.clear();
-        		map.put("ORDERID",id);
-        		dityService.editGoodsMsOwnAcnt(map);
-        	}else {
-        		map.clear();
-        		map.put("ORDERID",id);
-        		dityService.editGoodsOwnAcnt(map);
-        	}
+        	map.clear();
+        	map.put("ORDERID",id);
+        	dityService.editGoodsOwnAcnt(map);
         	
         	map.put("ID",id);
         	map.put("O_RUNSTATUS", 1);
@@ -721,6 +720,10 @@ public class MobileController {
         	map.put("STATUS",5);
         	map.put("ID",id);
         	dityService.setOrder(map);
+        	map.clear();
+        	map.put("ORDERID",id);
+        	dityService.setGoodPrice(map);
+        	dityService.editGoodsPdStatus(map);
         	map.put("O_RUNSTATUS", 1);
         	map.put("O_MSG", "操作成功！");
         } catch (Exception e) {
@@ -742,7 +745,7 @@ public class MobileController {
         	map.put("STATUS",3);
         	map.put("ID",id);
         	map.put("ORDER_EXPRESS",ORDER_EXPRESS);
-        	dityService.setOrder(map);
+        	dityService.setOrderExpress(map);
         	map.put("O_RUNSTATUS", 1);
         	map.put("O_MSG", "操作成功！");
         } catch (Exception e) {
@@ -756,6 +759,7 @@ public class MobileController {
     /**
      * 根据 url 生成二维码
      */
+    @PassToken
     @RequestMapping(value = "/createLogoQRCode")
     public void createLogoQRCode(HttpServletRequest request, HttpServletResponse response,
             @RequestParam(value = "URL", required = true) String url) throws Exception {
@@ -794,4 +798,140 @@ public class MobileController {
 		}
 		return map;
 	}
+    
+    @RequestMapping(value = "/qryWtSkInfo", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public Map<String, Object> qryWtSkInfo(){
+		Map<String,Object> map = new HashMap<String, Object>();
+		try {
+			List<Map<String, Object>> list = dityService.qryWtSkInfo(map);
+			map.put("O_DATA",list.get(0));
+			map.put("O_RUNSTATUS",1);
+			map.put("O_MSG","success");
+		} catch (Exception e) {
+			logger.error("qryWtSkInfo:"+map,e);
+			map.put("O_RUNSTATUS",0);
+			map.put("O_MSG","system error");
+		}
+		return map;
+	}
+    
+    @RequestMapping(value = "/qryOrderSkInfo", method = { RequestMethod.POST, RequestMethod.GET })
+   	@ResponseBody
+   	public Map<String, Object> qryOrderSkInfo(HttpServletRequest request,
+            @RequestParam(value = "GOODID", required = true) String GOODID){
+   		Map<String,Object> map = new HashMap<String, Object>();
+   		try {
+   			map.put("GOODID",GOODID);
+   			List<Map<String, Object>> list = dityService.qryOrderSkInfo(map);
+   			map.put("O_DATA",list.get(0));
+   			map.put("O_RUNSTATUS",1);
+   			map.put("O_MSG","success");
+   		} catch (Exception e) {
+   			logger.error("qryWtSkInfo:"+map,e);
+   			map.put("O_RUNSTATUS",0);
+   			map.put("O_MSG","system error");
+   		}
+   		return map;
+   	}
+    
+    
+	@RequestMapping("/getAuthMessage")
+    @ResponseBody
+	@PassToken
+    public Object getAuthMessage(HttpServletRequest request) {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> user = new HashMap<>();
+        HttpSession session = request.getSession();
+		String token = (String) session.getAttribute("token");
+		if (token == null) {
+			user.put("STATUS_AUTH",0);
+			map.put("O_DATA",user);
+			map.put("O_RUNSTATUS", 1);
+			map.put("O_MSG", "");
+            return map;
+        }
+        // 验证 token
+        try {
+        	// 获取 token 中的 userNo
+        	String userNo = JWT.decode(token).getAudience().get(0);
+        	Map<String, Object> map2 = new HashMap<>();
+        	map2.put("USER_NO", userNo);
+            List<Map<String, Object>> list = (List<Map<String, Object>>) dityService.getUserByNo(map2);
+            user = list.get(0);
+        	JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256((String)user.get("PASS"))).build();
+            jwtVerifier.verify(token);
+            user.put("STATUS_AUTH",1);
+    		map.put("O_DATA",user);
+    		map.put("O_RUNSTATUS", 1);
+    		map.put("O_MSG", "");
+        } catch (Exception e) {
+        	//token验证失败，或token已过期，TokenService中设置有效时间，或用户被删了，改了密码。
+        	user.put("STATUS_AUTH",0);
+			map.put("O_DATA",user);
+			map.put("O_RUNSTATUS", 1);
+			map.put("O_MSG", "");
+            return map;
+        }
+        return map;
+    }
+	
+	@RequestMapping(value = "/getYjInfo", method = { RequestMethod.POST, RequestMethod.GET })
+   	@ResponseBody
+   	public Map<String, Object> getYjInfo(HttpServletRequest request,
+            @RequestParam(value = "USER_NO", required = true) String USER_NO){
+   		Map<String,Object> map = new HashMap<String, Object>();
+   		try {
+   			map.put("USER_NO",USER_NO);
+   			List<Map<String, Object>> list = dityService.getYjInfo(map);
+   			map.put("O_DATA",list.get(0));
+   			map.put("O_RUNSTATUS",1);
+   			map.put("O_MSG","success");
+   		} catch (Exception e) {
+   			logger.error("qryWtSkInfo:"+map,e);
+   			map.put("O_RUNSTATUS",0);
+   			map.put("O_MSG","system error");
+   		}
+   		return map;
+   	}
+	
+	@RequestMapping(value = "/getYjList", method = { RequestMethod.POST, RequestMethod.GET })
+   	@ResponseBody
+   	public Map<String, Object> getYjList(HttpServletRequest request,
+            @RequestParam(value = "USER_NO", required = true) String USER_NO){
+   		Map<String,Object> map = new HashMap<String, Object>();
+   		try {
+   			map.put("USER_NO",USER_NO);
+   			List<Map<String, Object>> list = dityService.getYjList(map);
+   			map.put("O_DATA",list);
+   			map.put("O_RUNSTATUS",1);
+   			map.put("O_MSG","success");
+   		} catch (Exception e) {
+   			logger.error("qryWtSkInfo:"+map,e);
+   			map.put("O_RUNSTATUS",0);
+   			map.put("O_MSG","system error");
+   		}
+   		return map;
+   	}
+	
+	@RequestMapping("/addYJ")
+	@ResponseBody
+    public Object addYJ(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "USER_NO", required = true) String USER_NO,
+            @RequestParam(value = "JE", required = true) String JE) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("USER_NO",USER_NO);
+        	map.put("JE",JE);
+        	map.put("ID",IDUtils.createID());
+        	dityService.addYJ(map);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/addYJ:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
 }

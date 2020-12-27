@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.dity.service.AuthService;
 
 public class AuthenticationInterceptor implements HandlerInterceptor{
@@ -77,7 +76,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor{
                 }
             }
         }
-        System.out.println(httpServletRequest.getRequestURI() + "true"); 
         return true;
     }
 	

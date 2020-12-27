@@ -21,8 +21,8 @@ function initBtn(){
 			}, function(){
 				$.ajax({
 			        type:'POST',
-			        data:{ID:rowData.ID, STATUS:5},
-			        url: '/dity/setOrder',
+			        data:{ID:rowData.ID},
+			        url: '/dity/qrfqwt',
 			        dataType:"json", 
 			        success:function(data){
 			        	parent.layer.alert(data.O_MSG);
@@ -49,7 +49,7 @@ function initFeePerfGrid(){
 		url:'/dity/qryOrder?STATUS=4',
         datatype: "json",
         mtype:'post',
-        height: 520,
+        height: 450,
         loadonce:true,//前台分页,页面刷新不走请求了
         rowNum:50, 
 		rowList:[10,50,200],   

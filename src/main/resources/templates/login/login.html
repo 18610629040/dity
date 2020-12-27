@@ -64,7 +64,12 @@
 	            		 $("#aaa").show();
 	            	 	 $("#content").text(data.O_MSG);
 	            	 }else{
-	            		 window.location.href="/dity";
+	            		 if(data.O_DATA.USER_TYPE == 1){
+		            		 window.location.href="/dity";
+	            		 }else{
+	            			 $("#aaa").show();
+		            	 	 $("#content").text("您不是管理员账号，无法登录后台管理系统！");
+	            		 }
 	            	 }
 	             }
 	         });

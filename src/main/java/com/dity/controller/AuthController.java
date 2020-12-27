@@ -120,7 +120,7 @@ public class AuthController {
             @RequestParam(value = "username", required = true) String name,
             @RequestParam(value = "userpass", required = true) String pass,
             @RequestParam(value = "userpass1", required = true) String pass1,
-            @RequestParam(value = "PARENT_NO", required = true) String PARENT_NO,
+            @RequestParam(value = "PARENT_NO", required = false) String PARENT_NO,
             @RequestParam(value = "type", required = false) String type) {
         Map<String, Object> map = new HashMap<>();
         try {
@@ -131,6 +131,7 @@ public class AuthController {
             } 
             map.put("ID", IDUtils.createID());
             map.put("USER_NO", userno);
+            map.put("MOBILE_NO", userno);
             map.put("USER_NAME", name);
             map.put("PASS", pass);
             List<Map<String, Object>> list = (List<Map<String, Object>>) authService.getUserInfo(map);
@@ -144,6 +145,9 @@ public class AuthController {
             }
             map.put("STATUS", 0);
             map.put("USER_TYPE", type);
+            if(StringUtils.isEmpty(PARENT_NO)) {
+            	PARENT_NO = "";
+            }
             map.put("PARENT_NO", PARENT_NO);
             map.put("O_RUNSTATUS", authService.saveUser(map));
             map.put("O_MSG", "注册成功");

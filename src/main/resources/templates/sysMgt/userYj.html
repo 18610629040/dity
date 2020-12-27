@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>用户管理</title>
+<title>佣金管理</title>
 
 <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
 <link href="/css/plugins/iCheck/custom.css" rel="stylesheet">
@@ -101,7 +101,7 @@
     			if(rowid == null){
     				parent.layer.msg('请选择数据！', {shift: 6});
     			}else{
-    				parent.layer.confirm('改操作会重置该用户的微信支付宝号、收款二维码，请确认是否继续操作！', {
+    				parent.layer.confirm('是否确认该笔提现已转账！', {
         				btn: ['确定','取消'],
         			    shade: false //不显示遮罩
         			}, function(){
@@ -110,7 +110,7 @@
         				$.ajax({
         			        type:'POST',
         			        data:{ID:rowData.ID},
-        			        url: '/dity/clearUserSk',
+        			        url: '/dity/updateYjStatus',
         			        dataType:"json", 
         			        success:function(data){
         			        	parent.layer.alert(data.O_MSG);
@@ -139,7 +139,7 @@
 
     function initFeePerfGrid2(){
     	$("#user_list2").jqGrid({
-    		url:'/dity/qryUserList?USER_TYPE=2',
+    		url:'/dity/getYjList',
     		datatype: "json",
             mtype:'post',
             height: 450,
@@ -155,30 +155,19 @@
     		shrinkToFit:false,  
     		autoScroll: true,
     		loadtext: "卖力加载中...",
-            colNames: ['ID','账号', '密码','用户名','手机号',
-            	'地址', '年龄','生日','USER_TYPE','账户类型',
-            	'银行卡号','开户行','真实姓名', '微信号','支付宝账号','创建时间',
-            	'创建人','WX_FILE_URL','ZFB_FILE_URL'],
+            colNames: ['姓名','ID','账号', '金额','STATUS','提现日期','状态','收款卡号','收款支付宝号','收款微信号','手机号'],
             colModel: [
+            	{name: 'USER_NAME',index: 'USER_NAME', align :"Center",editable: true,width: 100},
             	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
-                {name: 'USER_NO',index: 'USER_NO', align :"Center",editable: true,width: 120},
-                {name: 'PASS',index: 'PASS', align :"Center",editable: true,width: 100},
-                {name: 'USER_NAME',index: 'USER_NAME', align :"Center",editable: true,width: 100},
-                {name: 'MOBILE_NO',index: 'MOBILE_NO', align :"Center",editable: true,width: 120},
-                {name: 'USER_ADD',index: 'USER_ADD', align :"Center",editable: true,width: 200,hidden:true},
-                {name: 'USER_AGE',index: 'USER_AGE', align :"Center",editable: true,width: 100},
-                {name: 'USER_BIRTH',index: 'USER_BIRTH', align :"Center",editable: true,width: 100},
-                {name: 'USER_TYPE',index: 'USER_TYPE',editable: true, align :"Center",hidden:true},
-                {name: 'USER_TYPE_NAME',index: 'USER_TYPE_NAME', align :"Center",editable: true,width: 100,hidden:true},
-                {name: 'BANK_NO',index: 'BANK_NO', align :"Center",editable: true,width: 150},
-                {name: 'BANK_NAME',index: 'BANK_NAME', align :"Center",editable: true,width: 120},
-                {name: 'REAL_NAME',index: 'REAL_NAME', align :"Center",editable: true,width: 120},
-                {name: 'WX_NO',index: 'WX_NO', align :"Center",editable: true,width: 120},
-                {name: 'ZFB_NO',index: 'ZFB_NO', align :"Center",editable: true,width: 120},
-                {name: 'CRITE_TIME',index: 'CRITE_TIME', align :"Center",editable: true,width: 140},
-                {name: 'CRITENM',index: 'CRITENM', align :"Center",editable: true,width: 100},
-                {name: 'WX_FILE_URL',index: 'WX_FILE_URL',editable: true, align :"Center",hidden:true},
-                {name: 'ZFB_FILE_URL',index: 'ZFB_FILE_URL',editable: true, align :"Center",hidden:true}
+                {name: 'USER_NO',index: 'USER_NO', align :"Center",editable: true,width: 100},
+                {name: 'JE',index: 'JE', align :"Center",editable: true,width: 100},
+                {name: 'STATUS',index: 'STATUS', align :"Center",editable: true,width: 120,hidden:true},
+                {name: 'CRITE_TIME',index: 'CRITE_TIME', align :"Center",editable: true,width: 200},
+                {name: 'STATUS_NAME',index: 'STATUS_NAME', align :"Center",editable: true,width: 200},
+                {name: 'BANK_NO',index: 'KH', align :"Center",editable: true,width: 200},
+                {name: 'ZFB_NO',index: 'ZFB', align :"Center",editable: true,width: 200},
+                {name: 'WX_NO',index: 'WX', align :"Center",editable: true,width: 200},
+                {name: 'MOBILE_NO',index: 'MOBILE_NO', align :"Center",editable: true,width: 200}
             ],
             loadComplete: function (data) {
               　　		/* console.log(data) */
@@ -186,10 +175,10 @@
             pager: "#user_list_btn2",
             viewrecords: true,
             emptyrecords: "暂无数据",//viewrecords: true时生效
-            caption: "普通用户列表",
+            caption: "佣金提现列表",
             add: true,
             edit: true,
-            editurl :'/dity/userMgt',
+            editurl :'/dity/addYj',
             hidegrid: false
         });
     	
@@ -213,7 +202,7 @@
 <body>
 	<div class="wrapper wrapper-content animated fadeInRight" >
 		<div style="float:right;">
-			<button id="xxxcxxxx" class="btn btn-primary" data-toggle="modal" data-target="#myModal">重置收付款方式</button>
+			<button id="xxxcxxxx" class="btn btn-primary" data-toggle="modal" data-target="#myModal">确认提现</button>
 		</div>
         <div class="jqGrid_wrapper" style="margin-top: 40px;">
             <table id="user_list2"></table>

@@ -117,6 +117,7 @@ public class DityController {
         	map.put("ZFB_NO",ZFB_NO);
         	map.put("WX_FILE_URL",WX_FILE_URL);
         	map.put("ZFB_FILE_URL",ZFB_FILE_URL);
+        	map.put("TX_FILE_URL","");
         	map.put("CRITE_USER",SessionUtil.getUserNo());
         	map.put("STATUS",0);
         	if(StringUtils.isNotBlank(BANK_NO) 
@@ -124,7 +125,7 @@ public class DityController {
         			|| StringUtils.isNotBlank(ZFB_NO) || StringUtils.isNotBlank(ZFB_FILE_URL)) {
         		map.put("STATUS",1);
         	}
-        	map.put("ID",id);
+        	
         	map.put("USER_NO",USER_NO);
         	List<Map<String, Object>> list= dityService.getUserByNo(map);
         	if(list.size()>0) {
@@ -133,8 +134,10 @@ public class DityController {
             	return map;
         	}
         	if(StringUtils.isBlank(id)) {
+        		map.put("ID",IDUtils.createID());
         		dityService.addUser(map);
         	}else {
+        		map.put("ID",id);
         		dityService.editUser(map);
         	}
         	map.put("O_RUNSTATUS", 1);
@@ -363,103 +366,6 @@ public class DityController {
         return map;
     }
 	
-	
-	@RequestMapping(value = "/qryGoodsMsList", method = { RequestMethod.POST, RequestMethod.GET })
-	@ResponseBody
-	public List<Map<String,Object>> qryGoodsMsList(){
-		Map<String,Object> map = new HashMap<String, Object>();
-		List<Map<String,Object>> list = new ArrayList<>();
-		try {
-			list = dityService.qryGoodsMsList(map);
-		} catch (Exception e) {
-			logger.error("qryGoodsMsList:"+map,e);
-		}
-		return list;
-	}
-    
-	@RequestMapping("/addGoodsMs")
-	@ResponseBody
-    public Object addGoodsMs(HttpServletRequest request,HttpServletResponse response, 
-            @RequestParam(value = "ID", required = false) String id,
-            @RequestParam(value = "NAME", required = false) String name,
-            @RequestParam(value = "PRICE", required = false) String price,
-            @RequestParam(value = "INTRDCT", required = false) String intrdct,
-            @RequestParam(value = "BUY_TIME", required = false) String buy_time,
-            @RequestParam(value = "WT_TIME", required = false) String wt_time,
-            @RequestParam(value = "BUY_DATE", required = false) String buy_date,
-            @RequestParam(value = "WT_DATE", required = false) String wt_date,
-            @RequestParam(value = "FILE_URL", required = false) String FILE_URL) {
-        Map<String, Object> map = new HashMap<>();
-        try {
-        	if(StringUtils.isBlank(id)) {
-        		map.put("ID",IDUtils.createID());
-        	}else {
-        		map.put("ID",id);
-        	}
-        	map.put("NAME",name);
-        	map.put("PRICE",price);
-        	map.put("INTRDCT",intrdct);
-        	map.put("BUY_TIME",buy_time);
-        	map.put("WT_TIME",wt_time);
-        	map.put("BUY_DATE",buy_date);
-        	map.put("WT_DATE",wt_date);
-        	map.put("FILE_URL",FILE_URL);
-        	if(StringUtils.isBlank(id)) {
-        		map.put("CRITE_USER",SessionUtil.getUserNo());
-        		map.put("STATUS",1);
-            	map.put("OWN_ACNT","");
-        		dityService.addGoodsMs(map);
-        	}else {
-        		dityService.editGoodsMs(map);
-        	}
-        	map.put("O_RUNSTATUS", 1);
-        	map.put("O_MSG", "操作成功！");
-        } catch (Exception e) {
-            logger.error("/addGoodsMs:" + map, e);
-            map.put("O_RUNSTATUS", -1);
-            map.put("O_MSG", "system error");
-        }
-        return map;
-    }
-	
-	@RequestMapping("/delGoodsMs")
-	@ResponseBody
-    public Object delGoodsMs(HttpServletRequest request,HttpServletResponse response, 
-            @RequestParam(value = "ID", required = true) Object id) {
-        Map<String, Object> map = new HashMap<>();
-        try {
-        	map.put("ID", id);
-        	dityService.delGoodsMs(map);
-        	map.put("O_RUNSTATUS", 1);
-        	map.put("O_MSG", "操作成功！");
-        } catch (Exception e) {
-            logger.error("/delGoodsMs:" + map, e);
-            map.put("O_RUNSTATUS", -1);
-            map.put("O_MSG", "system error");
-        }
-        return map;
-    }
-	
-	@RequestMapping("/outGoodsMs")
-	@ResponseBody
-    public Object outGoodsMs(HttpServletRequest request,HttpServletResponse response, 
-            @RequestParam(value = "ID", required = true) Object id) {
-        Map<String, Object> map = new HashMap<>();
-        try {
-        	map.put("ID", id);
-        	map.put("STATUS", 0);
-        	dityService.setGoodsMsStatus(map);
-        	map.put("O_RUNSTATUS", 1);
-        	map.put("O_MSG", "操作成功！");
-        } catch (Exception e) {
-            logger.error("/outGoodsMs:" + map, e);
-            map.put("O_RUNSTATUS", -1);
-            map.put("O_MSG", "system error");
-        }
-        return map;
-    }
-	
-	
 	@RequestMapping(value = "/uploadPdImg", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
 	public Object uploadPdImg(HttpServletRequest request,HttpServletResponse response,
@@ -484,10 +390,12 @@ public class DityController {
 	
 	@RequestMapping(value = "/qryGoodsList", method = { RequestMethod.POST, RequestMethod.GET })
 	@ResponseBody
-	public List<Map<String,Object>> qryGoodsList(){
+	public List<Map<String,Object>> qryGoodsList(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "TYPE", required = true) String type){
 		Map<String,Object> map = new HashMap<String, Object>();
 		List<Map<String,Object>> list = new ArrayList<>();
 		try {
+			map.put("TYPE",type);
 			list = dityService.qryGoodsList(map);
 		} catch (Exception e) {
 			logger.error("qryGoodsList:"+map,e);
@@ -571,19 +479,43 @@ public class DityController {
         return map;
     }
 	
-	@RequestMapping("/setOrder")
+	
+	@RequestMapping("/putGoods")
 	@ResponseBody
-    public Object setOrder(HttpServletRequest request,HttpServletResponse response, 
-    		@RequestParam(value = "ID", required = false) String ID,
-            @RequestParam(value = "STATUS", required = false) String STATUS) {
+    public Object putGoods(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = true) Object id) {
         Map<String, Object> map = new HashMap<>();
         try {
-        	map.put("ID",ID);
-        	map.put("STATUS",STATUS);
-        	map.put("O_RUNSTATUS", dityService.setOrder(map));
+        	map.put("ID", id);
+        	map.put("STATUS", 1);
+        	dityService.setGoodsStatus(map);
+        	map.put("O_RUNSTATUS", 1);
         	map.put("O_MSG", "操作成功！");
         } catch (Exception e) {
-            logger.error("/setOrder:" + map, e);
+            logger.error("/outGoods:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+	
+	@RequestMapping("/qrfqwt")
+	@ResponseBody
+    public Object qrfqwt(HttpServletRequest request,HttpServletResponse response, 
+    		@RequestParam(value = "ID", required = false) String id) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("STATUS",5);
+        	map.put("ID",id);
+        	dityService.setOrder(map);
+        	map.clear();
+        	map.put("ORDERID",id);
+        	dityService.setGoodPrice(map);
+        	dityService.editGoodsPdStatus(map);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/qrfqwt:" + map, e);
             map.put("O_RUNSTATUS", -1);
             map.put("O_MSG", "system error");
         }
@@ -608,4 +540,96 @@ public class DityController {
 		}
 		return list;
 	}
+	
+	
+	@RequestMapping("/setUserWtsk")
+	@ResponseBody
+    public Object setUserWtsk(HttpServletRequest request,HttpServletResponse response, 
+    		@RequestParam(value = "ID", required = false) String ID) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID",ID);
+        	dityService.clearUserWtsk(map);
+        	dityService.setUserWtsk(map);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/setUserWtsk:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+	
+	@RequestMapping("/clearUserSk")
+	@ResponseBody
+    public Object clearUserSk(HttpServletRequest request,HttpServletResponse response, 
+    		@RequestParam(value = "ID", required = false) String ID) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID",ID);
+        	dityService.clearUserSk(map);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/claerUserSk:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+	
+	@RequestMapping("/updateYjStatus")
+	@ResponseBody
+    public Object updateYjStatus(HttpServletRequest request,HttpServletResponse response, 
+    		@RequestParam(value = "ID", required = false) String ID) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID",ID);
+        	dityService.updateYjStatus(map);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/updateYjStatus:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+	
+	@RequestMapping(value = "/userYj", method = { RequestMethod.POST, RequestMethod.GET })
+    public String userYj(){
+        return "/sysMgt/userYj";
+    }
+	
+	@RequestMapping(value = "/getYjList", method = { RequestMethod.POST, RequestMethod.GET })
+   	@ResponseBody
+   	public List<Map<String, Object>> getYjList(HttpServletRequest request){
+   		Map<String,Object> map = new HashMap<String, Object>();
+   		List<Map<String, Object>> list = new ArrayList<>();
+   		try {
+   			list = dityService.getYjList(map);
+   		} catch (Exception e) {
+   			logger.error("getYjList:"+map,e);
+   		}
+   		return list;
+   	}
+	
+	@RequestMapping("/delOrder")
+	@ResponseBody
+    public Object delOrder(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = true) Object id) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID", id);
+        	dityService.delOrder(map);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/delOrder:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
 }

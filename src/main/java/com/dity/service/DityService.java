@@ -54,29 +54,10 @@ public class DityService {
 		return dityDao.editIttonOrder(map);
 	}
 	
-	
-	public List<Map<String,Object>> qryGoodsMsList(Map<String, Object> map) {
-		return dityDao.qryGoodsMsList(map);
+	public int qryGoodsListCt(Map<String, Object> map) {
+		return dityDao.qryGoodsListCt(map);
 	}
 	
-	public int addGoodsMs(Map<String, Object> map) {
-		return dityDao.addGoodsMs(map);
-	}
-	
-	public int editGoodsMs(Map<String, Object> map) {
-		return dityDao.editGoodsMs(map);
-	}
-	
-	public int setGoodsMsStatus(Map<String, Object> map) {
-		return dityDao.setGoodsMsStatus(map);
-	}
-	
-	public int delGoodsMs(Map<String, Object> map) {
-		return dityDao.delGoodsMs(map);
-	}
-	
-	
-
 	public List<Map<String,Object>> qryGoodsList(Map<String, Object> map) {
 		return dityDao.qryGoodsList(map);
 	}
@@ -136,13 +117,17 @@ public class DityService {
 	public int setOrder(Map<String, Object> map) {
 		return dityDao.setOrder(map);
 	}
+	
+	public int setGoodPrice(Map<String, Object> map) {
+		return dityDao.setGoodPrice(map);
+	}
 
 	public int delOrder(Map<String, Object> map) {
 		return dityDao.delOrder(map);
 	}
 	
-	public int editGoodsMsOwnAcnt(Map<String, Object> map) {
-		return dityDao.editGoodsMsOwnAcnt(map);
+	public int editGoodsYsc(Map<String, Object> map) {
+		return dityDao.editGoodsYsc(map);
 	}
 	
 	public int editGoodsOwnAcnt(Map<String, Object> map) {
@@ -155,5 +140,56 @@ public class DityService {
 	
 	public List<Map<String,Object>> qryFsUser(Map<String, Object> map) {
 		return dityDao.qryFsUser(map);
+	}
+	
+	public int editGoodsMsPdStatus(Map<String, Object> map) {
+		return dityDao.editGoodsMsPdStatus(map);
+	}
+	
+	public int editGoodsPdStatus(Map<String, Object> map) {
+		return dityDao.editGoodsPdStatus(map);
+	}
+	
+	public List<Map<String,Object>> qryMyOrder(Map<String, Object> map) {
+		return dityDao.qryMyOrder(map);
+	}
+	
+	public int setUserWtsk(Map<String, Object> map) {
+		return dityDao.setUserWtsk(map);
+	}
+	
+	public int clearUserWtsk(Map<String, Object> map) {
+		return dityDao.clearUserWtsk(map);
+	}
+	
+	public List<Map<String,Object>> qryWtSkInfo(Map<String, Object> map) {
+		return dityDao.qryWtSkInfo(map);
+	}
+	
+	public List<Map<String,Object>> qryOrderSkInfo(Map<String, Object> map) {
+		return dityDao.qryOrderSkInfo(map);
+	}
+	
+	public List<Map<String,Object>> checkOrder(Map<String, Object> map) {
+		return dityDao.checkOrder(map);
+	}
+	
+	public int clearUserSk(Map<String, Object> map) {
+		return dityDao.clearUserSk(map);
+	}
+
+	public List<Map<String,Object>> getYjInfo(Map<String, Object> map) {
+		return dityDao.getYjInfo(map);
+	}
+	
+	public List<Map<String,Object>> getYjList(Map<String, Object> map) {
+		return dityDao.getYjList(map);
+	}
+	public int addYJ(Map<String, Object> map) {
+		return dityDao.addYJ(map);
+	}
+	
+	public int updateYjStatus(Map<String, Object> map) {
+		return dityDao.updateYjStatus(map);
 	}
 }

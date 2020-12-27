@@ -25,12 +25,19 @@
 	</delete>
 	
 	<select id="srchPrdtLbData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT T.*,USR.USER_NAME,
+		SELECT 
+				t.BGN_TIME,
+				t.END_TIME,
+				CONVERT(replace(t.BGN_TIME, ':','.'),DECIMAL) BGN_TIME_DATE ,
+				CONVERT(replace(t.END_TIME, ':','.'),DECIMAL) END_TIME_DATE ,
+				T.*,USR.USER_NAME,
 			CASE T.STATUS
 				WHEN 0 THEN
-					'未开放'
+					'暂不开放'
 				WHEN 1 THEN
-					'已开放'
+					'正常开放'
+				WHEN 2 THEN
+					'定时开放'
 				ELSE
 					T.STATUS
 			END STATUS_NAME,
@@ -46,13 +53,13 @@
 	</select>
 	
 	<insert id="addPrdtLbData" parameterType="java.util.HashMap">
-		INSERT INTO T_DITY_PRODUCT_TYPE (ID,TYPE_ORDER,TYPE_NAME,STATUS,FILE_URL,CRITE_TIME,CRITE_USER) VALUES 
-			(#{ID},#{TYPE_ORDER},#{TYPE_NAME},#{STATUS},#{FILE_URL},SYSDATE(),#{CRITE_USER})
+		INSERT INTO T_DITY_PRODUCT_TYPE (ID,TYPE_ORDER,TYPE_NAME,STATUS,BGN_TIME,END_TIME,FILE_URL,CRITE_TIME,CRITE_USER) VALUES 
+			(#{ID},#{TYPE_ORDER},#{TYPE_NAME},#{STATUS},#{BGN_TIME},#{END_TIME},#{FILE_URL},SYSDATE(),#{CRITE_USER})
 	</insert>
 	
 	<update id="modfyPrdtLbData" parameterType="java.util.HashMap">
 		UPDATE T_DITY_PRODUCT_TYPE T SET T.TYPE_ORDER = #{TYPE_ORDER}, T.TYPE_NAME = #{TYPE_NAME},
-			T.STATUS = #{STATUS}, T.FILE_URL = #{FILE_URL},
+			T.STATUS = #{STATUS}, T.BGN_TIME = #{BGN_TIME}, T.END_TIME = #{END_TIME}, T.FILE_URL = #{FILE_URL},
 			T.CRITE_USER = #{CRITE_USER}, T.CRITE_TIME = SYSDATE()
 			WHERE T.ID = #{ID}
 	</update>
@@ -77,24 +84,22 @@
 	</update>
 	
 	<select id="srchInfoTsData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT T.*,DATE_FORMAT(T.CRITE_TIME,'%Y-%m-%d %T') CRITETIME,USR.USER_NAME
+		SELECT T.*
 		FROM T_DITY_CONTATE_INFO T
-		LEFT JOIN T_DITY_USER USR
-		ON T.CRITE_USER = USR.USER_NO
 	</select>
 	
 	<insert id="addInfoTsData" parameterType="java.util.HashMap">
-		INSERT INTO T_DITY_CONTATE_INFO (ID,CONTATE_NAME,CONTATE_INFO,CRITE_TIME,CRITE_USER) VALUES 
-			(#{ID},#{CONTATE_NAME},#{CONTATE_INFO},SYSDATE(),#{CRITE_USER})
+		INSERT INTO T_DITY_CONTATE_INFO (ID,CONTATE_NAME,CONTATE_INFO) VALUES 
+			(#{ID},#{CONTATE_NAME},#{CONTATE_INFO})
 	</insert>
 	
 	<update id="modfyInfoTsData" parameterType="java.util.HashMap">
-		UPDATE T_DITY_CONTATE_INFO T SET T.CONTATE_NAME = #{CONTATE_NAME}, T.CONTATE_INFO = #{CONTATE_INFO},T.CRITE_USER = #{CRITE_USER}, T.CRITE_TIME = SYSDATE()
+		UPDATE T_DITY_CONTATE_INFO T SET T.CONTATE_NAME = #{CONTATE_NAME}, T.CONTATE_INFO = #{CONTATE_INFO}
 			WHERE T.ID = #{ID}
 	</update>
 	
 	<delete id="delInfoTsData" parameterType="java.util.HashMap">
-		DELETE FROM T_DITY_CONTATE_INFO WHERE ID IN (${ID})
+		DELETE FROM T_DITY_CONTATE_INFO WHERE ID=#{ID}
 	</delete>
 	
 	<select id="srchPdOrderData" parameterType="java.util.HashMap" resultType="java.util.HashMap">

@@ -1,58 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>藏品区域维护</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script src="/js/jquery.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<!-- jqGrid -->
-<link href="/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
-<link href="/css/bootstrap.min.css" rel="stylesheet">
-<link href="/css/font-awesome.css" rel="stylesheet">
-<link href="/css/animate.css" rel="stylesheet">
-<link href="/css/style.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
-<link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
-<script src="/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
-<script src="/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
-<script src="/js/sysMgt/pdType.js"></script>
-<script src="/js/jquery.form.min.js"></script>
-<script src="/js/vendor/jquery.ui.widget.js"></script>
-<script src="/js/jquery.iframe-transport.js"></script>
-<script src="/js/jquery.fileupload.js"></script>
+    <title>区域管理</title>
 
+    <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+	<link href="/css/plugins/iCheck/custom.css" rel="stylesheet">
+	<link href="/css/plugins/chosen/chosen.css" rel="stylesheet">
+	<link href="/css/plugins/cropper/cropper.min.css" rel="stylesheet">
+	<link href="/css/plugins/switchery/switchery.css" rel="stylesheet">
+	<link href="/css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+	<link href="/css/plugins/nouslider/jquery.nouislider.css" rel="stylesheet">
+	<link href="/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+	<link href="/css/plugins/ionRangeSlider/ion.rangeSlider.css" rel="stylesheet">
+	<link href="/css/plugins/ionRangeSlider/ion.rangeSlider.skinFlat.css" rel="stylesheet">
+	<link href="/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+	<link href="/css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+	<link href="/css/animate.css" rel="stylesheet">
+	<link href="/css/style.css?v=4.1.0" rel="stylesheet">
+	<link href="/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
+	<link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
 <style>
-  .cover{
-      display: none;
-      position: absolute;
-      top: 0%;
-      left: 0%;
-      width: 100%;
-      height: 100%;
-      background-color: #999c9e;
-      z-index:1001;
-      -moz-opacity: 0.8;
-      opacity:.80;
-      filter: alpha(opacity=88);
-  }
-  .window {
-	display: none;
-	position: absolute;
-	top: 25%;
-	left: 10%;
-	width: 80%;
-	height: 58%;
-	border: 2px solid #777;
-	background-color: #ffffff;
-	z-index: 1002;
-	overflow: auto;
-  }
+	.aspan{
+		    float: left;
+    /* margin-top: 8px; */
+    background-color: #eeeeee;
+    width: auto;
+    min-width: 16px;
+    padding: 7px 10px;
+    font-weight: normal;
+    line-height: 1.428571429;
+    text-align: center;
+    text-shadow: 0 1px 0 #fff;
+    vertical-align: middle;
+    background-color: #eeeeee;
+    border-width: 1px 0;
+    margin-left: -5px;
+    margin-right: -5px;
+	}
+	
+	.showTime{
+		display:none;
+	}
+
 </style>
+
 </head>
-<body>
+
+<body class="gray-bg">
 	<div class="wrapper wrapper-content animated fadeInRight" >
 		<div style="float:right;">
+			<button id="xxxcxxxx" class="btn btn-primary" data-toggle="modal" data-target="#myModal">增加区域</button>
 			<button class="btn btn-primary" id="updtStat">更改开放状态</button>
 		</div>
         <div class="jqGrid_wrapper" style="margin-top: 40px;">
@@ -60,67 +62,386 @@
             <div id="user_list_btn"></div>
         </div>
 	</div>
-    <div class="cover"></div>
-    <div class="window">
-    	<div class="wrapper wrapper-content animated fadeInRight">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="ibox float-e-margins">
-                        <form method="post" id="user_form" action="/dity/feePerfMgt/addQy" class="form-horizontal" enctype="multipart/form-data">
-                        	<div class="hr-line-dashed"></div>
-                         	<div class="form-group" style="margin-left: 20px;">
-                                <div class="col-sm-10">
-                                    <div class="row">
-                                        <label class="col-sm-2 control-label">区域名称</label>
-                                        <div class="col-md-4">
-                                        	<input id="ID" name="ID" type="hidden">
-                                            <input id="TYPE_NAME" name="TYPE_NAME" type="text" placeholder="请填写名称" class="form-control"
-                                            	required="" aria-required="true">
-                                        </div>
-                                        <label class="col-sm-2 control-label">排序</label>
-                                        <div class="col-md-4">
-                                            <input id="TYPE_ORDER" name="TYPE_ORDER" type="text" placeholder="手机端展示区域的排序，从1开始" class="form-control"
-                                            	required="" aria-required="true">
-                                        </div>
-                                    </div>
-                                </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" style="width:80%;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">区域信息</h4>
+                </div>
+                <div class="modal-body">
+	            	<form method="post" id="user_form" action="/dity/feePerfMgt/addQy" class="form-horizontal" enctype="multipart/form-data">
+	            		<div class="row">
+							<label class="col-sm-1 control-label" style="text-align: right;">区域名称：</label>
+                          	<div class="col-md-4">
+								<input id="ID" name="ID" type="hidden">
+                                <input id="TYPE_NAME" name="TYPE_NAME" type="text" placeholder="" class="form-control"
+                                   		required="" aria-required="true">
                             </div>
-                            
-                            <div class="form-group" style="margin-left: 20px;">
-                            	<div class="col-sm-10">
-                                    <div class="row">
-                                    	<label class="col-sm-2 control-label" on>区域图片</label>
-                                        <div class="col-md-4">
-                                        	<input id="qyimgFile" type="file" name="qyimgFile">
-                                        	<img style="margin-top: 8px; max-width: 100%;" 
-                                        		id="qyimg" src=""/>
-                                        	<input type="hidden" id="FILE_URL" name="FILE_URL"/>
-                                        </div>
-                                        <label class="col-sm-2 control-label">是否开放</label>
-                                        <div class="col-md-4">
-		                                    <div class="radio radio-info radio-inline">
-		                                        <label>
-		                                            <input type="radio" checked="" value="0" name="STATUS">未开放
-		                                         </label>
-		                                         <label><input type="radio" value="1" name="STATUS">已开放</label>
-		                                    </div>
-		                                </div>
-                                    </div>
+                            <label class="col-sm-1 control-label" style="text-align: right;">排序：</label>
+                            <div class="col-md-4">
+                                <input id="TYPE_ORDER" name="TYPE_ORDER" type="text" placeholder="手机端展示区域的排序，从1开始" class="form-control"
+                                   	required="" aria-required="true">
+                             </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="row">
+							<label class="col-sm-1 control-label" style="text-align: right;">是否开放：</label>
+                            <div class="col-md-4">
+	                            <fieldset>
+	                                <div class="radio radio-info radio-inline">
+	                                    <input id="inlineRadio1" type="radio" value="0" name="STATUS" checked="checked" onclick="hideTime()">
+	                                    <label for="inlineRadio1"> 暂不开放 </label>
+	                                </div>
+	                                <div class="radio radio-info radio-inline">
+	                                    <input id="inlineRadio2" type="radio" value="1" name="STATUS" onclick="hideTime()">
+	                                    <label for="inlineRadio2"> 正常开放 </label>
+	                                </div>
+	                                <div class="radio radio-info radio-inline">
+	                                    <input id="inlineRadio3" type="radio" value="2" name="STATUS" onclick="showTime()">
+	                                    <label for="inlineRadio3"> 定时开放 </label>
+	                                </div>
+	                            </fieldset>
+                        	</div>
+                            <label class="col-sm-1 control-label showTime" style="text-align: right;">起止时间：</label>
+                            <div class="col-md-4 showTime">
+                                <div class="input-group clockpicker col-md-5" style="float: left;" data-autoclose="true">
+		                            <input type="text" id="BGN_TIME" name="BGN_TIME" class="form-control" value="">
+		                            <span class="input-group-addon">
+		                                    <span class="fa fa-clock-o"></span>
+		                            </span>
+		                        </div>
+		                        <span class="aspan">至</span>
+		                        <div class="input-group clockpicker col-md-5" style="float: left;" data-autoclose="true">
+		                            <input type="text" id="END_TIME" name="END_TIME" class="form-control" value="">
+		                            <span class="input-group-addon">
+		                                    <span class="fa fa-clock-o"></span>
+		                            </span>
+		                        </div>
+                             </div>
+                        </div>
+                        
+                        <div class="hr-line-dashed"></div>
+                      	<div class="row">
+	                		<label class="col-sm-1 control-label" style="text-align: right;">区域图片：</label>
+		                	<div id="file-pretty">
+                     			<div class="col-md-4">
+                                	<input id="qyimgFile" type="file" name="qyimgFile">
+                                	<input type="hidden" id="FILE_URL" name="FILE_URL"/>
                                 </div>
-                            </div>
-                            <div class="hr-line-dashed"></div>
-                            <div class="form-group">
-                                <div class="col-sm-2" style="float: right;">
-                                	<input id="submitBtn" value="确定" type="submit" class="btn btn-primary"/>
-                                	<input id="celBtn" value="取消" type="button" class="btn btn-white"/>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+		                    </div>
+                        </div>
+                      	<div class="row">
+                      		<label class="col-sm-1 control-label" style="text-align: right;"></label>
+		                    <div class="col-md-9">
+                               <img id="qyimg" style="max-width: 100%; margin-top: 20px;"  src=""/>
+                   			</div>
+                        </div>
+                        <div class="modal-footer">
+                        	<input id="submitBtn" value="确定" type="submit" class="btn btn-primary"/>
+                           	<input id="celBtn" value="取消" type="button" class="btn btn-default"/>
+		                </div>
+	        		</form>
+                </div>
             </div>
         </div>
-        
-    	</div>
     </div>
+    
+	<script src="/js/jquery.min.js?v=2.1.4"></script>
+    <script src="/js/bootstrap.min.js?v=3.3.7"></script>
+    <!-- Chosen -->
+    <script src="/js/plugins/chosen/chosen.jquery.js"></script>
+    <!-- JSKnob -->
+    <script src="/js/plugins/jsKnob/jquery.knob.js"></script>
+    <!-- Input Mask-->
+    <script src="/js/plugins/jasny/jasny-bootstrap.min.js"></script>
+    <!-- Data picker -->
+    <script src="/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <!-- Prettyfile -->
+    <script src="/js/plugins/prettyfile/bootstrap-prettyfile.js"></script>
+    <!-- NouSlider -->
+    <script src="/js/plugins/nouslider/jquery.nouislider.min.js"></script>
+    <!-- Switchery -->
+    <script src="/js/plugins/switchery/switchery.js"></script>
+    <!-- IonRangeSlider -->
+    <script src="/js/plugins/ionRangeSlider/ion.rangeSlider.min.js"></script>
+    <!-- iCheck -->
+    <script src="/js/plugins/iCheck/icheck.min.js"></script>
+    <!-- MENU -->
+    <script src="/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <!-- Clock picker -->
+    <script src="/js/plugins/clockpicker/clockpicker.js"></script>
+    <!-- Image cropper -->
+    <script src="/js/plugins/cropper/cropper.min.js"></script>
+    <script src="/js/demo/form-advanced-demo.js"></script>
+	
+	<script src="/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+	<script src="/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+	<script src="/js/jquery.form.min.js"></script>
+	<script src="/js/vendor/jquery.ui.widget.js"></script>
+	<script src="/js/jquery.iframe-transport.js"></script>
+	<script src="/js/jquery.fileupload.js"></script>
+	
+	<script type="text/javascript">
+	$(document).ready(function () {
+		$.jgrid.defaults.styleUI = 'Bootstrap';
+		initBtn();
+		initFeePerfGrid();
+	});
+
+	function initBtn(){
+		//初始化上传插件
+		$('#qyimgFile').fileupload({
+			//上传地址
+			url:'/dity/uploadQyImg',
+			//返回格式
+			dataType: 'json',
+			add: function(e, data) {
+				var acceptFileTypes = /(\.|\/)(gif|jpe?g|png)$/i;
+				if(data.originalFiles[0]['type'].length && !acceptFileTypes.test(data.originalFiles[0]['type'])) {
+					alert('请上传图片格式文件！')
+				} else {
+					data.submit();
+				}
+			},
+			//e：事件对象
+			//data：图片上传后的对象，通过data.result.picAddr可以获取上传后的图片地址
+			done: function (e, data) {
+				if(data.result.O_RUNSTATUS == -1){
+					alert(data.result.O_MSG);
+				}else{
+					$('#qyimg').attr('src',data.result.url);
+					$('#FILE_URL').val(data.result.url);
+				}
+			}
+		});
+		
+		$("#user_form").ajaxForm(function (data) {
+	        if(data.O_RUNSTATUS == 1){
+	        	window.location.reload();
+	        }else{
+	        	alert(data.O_MSG);
+	        }
+	    });
+		$("#celBtn").click(function (){
+			window.location.reload();
+		});
+		
+		$("#updtStat").click(function(){
+			var rowid = $("#user_list").getGridParam("selrow");
+			var rowData = $("#user_list").getRowData(rowid);
+			if(rowid == null){
+				parent.layer.msg('请选择数据！', {shift: 6});
+			}else{
+				var statNm = rowData.STATUS_NAME;
+				var lbNm = rowData.TYPE_NAME;
+				parent.layer.confirm('【'+lbNm+'】当前状态为【'+statNm+'】，确定更改开放状态？', {
+					btn: ['确定','取消'],
+				    shade: false //不显示遮罩
+				}, function(){
+					parent.layer.closeAll();
+					var postData = {ID:rowData.ID, oper:'updtStat'};
+					//更改开放状态
+					$.ajax({
+				        type:'POST',
+				        data:{postData:JSON.stringify(postData)},
+				        url: '/dity/feePerfMgt/optPrdtLbData',
+				        dataType:"json", 
+				        success:function(data){
+				        	parent.layer.alert(data.O_MSG);
+	    			        if((data.O_MSG).indexOf('成功') != -1){
+	    			        	$("#user_list").trigger("reloadGrid");
+	    			        }
+				        },
+				        error:function(jqXHR){
+				        	parent.layer.alert("服务器发生错误："+ jqXHR.status);
+				        }
+					});
+					
+				}, function(){
+				    parent.layer.close();
+				});
+			}
+		});
+	}
+
+	function initFeePerfGrid(){
+		$("#user_list").jqGrid({
+			url:'/dity/feePerfMgt/srchPrdtLbData',
+	        datatype: "json",
+	        autowidth: true,
+	        height: 450,
+//	        width:1030,
+	        shrinkToFit: true,
+	        rownumbers: true,
+	        rowNum: 50,
+	        rowList: [10, 50, 200],
+	        colNames: ['ID','排序', '类型名称','STATUS','是否开放','开始时间','结束时间','FILE_URL', '操作人', '操作时间'],
+	        colModel: [
+	        	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
+	            {name: 'TYPE_ORDER',index: 'TYPE_ORDER', align :"Center",editable: true,width: 100},
+	            {name: 'TYPE_NAME',index: 'TYPE_NAME', align :"Center",editable: true,width: 100},
+	            {name: 'STATUS',index: 'STATUS',editable: true, align :"Center",hidden:true},
+	            {name: 'STATUS_NAME',index: 'STATUS_NAME', align :"Center",editable: true,width: 100},
+	            {name: 'BGN_TIME',index: 'BGN_TIME', align :"Center",editable: true,width: 150},
+	            {name: 'END_TIME',index: 'END_TIME', align :"Center",editable: true,width: 150},
+	            {name: 'FILE_URL',index: 'FILE_URL',editable: true, align :"Center",hidden:true},
+	            {name: 'USER_NAME',index: 'USER_NAME', align :"Center",editable: false,width: 120},
+	            {name: 'CRITETIME',index: 'CRITETIME', align :"Center",editable: false,width: 120}
+	        ],
+	        loadComplete: function (data) {
+	          　　		/* console.log(data) */
+	      　　	},
+	        pager: "#user_list_btn",
+	        viewrecords: true,
+	        emptyrecords: "暂无数据",//viewrecords: true时生效
+	        caption: "商品类别维护管理",
+	        add: true,
+	        edit: true,
+	        editurl :'/dity/feePerfMgt/addQy',
+	        hidegrid: false
+	    });
+		
+	    //设置操作按钮
+	    $("#user_list").jqGrid('navGrid', '#user_list_btn', {
+	        edit: false,
+	        add: false,
+	        del: false,
+	        search: false
+	    }, {
+	    	// edit: true 修改的
+	        height: 200,
+	        reloadAfterSubmit: true,
+	        checkOnSubmit:true,
+	   	 	closeAfterEdit:true,
+	   	 	serializeEditData:function(postData){
+	   	 		postData = {"postData":JSON.stringify(postData)};
+	   	 		return postData;
+	   	 	},
+	   	 	afterSubmit:function(reqData){
+		        var jsonResponse = $.parseJSON(reqData.responseText);
+		        if (jsonResponse.O_RUNSTATUS != 1) {
+		            return [false, jsonResponse.O_MSG];//提示信息
+		        } else {
+		            return [true];
+		        }
+	   	 	}
+	    }, {
+	    	// add: true 新增的
+	        height: 200,
+	        reloadAfterSubmit: true,
+	        checkOnSubmit:true,
+	   	 	closeAfterAdd:true,
+	   	 	serializeEditData:function(postData){
+	   	 		postData = {"postData":JSON.stringify(postData)};
+	   	 		return postData;
+	   	 	},
+	   	 	afterSubmit:function(reqData){
+			 	var jsonResponse = $.parseJSON(reqData.responseText);
+			    if (jsonResponse.O_RUNSTATUS != 1) {
+			        return [false, jsonResponse.O_MSG];//提示信息
+			    } else {
+			        return [true];
+			    }
+	   	 	}
+	    });
+	    $("#user_list").jqGrid('navButtonAdd', '#user_list_btn',
+	    		{caption:"", 
+	    		buttonicon:"glyphicon glyphicon-trash", 
+	    		onClickButton:function(){   
+	    			var rowid = $("#user_list").getGridParam("selrow");
+					var rowData = $("#user_list").getRowData(rowid);
+					if(rowid == null){
+						parent.layer.msg('请选择数据！', {shift: 6});
+					}else{
+						parent.layer.confirm('确定删除所选数据？', {
+		    				btn: ['确定','取消'],
+		    			    shade: false //不显示遮罩
+		    			}, function(){
+		    				var postData = {ID:rowData.ID, oper:'del'};
+		    				//删除数据
+		    				$.ajax({
+		    			        type:'POST',
+		    			        data:{postData:JSON.stringify(postData)},
+		    			        url: '/dity/feePerfMgt/optPrdtLbData',
+		    			        dataType:"json", 
+		    			        success:function(data){
+		    			        	parent.layer.alert(data.O_MSG);
+			    			        if((data.O_MSG).indexOf('成功') != -1){
+			    			        	$("#user_list").trigger("reloadGrid");
+			    			        }
+		    			        },
+		    			        error:function(jqXHR){
+		    			        	parent.layer.alert("服务器发生错误："+ jqXHR.status);
+		    			        }
+		    				});
+		    				
+		    			}, function(){
+		    			    parent.layer.close();
+		    			});
+					}
+	    		}, 
+	    		position: "last", title:"删除所选数据", cursor: "pointer"}
+	    );
+	    $("#user_list").jqGrid('navButtonAdd', '#user_list_btn',
+	    		{caption:"", 
+	    		buttonicon:"glyphicon glyphicon-edit", 
+	    		onClickButton:function(){   
+	    			var rowid = $("#user_list").getGridParam("selrow");
+	    			if(rowid != null){
+	    				var rowData = $("#user_list").getRowData(rowid);
+	    				$('#ID').val(rowData.ID);
+	    				$('#TYPE_ORDER').val(rowData.TYPE_ORDER);
+	    				$('#TYPE_NAME').val(rowData.TYPE_NAME);
+	    				$("input[name='STATUS'][value='"+rowData.STATUS+"']").prop("checked","checked");
+	    				if(rowData.STATUS == 2){
+	    					$('.showTime').show();
+	    					$('#BGN_TIME').val(rowData.BGN_TIME);
+	    					$('#END_TIME').val(rowData.END_TIME);
+	    				}else{
+	    					$('.showTime').hide();
+	    					$('#BGN_TIME').val("");
+	    					$('#END_TIME').val("");
+	    				}
+	    				$('#qyimg').attr("src",rowData.FILE_URL);
+	    				$('#FILE_URL').val(rowData.FILE_URL);
+	    				$('#xxxcxxxx').click();
+	    			}
+	    		}, 
+	    		position: "first", title:"修改区域", cursor: "pointer"}
+	    );
+	    $("#user_list").jqGrid('navButtonAdd', '#user_list_btn',
+	    		{caption:"", 
+	    		buttonicon:"glyphicon glyphicon-plus", 
+	    		onClickButton:function(){   
+	    			$('#xxxcxxxx').click();
+	    		}, 
+	    		position: "first", title:"新增区域", cursor: "pointer"}
+	    );
+	    
+
+	    //改变列宽
+	    $(window).bind('resize', function () {
+	        var width = $('.jqGrid_wrapper').width();
+	        $('#user_list').setGridWidth(width);
+	    });
+	}
+
+	function closeWindow(){
+		window.location.reload();
+	}
+	
+	function showTime(){
+		$('.showTime').show();
+	}
+	
+	function hideTime(){
+		$('#BGN_TIME').val("");
+		$('#END_TIME').val("");
+		$('.showTime').hide();
+	}
+	
+	</script>
 </body>
+
 </html>

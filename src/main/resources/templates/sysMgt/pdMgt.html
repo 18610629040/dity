@@ -52,6 +52,7 @@
 			<button id="xxxcxxxx" class="btn btn-primary" data-toggle="modal" data-target="#myModal">新增</button>
 			<button class="btn btn-warning" id="ccccxcccc">修改</button>
 			<button class="btn btn-default" id="dddddd">下架</button>
+			<button class="btn btn-default" id="eeeeee">重新上架</button>
 		</div>
         <div class="jqGrid_wrapper" style="margin-top: 40px;">
             <table id="user_list"></table>
@@ -235,11 +236,14 @@
 				if(data != null && data.length > 0){
 					var html = '';
 					$.each(data,function(i,e){
-						console.log(e)
-						html += '<div class="radio radio-info radio-inline">'
-                             +'<input type="radio" value="'+e.ID+'" name="GOODS_TYPE">'
-                             +'<label> '+e.TYPE_NAME+' </label>'
-                             +'</div>';
+						console.log(e);
+						if(e.STATUS != 2){
+							
+							html += '<div class="radio radio-info radio-inline">'
+	                             +'<input id="inlineRadio'+i+'" type="radio" value="'+e.ID+'" name="GOODS_TYPE">'
+	                             +'<label for="inlineRadio'+i+'"> '+e.TYPE_NAME+' </label>'
+	                             +'</div>';
+						}
 					});
 					$("#FieldsetID").html(html);
 					$("input[name='GOODS_TYPE']").eq(0).prop("checked","checked");
@@ -254,10 +258,10 @@
 
 	function initFeePerfGrid(){
 		$("#user_list").jqGrid({
-			url:'/dity/qryGoodsList',
+			url:'/dity/qryGoodsList?TYPE=1',
 			datatype: "json",
 	        mtype:'post',
-	        height: 520,
+	        height: 450,
 	        loadonce:true,//前台分页,页面刷新不走请求了
 	        rowNum:50, 
 	        rowList:[10,50,200],   
@@ -312,6 +316,7 @@
 		    				btn: ['确定','取消'],
 		    			    shade: false //不显示遮罩
 		    			}, function(){
+		    				parent.layer.closeAll();
 		    				var rowData = $("#user_list").getRowData(rowid);
 		    				$.ajax({
 		    					type:"post",
@@ -394,22 +399,61 @@
 	    	var rowid = $("#user_list").getGridParam("selrow");
 			if(rowid != null){
 				var rowData = $("#user_list").getRowData(rowid);
-				$.ajax({
-					type:"post",
-					url:"/dity/outGoods",
-					data : {ID: rowData.ID},
-					dataType:"json",
-					success:function(data){
-						if(data.O_RUNSTATUS == 1){
-							window.location.reload();
-						}else{
-							alert(data.O_MSG);
-						}
-					},
-					error:function(jqXHR){
-						aler("error："+ jqXHR.status);
-					}
-				});
+				parent.layer.confirm('确定下架此藏品？', {
+    				btn: ['确定','取消'],
+    			    shade: false //不显示遮罩
+    			}, function(){
+    				parent.layer.closeAll();
+    				$.ajax({
+    					type:"post",
+    					url:"/dity/outGoods",
+    					data : {ID: rowData.ID},
+    					dataType:"json",
+    					success:function(data){
+    						if(data.O_RUNSTATUS == 1){
+    							window.location.reload();
+    						}else{
+    							alert(data.O_MSG);
+    						}
+    					},
+    					error:function(jqXHR){
+    						aler("error："+ jqXHR.status);
+    					}
+    				});
+    			}, function(){
+    			    parent.layer.close();
+    			});
+			}
+		});
+	    
+	    $("#eeeeee").click(function (){
+	    	var rowid = $("#user_list").getGridParam("selrow");
+			if(rowid != null){
+				var rowData = $("#user_list").getRowData(rowid);
+				parent.layer.confirm('确定重新上架此藏品？', {
+    				btn: ['确定','取消'],
+    			    shade: false //不显示遮罩
+    			}, function(){
+    				parent.layer.closeAll();
+    				$.ajax({
+    					type:"post",
+    					url:"/dity/putGoods",
+    					data : {ID: rowData.ID},
+    					dataType:"json",
+    					success:function(data){
+    						if(data.O_RUNSTATUS == 1){
+    							window.location.reload();
+    						}else{
+    							alert(data.O_MSG);
+    						}
+    					},
+    					error:function(jqXHR){
+    						aler("error："+ jqXHR.status);
+    					}
+    				});
+    			}, function(){
+    			    parent.layer.close();
+    			});
 			}
 		});
 	}

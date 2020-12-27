@@ -14,7 +14,7 @@ function initFeePerfGrid(){
 		url:'/dity/qryOrder',
         datatype: "json",
         mtype:'post',
-        height: 520,
+        height: 480,
         loadonce:true,//前台分页,页面刷新不走请求了
         rowNum:50, 
 		rowList:[10,50,200],   
@@ -116,18 +116,17 @@ function initFeePerfGrid(){
 	    				btn: ['确定','取消'],
 	    			    shade: false //不显示遮罩
 	    			}, function(){
-	    				var postData = {ID:rowData.ID, oper:'del'};
 	    				//删除数据
 	    				$.ajax({
 	    			        type:'POST',
-	    			        data:{postData:JSON.stringify(postData)},
-	    			        url: '/dity/feePerfMgt/optFeePerfData',
+	    			        data:{ID:rowData.ID},
+	    			        url: '/dity/delOrder',
 	    			        dataType:"json", 
 	    			        success:function(data){
 	    			        	parent.layer.alert(data.O_MSG);
-	    			           if((data.O_MSG).indexOf('成功') != -1){
-	    			        	   $("#pdOrder_list").trigger("reloadGrid");
-	    			           }
+	    			            if((data.O_MSG).indexOf('成功') != -1){
+		    			        	$("#pdOrder_list").trigger("reloadGrid");
+		    			        }
 	    			        },
 	    			        error:function(jqXHR){
 	    			        	parent.layer.alert("服务器发生错误："+ jqXHR.status);

@@ -1,5 +1,9 @@
 package com.dity.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dity.common.SysProperties;
@@ -26,6 +31,8 @@ import com.dity.common.utils.IDUtils;
 import com.dity.common.utils.SessionUtil;
 import com.dity.service.DityService;
 import com.dity.service.FeePerfMgtService;
+
+import net.coobird.thumbnailator.Thumbnails;
 
 @CrossOrigin
 @Controller
@@ -119,7 +126,7 @@ public class FeePerfMgtController {
 	
 	@RequestMapping(value = "/pdType", method = { RequestMethod.POST, RequestMethod.GET })
     public String pdType(){
-        return "/sysMgt//pdType";
+        return "/sysMgt/pdType";
     }
 	
 	/**
@@ -145,6 +152,8 @@ public class FeePerfMgtController {
             @RequestParam(value = "TYPE_NAME", required = false) String TYPE_NAME,
             @RequestParam(value = "TYPE_ORDER", required = false) String TYPE_ORDER,
             @RequestParam(value = "STATUS", required = false) String STATUS,
+            @RequestParam(value = "BGN_TIME", required = false) String BGN_TIME,
+            @RequestParam(value = "END_TIME", required = false) String END_TIME,
             @RequestParam(value = "FILE_URL", required = false) String FILE_URL) {
         Map<String, Object> map = new HashMap<>();
         try {
@@ -162,6 +171,8 @@ public class FeePerfMgtController {
         	map.put("TYPE_ORDER",TYPE_ORDER);
         	map.put("FILE_URL",FILE_URL);
         	map.put("STATUS",STATUS);
+        	map.put("BGN_TIME",BGN_TIME);
+        	map.put("END_TIME",END_TIME);
         	map.put("CRITE_USER",SessionUtil.getUserNo());
         	if(StringUtils.isBlank(id)) {
         		feePerfMgtService.addPrdtLbData(map);
@@ -225,9 +236,9 @@ public class FeePerfMgtController {
 	/**
 	 * 信息提示管理首页
 	 */
-	@RequestMapping(value = "/infoTsIndex", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping(value = "/msgInfo", method = { RequestMethod.POST, RequestMethod.GET })
     public String infoTsIndex(){
-        return "/sysMgt/infoTsMgt";
+        return "/sysMgt/msgInfo";
     }
 	
 	/**
@@ -246,48 +257,109 @@ public class FeePerfMgtController {
 		return list;
 	}
 	
-	/**
-	 * 信息提示数据-操作
-	 */
-	@RequestMapping(value = "/optInfoTsData", method = { RequestMethod.POST, RequestMethod.GET })
+	@RequestMapping("/ggMgt")
 	@ResponseBody
-	public Object optInfoTsData(HttpServletRequest request){
+    public Object addgg(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = false) String id,
+            @RequestParam(value = "CONTATE_NAME", required = false) String CONTATE_NAME,
+            @RequestParam(value = "CONTATE_INFO", required = false) String CONTATE_INFO) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("CONTATE_NAME",CONTATE_NAME);
+        	map.put("CONTATE_INFO",CONTATE_INFO);
+        	if(StringUtils.isBlank(id)) {
+        		map.put("ID",IDUtils.createID());
+        		feePerfMgtService.addInfoTsData(map);
+        	}else {
+        		map.put("ID",id);
+        		feePerfMgtService.modfyInfoTsData(map);
+        	}
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/ggMgt:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+	
+	@RequestMapping("/delGg")
+	@ResponseBody
+    public Object delUser(HttpServletRequest request,HttpServletResponse response, 
+            @RequestParam(value = "ID", required = true) String id) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+        	map.put("ID", id);
+        	feePerfMgtService.delInfoTsData(map);
+        	map.put("O_RUNSTATUS", 1);
+        	map.put("O_MSG", "操作成功！");
+        } catch (Exception e) {
+            logger.error("/delGg:" + map, e);
+            map.put("O_RUNSTATUS", -1);
+            map.put("O_MSG", "system error");
+        }
+        return map;
+    }
+	
+	@RequestMapping(value = "/uploadGgImg", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public Object uploadGgImg(HttpServletRequest request,HttpServletResponse response,
+			@RequestParam(value = "ggFile", required = false) MultipartFile ggFile){
 		Map<String,Object> map = new HashMap<String, Object>();
-		String postData = request.getParameter("postData");
-		JSONObject jObj = JSONObject.parseObject(postData);
-		String CONTATE_NAME = String.valueOf(jObj.get("CONTATE_NAME"));
-		String CONTATE_INFO = String.valueOf(jObj.get("CONTATE_INFO"));
-		String oper = String.valueOf(jObj.get("oper"));
-		String msg = "操作成功！";
-		int count = 0;
+		map.put("url", uplodFile2LocalPath(ggFile));
+		map.put("O_RUNSTATUS", 1);
+    	map.put("O_MSG", "操作成功！");
+    	return map;
+	}
+	
+	public String uplodFile2LocalPath(MultipartFile file){
+		String url = "";
+		InputStream in = null;
+		FileOutputStream os = null;
+		String fileName = "";
+		String path = "";
+		String fileId = "";
 		try {
-			map.put("CONTATE_NAME",CONTATE_NAME);
-			map.put("CONTATE_INFO",CONTATE_INFO);
-			map.put("CRITE_USER",SessionUtil.getUserNo());
-			if("add".equals(oper)){
-				map.put("ID",IDUtils.createID());
-				count = feePerfMgtService.addInfoTsData(map);
-			}else if("edit".equals(oper)) {
-				map.put("ID",String.valueOf(jObj.get("ID")));
-				count = feePerfMgtService.modfyInfoTsData(map);
-			}else if("del".equals(oper)){
-				map.put("O_MSG","APP端信息提示，请勿删除！");
-				map.put("O_RUNSTATUS",-1);
-				return map;
-//				map.put("ID",String.valueOf(jObj.get("ID")));
-//				count = feePerfMgtService.delInfoTsData(map);
+			fileName = file.getOriginalFilename();
+			in = file.getInputStream();
+			path = sysProperties.getLocation();//都上传到本地目录下
+			fileId = IDUtils.createID();
+			File tempFile = new File(path,fileId+fileName);
+			tempFile.deleteOnExit();
+			tempFile.createNewFile();
+			os = new FileOutputStream(tempFile);
+			byte temp[] = new byte[1024];
+			int size = -1;
+			while ((size = in.read(temp)) != -1) {
+				os.write(temp, 0, size);
 			}
-			map.put("O_RUNSTATUS",count);
-			if(count<1) {
-				msg = "操作失败，请联系管理员！";
+	    	url = "/tempFile"+File.separator+"small"+fileId+fileName;
+		} catch (IOException e) {
+			logger.error("文件上传失败", e);
+		}finally {
+			if(in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-		} catch (Exception e) {
-			map.put("O_RUNSTATUS",0);
-			msg = "操作失败，请联系管理员！";
-			logger.error("/dity/feePerfMgt/optInfoTsData:"+map,e);
+			if(os != null) {
+				try {
+					os.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
-		map.put("O_MSG",msg);
-		return map;
+		try {
+			Thumbnails.of(path+File.separator+fileId+fileName).scale(1f).outputQuality(0.25f).toFile(path+File.separator+"small"+fileId+fileName);
+		} catch (IOException e) {
+			logger.error("error:",e);
+			url = "/tempFile"+File.separator+fileId+fileName;
+		}
+		return url;
 	}
 	
 	/**

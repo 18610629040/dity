@@ -1,32 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>用户管理</title>
+<title>用户管理</title>
 
-    <link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
-	<link href="/css/plugins/iCheck/custom.css" rel="stylesheet">
-	<link href="/css/plugins/chosen/chosen.css" rel="stylesheet">
-	<link href="/css/plugins/cropper/cropper.min.css" rel="stylesheet">
-	<link href="/css/plugins/switchery/switchery.css" rel="stylesheet">
-	<link href="/css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
-	<link href="/css/plugins/nouslider/jquery.nouislider.css" rel="stylesheet">
-	<link href="/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
-	<link href="/css/plugins/ionRangeSlider/ion.rangeSlider.css" rel="stylesheet">
-	<link href="/css/plugins/ionRangeSlider/ion.rangeSlider.skinFlat.css" rel="stylesheet">
-	<link href="/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
-	<link href="/css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
-	<link href="/css/animate.css" rel="stylesheet">
-	<link href="/css/style.css?v=4.1.0" rel="stylesheet">
-	<link href="/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
-	<link href="/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
-	<link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
+<link href="/css/font-awesome.css?v=4.4.0" rel="stylesheet">
+<link href="/css/plugins/iCheck/custom.css" rel="stylesheet">
+<link href="/css/plugins/chosen/chosen.css" rel="stylesheet">
+<link href="/css/plugins/cropper/cropper.min.css" rel="stylesheet">
+<link href="/css/plugins/switchery/switchery.css" rel="stylesheet">
+<link href="/css/plugins/jasny/jasny-bootstrap.min.css" rel="stylesheet">
+<link href="/css/plugins/nouslider/jquery.nouislider.css" rel="stylesheet">
+<link href="/css/plugins/datapicker/datepicker3.css" rel="stylesheet">
+<link href="/css/plugins/ionRangeSlider/ion.rangeSlider.css" rel="stylesheet">
+<link href="/css/plugins/ionRangeSlider/ion.rangeSlider.skinFlat.css" rel="stylesheet">
+<link href="/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+<link href="/css/plugins/clockpicker/clockpicker.css" rel="stylesheet">
+<link href="/css/animate.css" rel="stylesheet">
+<link href="/css/style.css" rel="stylesheet">
+<link href="/css/plugins/jqgrid/ui.jqgrid.css" rel="stylesheet">
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/css/plugins/webuploader/webuploader.css">
+<link rel="stylesheet" type="text/css" href="/css/demo/webuploader-demo.css">
+
+<script src="/js/jquery.min.js?v=2.1.4"></script>
+<script src="/js/bootstrap.min.js?v=3.3.7"></script>
+<!-- Chosen -->
+<script src="/js/plugins/chosen/chosen.jquery.js"></script>
+<!-- JSKnob -->
+<script src="/js/plugins/jsKnob/jquery.knob.js"></script>
+<!-- Input Mask-->
+<script src="/js/plugins/jasny/jasny-bootstrap.min.js"></script>
+<!-- Data picker -->
+<script src="/js/plugins/datapicker/bootstrap-datepicker.js"></script>
+<!-- Prettyfile -->
+<script src="/js/plugins/prettyfile/bootstrap-prettyfile.js"></script>
+<!-- NouSlider -->
+<script src="/js/plugins/nouslider/jquery.nouislider.min.js"></script>
+<!-- Switchery -->
+<script src="/js/plugins/switchery/switchery.js"></script>
+<!-- IonRangeSlider -->
+<script src="/js/plugins/ionRangeSlider/ion.rangeSlider.min.js"></script>
+<!-- iCheck -->
+<script src="/js/plugins/iCheck/icheck.min.js"></script>
+<!-- MENU -->
+<script src="/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+<!-- Clock picker -->
+<script src="/js/plugins/clockpicker/clockpicker.js"></script>
+<!-- Image cropper -->
+<script src="/js/plugins/cropper/cropper.min.js"></script>
+<script src="/js/demo/form-advanced-demo.js"></script>
+
+<script src="/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
+<script src="/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
+<script src="/js/jquery.form.min.js"></script>
+<script src="/js/vendor/jquery.ui.widget.js"></script>
+<script src="/js/jquery.iframe-transport.js"></script>
+<script src="/js/jquery.fileupload.js"></script>
 <style>
-	.aspan{
-		    float: left;
+
+.aspan{
+	float: left;
     /* margin-top: 8px; */
     background-color: #eeeeee;
     width: auto;
@@ -41,9 +77,15 @@
     border-width: 1px 0;
     margin-left: -5px;
     margin-right: -5px;
-	}
+}
+.ui-jqgrid .ui-jqgrid-bdiv { 
+    border-top: 1px solid #E1E1E1; 
+    overflow-x: auto; 
+} 
+.frozen-div, .frozen-bdiv {
+    background-color: #E4E6E9;/*与网页背景色一致*/ */
+} 
 </style>
-
 </head>
 
 <body class="gray-bg">
@@ -51,6 +93,7 @@
 		<div style="float:right;">
 			<button id="xxxcxxxx" class="btn btn-primary" data-toggle="modal" data-target="#myModal">新增管理员</button>
 			<button class="btn btn-warning" id="ccccxcccc">修改管理员信息</button>
+			<button class="btn btn-default" id="ddddddddd">设置委托收款</button>
 		</div>
         <div class="jqGrid_wrapper" style="margin-top: 40px;">
             <table id="user_list"></table>
@@ -194,47 +237,12 @@
         </div>
     </div>
     
-	<script src="/js/jquery.min.js?v=2.1.4"></script>
-    <script src="/js/bootstrap.min.js?v=3.3.7"></script>
-    <!-- Chosen -->
-    <script src="/js/plugins/chosen/chosen.jquery.js"></script>
-    <!-- JSKnob -->
-    <script src="/js/plugins/jsKnob/jquery.knob.js"></script>
-    <!-- Input Mask-->
-    <script src="/js/plugins/jasny/jasny-bootstrap.min.js"></script>
-    <!-- Data picker -->
-    <script src="/js/plugins/datapicker/bootstrap-datepicker.js"></script>
-    <!-- Prettyfile -->
-    <script src="/js/plugins/prettyfile/bootstrap-prettyfile.js"></script>
-    <!-- NouSlider -->
-    <script src="/js/plugins/nouslider/jquery.nouislider.min.js"></script>
-    <!-- Switchery -->
-    <script src="/js/plugins/switchery/switchery.js"></script>
-    <!-- IonRangeSlider -->
-    <script src="/js/plugins/ionRangeSlider/ion.rangeSlider.min.js"></script>
-    <!-- iCheck -->
-    <script src="/js/plugins/iCheck/icheck.min.js"></script>
-    <!-- MENU -->
-    <script src="/js/plugins/metisMenu/jquery.metisMenu.js"></script>
-    <!-- Clock picker -->
-    <script src="/js/plugins/clockpicker/clockpicker.js"></script>
-    <!-- Image cropper -->
-    <script src="/js/plugins/cropper/cropper.min.js"></script>
-    <script src="/js/demo/form-advanced-demo.js"></script>
-	
-	<script src="/js/plugins/jqgrid/i18n/grid.locale-cn.js"></script>
-	<script src="/js/plugins/jqgrid/jquery.jqGrid.min.js"></script>
-	<script src="/js/jquery.form.min.js"></script>
-	<script src="/js/vendor/jquery.ui.widget.js"></script>
-	<script src="/js/jquery.iframe-transport.js"></script>
-	<script src="/js/jquery.fileupload.js"></script>
-	
-	<script type="text/javascript">
+    
+    <script type="text/javascript">
 	$(document).ready(function () {
 		$.jgrid.defaults.styleUI = 'Bootstrap';
 		initBtn();
 		initFeePerfGrid();
-		initFeePerfGrid2();
 	});
 
 	function initBtn(){
@@ -296,51 +304,52 @@
 		$("#celBtn").click(function (){
 			window.location.reload();
 		});
-		
 	}
 
 	function initFeePerfGrid(){
 		$("#user_list").jqGrid({
 			url:'/dity/qryUserList?USER_TYPE=1',
-	        datatype: "json",
-	        mtype:'post',
-	        height: 520,
-	        loadonce:true,//前台分页,页面刷新不走请求了
-	        rowNum:50, 
-	        rowList:[10,50,200],   
-		    altRows: true, 
-		    rownumbers:true,
-			multiselect: false,  
-			multiboxonly:true,
-			sortorder: "asc",     
-			autowidth:true,
-			shrinkToFit:false,  
-			autoScroll: true,
-			loadtext: "卖力加载中...",
+			datatype: "json",
+            mtype:'post',
+            height: 440,
+            loadonce:true,//前台分页,页面刷新不走请求了
+            rowNum:50, 
+            rowList:[10,50,200],   
+    	    altRows: true, 
+    	    rownumbers:true,
+    		multiselect: false,  
+    		multiboxonly:true,
+    		sortorder: "asc",     
+    		autowidth:true,
+    		shrinkToFit:false,  
+    		autoScroll: true,
+    		loadtext: "卖力加载中...",
 	        colNames: ['ID','账号', '密码','用户名','手机号',
 	        	'地址', '年龄','生日','账户类型','USER_TYPE',
 	        	'银行卡号','开户行','真实姓名', '微信号','支付宝账号','创建时间',
-	        	'创建人','WX_FILE_URL','ZFB_FILE_URL'],
+	        	'创建人','WX_FILE_URL','ZFB_FILE_URL','IS_WTSK','是否为收委托费账户'],
 	        colModel: [
 	        	{name: 'ID',index: 'ID',editable: true, align :"Center",hidden:true},
 	            {name: 'USER_NO',index: 'USER_NO', align :"Center",editable: true,width: 120},
 	            {name: 'PASS',index: 'PASS', align :"Center",editable: true,width: 100},
 	            {name: 'USER_NAME',index: 'USER_NAME', align :"Center",editable: true,width: 100},
 	            {name: 'MOBILE_NO',index: 'MOBILE_NO', align :"Center",editable: true,width: 120},
-	            {name: 'USER_ADD',index: 'USER_ADD', align :"Center",editable: true,width: 200},
-	            {name: 'USER_AGE',index: 'USER_AGE', align :"Center",editable: true,width: 100},
-	            {name: 'USER_BIRTH',index: 'USER_BIRTH', align :"Center",editable: true,width: 100},
-	            {name: 'USER_TYPE_NAME',index: 'USER_TYPE_NAME', align :"Center",editable: true,width: 100},
+	            {name: 'USER_ADD',index: 'USER_ADD', align :"Center",editable: true,width: 80},
+	            {name: 'USER_AGE',index: 'USER_AGE', align :"Center",editable: true,width: 80},
+	            {name: 'USER_BIRTH',index: 'USER_BIRTH', align :"Center",editable: true,width: 80},
+	            {name: 'USER_TYPE_NAME',index: 'USER_TYPE_NAME', align :"Center",editable: true,width: 90},
 	            {name: 'USER_TYPE',index: 'USER_TYPE',editable: true, align :"Center",hidden:true},
 	            {name: 'BANK_NO',index: 'BANK_NO', align :"Center",editable: true,width: 120},
-	            {name: 'BANK_NAME',index: 'BANK_NAME', align :"Center",editable: true,width: 120},
-	            {name: 'REAL_NAME',index: 'REAL_NAME', align :"Center",editable: true,width: 120},
+	            {name: 'BANK_NAME',index: 'BANK_NAME', align :"Center",editable: true,width: 80},
+	            {name: 'REAL_NAME',index: 'REAL_NAME', align :"Center",editable: true,width: 80},
 	            {name: 'WX_NO',index: 'WX_NO', align :"Center",editable: true,width: 100},
 	            {name: 'ZFB_NO',index: 'ZFB_NO', align :"Center",editable: true,width: 100},
 	            {name: 'CRITE_TIME',index: 'CRITE_TIME', align :"Center",editable: true,width: 140},
-	            {name: 'CRITENM',index: 'CRITENM', align :"Center",editable: true,width: 100},
+	            {name: 'CRITENM',index: 'CRITENM', align :"Center",editable: true,width: 80},
 	            {name: 'WX_FILE_URL',index: 'WX_FILE_URL',editable: true, align :"Center",hidden:true},
-	            {name: 'ZFB_FILE_URL',index: 'ZFB_FILE_URL',editable: true, align :"Center",hidden:true}
+	            {name: 'ZFB_FILE_URL',index: 'ZFB_FILE_URL',editable: true, align :"Center",hidden:true},
+	            {name: 'IS_WTSK',index: 'IS_WTSK',editable: true, align :"Center",hidden:true},
+	            {name: 'IS_WTSK_NAME',index: 'IS_WTSK_NAME', align :"Center",editable: true,width: 160}
 	        ],
 	        loadComplete: function (data) {
 	          　　		/*console.log(data)*/
@@ -408,6 +417,7 @@
 		    				btn: ['确定','取消'],
 		    			    shade: false //不显示遮罩
 		    			}, function(){
+		    				parent.layer.closeAll();
 		    				var rowData = $("#user_list").getRowData(rowid);
 		    				$.ajax({
 		    					type:"post",
@@ -513,7 +523,45 @@
 		window.location.reload();
 	}
 	
-	</script>
+	$("#ddddddddd").click(function (){
+    	var rowid = $("#user_list").getGridParam("selrow");
+		if(rowid != null){
+			var rowid = $("#user_list").getGridParam("selrow");
+			var rowData = $("#user_list").getRowData(rowid);
+			if(rowid == null){
+				parent.layer.msg('请选择数据！', {shift: 6});
+			}else{
+				parent.layer.confirm('确定要设置该管理员为委托费收款账户？', {
+    				btn: ['确定','取消'],
+    			    shade: false //不显示遮罩
+    			}, function(){
+    				parent.layer.closeAll();
+    				//删除数据
+    				$.ajax({
+    			        type:'POST',
+    			        data:{ID:rowData.ID},
+    			        url: '/dity/setUserWtsk',
+    			        dataType:"json", 
+    			        success:function(data){
+    			        	parent.layer.alert(data.O_MSG);
+	    			        if(data.O_RUNSTATUS == 1){
+	    			        	window.location.reload();
+	    			        }
+    			        },
+    			        error:function(jqXHR){
+    			        	parent.layer.alert("服务器发生错误："+ jqXHR.status);
+    			        }
+    				});
+    				
+    			}, function(){
+    			    parent.layer.close();
+    			});
+			}
+		}else{
+			parent.layer.msg('请选择数据！', {shift: 6});
+		}
+	});
+</script>
 </body>
 
 </html>

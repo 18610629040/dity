@@ -29,6 +29,16 @@
 				T.ZFB_NO,
 				T.WX_FILE_URL,
 				T.ZFB_FILE_URL,
+				T.TX_FILE_URL,
+				T.IS_WTSK,
+				CASE T.IS_WTSK
+					WHEN 0 THEN
+						'否'
+					WHEN 1 THEN
+						'是'
+					ELSE
+						T.IS_WTSK
+				END IS_WTSK_NAME,
 				DATE_FORMAT(T.CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
 				T.CRITE_USER,USR.USER_NAME CRITENM
 		FROM T_DITY_USER T 
@@ -75,6 +85,16 @@
 				ZFB_NO,
 				WX_FILE_URL,
 				ZFB_FILE_URL,
+				TX_FILE_URL,
+				T.IS_WTSK,
+				CASE T.IS_WTSK
+					WHEN 0 THEN
+						'否'
+					WHEN 1 THEN
+						'是'
+					ELSE
+						T.IS_WTSK
+				END IS_WTSK_NAME,
 				DATE_FORMAT(CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
 				CRITE_USER
 			FROM T_DITY_USER T where 1=1
@@ -104,6 +124,8 @@
 				ZFB_NO,
 				WX_FILE_URL,
 				ZFB_FILE_URL,
+				TX_FILE_URL,
+				IS_WTSK,
 				CRITE_TIME,
 				CRITE_USER 
 			) VALUES (
@@ -123,6 +145,8 @@
 				#{ZFB_NO},
 				#{WX_FILE_URL},
 				#{ZFB_FILE_URL},
+				#{TX_FILE_URL},
+				#{IS_WTSK},
 				SYSDATE(),
 				#{CRITE_USER}
 			)
@@ -217,102 +241,20 @@
 			WHERE ID = #{ID}
 	</update>
 	
-	
-	<select id="qryGoodsMsList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
-		SELECT
-			((select t.RATE_VAL from t_dity_rate t where t.RATE_NAME='委托费') * t.PRICE) WTF,
-		    ((select t.RATE_VAL from t_dity_rate t where t.RATE_NAME='预计收益') * t.PRICE) YJSY,
-			t.PRICE,
-			t.*,
-			USR.USER_NAME OWN_ACNT_NAME,
-			CASE t.STATUS
-				WHEN 0 THEN
-					'已下架'
-				WHEN 1 THEN
-					'正常'
-				ELSE
-					t.STATUS
-			END STATUS_NAME,
-		 	DATE_FORMAT(t.CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME
-		FROM T_DITY_GOODS_MS T 
-		LEFT JOIN T_DITY_USER USR
-		ON T.OWN_ACNT = USR.USER_NO
-			WHERE 1 = 1
-		<if test="ID != null and ID !=''">
-			and t.ID = #{ID}
-		</if>
-		<if test="NAME != null and NAME !=''">
-			and t.NAME like concat('%',#{NAME},'%')
-		</if>
-	</select>
-	
-	<insert id="addGoodsMs" parameterType="java.util.HashMap">
-		INSERT INTO T_DITY_GOODS_MS (
-				ID,
-				NAME,
-				PRICE,
-				INTRDCT,
-				OWN_ACNT,
-				FILE_URL,
-				STATUS,
-				BUY_TIME,
-				WT_TIME,
-				BUY_DATE,
-				WT_DATE,
-				CRITE_TIME,
-				CRITE_USER
-			) VALUES (
-				#{ID},
-				#{NAME},
-				#{PRICE},
-				#{INTRDCT},
-				#{CRITE_USER},
-				#{FILE_URL},
-				1,
-				#{BUY_TIME},
-				#{WT_TIME},
-				#{BUY_DATE},
-				#{WT_DATE},
-				SYSDATE(),
-				#{CRITE_USER}
-			)
-	</insert>
-	
-	<update id="editGoodsMs" parameterType="java.util.HashMap">
-		UPDATE T_DITY_GOODS_MS T SET 
-				T.NAME = #{NAME}, 
-				T.PRICE = #{PRICE},
-				T.INTRDCT = #{INTRDCT}, 
-				T.BUY_TIME = #{BUY_TIME}, 
-				T.WT_TIME = #{WT_TIME},
-				T.BUY_DATE = #{BUY_DATE}, 
-				T.WT_DATE = #{WT_DATE}, 
-				T.FILE_URL = #{FILE_URL}
-			WHERE T.ID = #{ID}
-	</update>
-	
-	<delete id="delGoodsMs" parameterType="java.util.HashMap">
-		DELETE FROM T_DITY_GOODS_MS WHERE ID = #{ID}
-	</delete>
-	
-	<update id="setGoodsMsStatus" parameterType="java.util.HashMap">
-		UPDATE T_DITY_GOODS_MS T SET 
-				T.STATUS = #{STATUS}
-			WHERE T.ID = #{ID}
-	</update>
-	
-	
 	<select id="qryGoodsList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 		SELECT T.*,
-			((select t.RATE_VAL from t_dity_rate t where t.RATE_NAME='委托费') * t.PRICE) WTF,
-		  	((select t.RATE_VAL from t_dity_rate t where t.RATE_NAME='预计收益') * t.PRICE) YJSY,
+			convert((select t.RATE_VAL from t_dity_rate t where t.RATE_NAME='委托费') * t.PRICE/100,decimal(15,2)) WTF,
+			convert((select t.RATE_VAL from t_dity_rate t where t.RATE_NAME='预计收益') * t.PRICE/100,decimal(15,2)) YJSY,
 			TYPE.TYPE_NAME,
 			USR.USER_NAME OWN_ACNT_NAME,
+			USR.MOBILE_NO,
 			CASE T.STATUS
 				WHEN 0 THEN
 					'已下架'
 				WHEN 1 THEN
-					'正常'
+					'正常上架'
+				WHEN 2 THEN
+					'已卖出'
 				ELSE
 					T.STATUS
 			END STATUS_NAME,
@@ -322,12 +264,34 @@
 		ON T.GOODS_TYPE = TYPE.ID
 		LEFT JOIN T_DITY_USER USR
 		ON T.OWN_ACNT = USR.USER_NO
-			WHERE 1 = 1
+			WHERE 1=1 
+		<if test="TYPE != null and TYPE ==1">
+			and t.GOODS_TYPE in (select ID from t_dity_product_type a where a.status='1')
+		</if>
+		<if test="TYPE != null and TYPE ==2">
+			and t.GOODS_TYPE in (select ID from t_dity_product_type a where a.status='2')
+		</if>
 		<if test="ID != null and ID !=''">
 			and t.ID = #{ID}
 		</if>
-		<if test="NAME != null and NAME !=''">
-			and t.NAME like concat('%',#{NAME},'%')
+		<if test="GOODS_TYPE != null and GOODS_TYPE !=''">
+			and t.GOODS_TYPE = #{GOODS_TYPE}
+		</if>
+		order by t.GOODS_TYPE,t.CRITE_TIME desc 
+		<if test="PAGENUM != null and PAGESIZE != null">
+			LIMIT ${(PAGENUM-1)*PAGESIZE},${PAGESIZE};
+		</if>
+	</select>
+	
+	<select id="qryGoodsListCt" parameterType="java.util.HashMap" resultType="Integer">
+		SELECT count(1) O_COUNT
+		FROM T_DITY_GOODS T
+			WHERE 1=1 
+		<if test="TYPE != null and TYPE ==1">
+			and t.GOODS_TYPE in (select ID from t_dity_product_type a where a.status='1')
+		</if>
+		<if test="TYPE != null and TYPE ==2">
+			and t.GOODS_TYPE in (select ID from t_dity_product_type a where a.status='2')
 		</if>
 		<if test="GOODS_TYPE != null and GOODS_TYPE !=''">
 			and t.GOODS_TYPE = #{GOODS_TYPE}
@@ -379,7 +343,6 @@
 				T.STATUS = #{STATUS}
 			WHERE T.ID = #{ID}
 	</update>
-	
 	
 	<select id="qryUserDz" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 		SELECT * FROM T_DITY_USERDZ 
@@ -446,6 +409,7 @@
 				ORDER_NO,
 				ORDER_PD,
 				ORDER_PD_NAME,
+				PD_FILE_URL,
 				ORDER_PD_TYPE,
 				ORDER_PRICE,
 				ORDER_CVAL,
@@ -462,6 +426,7 @@
 				#{ORDER_NO},
 				#{ORDER_PD},
 				#{ORDER_PD_NAME},
+				#{PD_FILE_URL},
 				#{ORDER_PD_TYPE},
 				#{ORDER_PRICE},
 				#{ORDER_CVAL},
@@ -482,6 +447,7 @@
 			t.ORDER_PD,
 			t.ORDER_PD_NAME,
 			t.ORDER_PD_TYPE,
+			t.PD_FILE_URL,
 			CASE T.ORDER_PD_TYPE
 				WHEN 0 THEN
 					'非秒杀商品订单'
@@ -499,6 +465,7 @@
 			u.USER_NAME ORDER_USER_SEL_NAME,
 			t.ORDER_USER_BUY_NO,
 			uu.USER_NAME ORDER_USER_BUY_NAME,
+			uu.MOBILE_NO ORDER_USER_BUY_MOBILE,
 			t.STATUS,
 			CASE T.STATUS
 				WHEN 0 THEN
@@ -526,20 +493,21 @@
 		<if test="ID != null and ID !=''">
 			and T.ID = #{ID}
 		</if>
-		<if test="TYPE =='0'">
+		<if test="TYPE == 0">
 			and T.STATUS = 0 and T.ORDER_USER_BUY_NO = #{USER_NO}
 		</if>
-		<if test="TYPE =='1'">
+		<if test="TYPE == 1">
 			and T.STATUS = 1 and T.ORDER_USER_SEL_NO = #{USER_NO}
 		</if>
-		<if test="TYPE =='2'">
-			and T.STATUS = 3 and T.ORDER_USER_BUY_NO = #{USER_NO}
+		<if test="TYPE == 2">
+			<!-- and T.STATUS = 3 and T.ORDER_USER_BUY_NO = #{USER_NO} -->
+			and T.STATUS in (4,5) and T.ORDER_USER_BUY_NO = #{USER_NO}
 		</if>
-		<if test="TYPE =='3'">
-			and T.STATUS = 2 and T.ORDER_USER_BUY_NO = #{USER_NO}
+		<if test="TYPE == 3">
+			and T.STATUS in (2) and T.ORDER_USER_BUY_NO = #{USER_NO}
 		</if>
-		<if test="TYPE =='4'">
-			and T.STATUS != 1 and T.ORDER_USER_SEL_NO = #{USER_NO}
+		<if test="TYPE == 4">
+			and T.STATUS in (2,3,4,5) and T.ORDER_USER_SEL_NO = #{USER_NO}
 		</if>
 		<if test="ORDER_PD != null and ORDER_PD !=''">
 			and T.ORDER_PD = #{ORDER_PD}
@@ -555,6 +523,7 @@
 			t.ORDER_NO,
 			t.ORDER_PD,
 			t.ORDER_PD_NAME,
+			t.PD_FILE_URL,
 			t.ORDER_PD_TYPE,
 			CASE T.ORDER_PD_TYPE
 				WHEN 0 THEN
@@ -573,6 +542,7 @@
 			u.USER_NAME ORDER_USER_SEL_NAME,
 			t.ORDER_USER_BUY_NO,
 			uu.USER_NAME ORDER_USER_BUY_NAME,
+			uu.MOBILE_NO ORDER_USER_BUY_MOBILE,
 			t.STATUS,
 			CASE T.STATUS
 				WHEN 0 THEN
@@ -609,15 +579,16 @@
 		DELETE FROM t_dity_order WHERE ID = #{ID}
 	</delete>
 	
-	<update id="editGoodsMsOwnAcnt" parameterType="java.util.HashMap">
-		update T_DITY_GOODS_MS t set 
-			t.OWN_ACNT=(select a.ORDER_USER_BUY_NO 
-				from t_dity_order a where a.id=#{ORDERID})
+	<update id="editGoodsYsc" parameterType="java.util.HashMap">
+		update T_DITY_GOODS t set t.STATUS=2
+			where t.ID=#{ID}
 	</update>
 	
 	<update id="editGoodsOwnAcnt" parameterType="java.util.HashMap">
 		update T_DITY_GOODS t set 
 			t.OWN_ACNT=(select a.ORDER_USER_BUY_NO 
+				from t_dity_order a where a.id=#{ORDERID})
+		where t.ID=(select a.ORDER_PD 
 				from t_dity_order a where a.id=#{ORDERID})
 	</update>
 	
@@ -627,7 +598,6 @@
 				,T.ORDER_EXPRESS = #{ORDER_EXPRESS}
 			WHERE T.ID = #{ID}
 	</update>
-	
 	
 	<select id="qryFsUser" parameterType="java.util.HashMap" resultType="java.util.HashMap">
 		SELECT  T.ID,
@@ -660,6 +630,200 @@
 		FROM T_DITY_USER T 
 		LEFT JOIN T_DITY_USER USR
 		ON T.CRITE_USER = USR.USER_NO
-		WHERE PARENT_NO= #{USER_NO}
+		WHERE T.PARENT_NO= #{USER_NO}
 	</select>
+	
+	<update id="editGoodsMsPdStatus" parameterType="java.util.HashMap">
+		update T_DITY_GOODS_MS t set t.STATUS=1
+		where t.ID=(select a.ORDER_PD 
+				from t_dity_order a where a.id=#{ORDERID})
+	</update>
+	
+	<update id="editGoodsPdStatus" parameterType="java.util.HashMap">
+		update T_DITY_GOODS t set t.STATUS=1
+		where t.ID=(select a.ORDER_PD 
+				from t_dity_order a where a.id=#{ORDERID})
+	</update>
+	
+	<update id="setGoodPrice" parameterType="java.util.HashMap">
+		update T_DITY_GOODS t set 
+			t.PRICE=(select convert(a.ORDER_PRICE + a.ORDER_CVAL + a.ORDER_CFEE,decimal(15,2))
+				from t_dity_order a where a.id=#{ORDERID})
+		where t.ID=(select a.ORDER_PD 
+				from t_dity_order a where a.id=#{ORDERID})
+	</update>
+	
+	<select id="qryMyOrder" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT t.ID,
+			t.ORDER_NO,
+			t.ORDER_PD,
+			t.ORDER_PD_NAME,
+			t.ORDER_PD_TYPE,
+			t.PD_FILE_URL,
+			CASE T.ORDER_PD_TYPE
+				WHEN 0 THEN
+					'非秒杀商品订单'
+				WHEN 1 THEN
+					'秒杀商品订单'
+				ELSE
+					T.ORDER_PD_TYPE
+			END ORDER_PD_TYPE_NAME,
+			t.ORDER_PRICE,
+			t.ORDER_CVAL,
+			t.ORDER_CFEE,
+			t.ORDER_INCOM,
+			t.ORDER_EXPRESS,
+			t.ORDER_USER_SEL_NO,
+			u.USER_NAME ORDER_USER_SEL_NAME,
+			t.ORDER_USER_BUY_NO,
+			uu.USER_NAME ORDER_USER_BUY_NAME,
+			uu.MOBILE_NO ORDER_USER_BUY_MOBILE,
+			t.STATUS,
+			CASE T.STATUS
+				WHEN 0 THEN
+					'等待买家确认已付款'
+				WHEN 1 THEN
+					'等待卖家确认已收款'
+				WHEN 2 THEN
+					'卖家已确认收款'
+				WHEN 3 THEN
+					'卖家已发货'
+				WHEN 4 THEN
+					'买家已发起委托，待管理员确认委托'
+				WHEN 5 THEN
+					'管理员已确认委托'
+				ELSE
+					T.STATUS
+			END STATUS_NAME,
+			DATE_FORMAT(t.OPTION_TIME,'%Y-%m-%d %H:%i:%s') OPTION_TIME,
+			t.OPTION_USER 
+		FROM t_dity_order t left join t_dity_user u
+		 on t.ORDER_USER_SEL_NO=u.USER_NO
+		left join t_dity_user uu
+		 on t.ORDER_USER_BUY_NO=uu.USER_NO
+		where t.ORDER_USER_BUY_NO = #{USER_NO} or t.ORDER_USER_SEL_NO=#{USER_NO}
+		order by T.OPTION_TIME desc
+	</select>
+	
+	<update id="clearUserWtsk" parameterType="java.util.HashMap">
+		update T_DITY_USER t set t.IS_WTSK=0
+		where t.ID != #{ID}
+	</update>
+	
+	<update id="setUserWtsk" parameterType="java.util.HashMap">
+		update T_DITY_USER t set t.IS_WTSK=1
+		where t.ID=#{ID}
+	</update>
+	
+	<select id="qryWtSkInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT  T.USER_NO,
+				T.USER_NAME,
+				T.MOBILE_NO,
+				T.BANK_NO,
+				T.BANK_NAME,
+				T.REAL_NAME,
+				T.WX_NO,
+				T.ZFB_NO,
+				T.WX_FILE_URL,
+				T.ZFB_FILE_URL
+		FROM T_DITY_USER T 
+		WHERE USER_TYPE=1 and IS_WTSK=1
+	</select>
+	
+	<select id="qryOrderSkInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT  T.USER_NO,
+				T.USER_NAME,
+				T.MOBILE_NO,
+				T.BANK_NO,
+				T.BANK_NAME,
+				T.REAL_NAME,
+				T.WX_NO,
+				T.ZFB_NO,
+				T.WX_FILE_URL,
+				T.ZFB_FILE_URL
+		FROM T_DITY_USER T 
+		WHERE t.USER_NO=(select OWN_ACNT from t_dity_goods where ID=#{GOODID})
+	</select>
+	
+	
+	<select id="checkOrder" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT *
+			FROM t_dity_order t 
+			where T.STATUS != 5
+			and T.ORDER_PD = #{ORDER_PD}
+	</select>
+	
+	<update id="clearUserSk" parameterType="java.util.HashMap">
+		update T_DITY_USER t set t.WX_NO='',t.ZFB_NO='',t.WX_FILE_URL='',t.ZFB_FILE_URL=''
+		where t.ID = #{ID}
+	</update>
+	
+	<!-- 累计信息   累计佣金 YJ  已提佣金YTYJ  佣金余额YJYE -->
+	<select id="getYjInfo" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT
+			convert(IFNULL(sum(t.ORDER_PRICE),0)*0.004,decimal(15,2)) yj,
+		  	convert((select IFNULL(sum(y.JE),0) from t_dity_yj y where y.USER_NO=#{USER_NO}),decimal(15,2)) ytje,
+		  	convert(IFNULL(sum(t.ORDER_PRICE),0)*0.004 - 
+		  		(select IFNULL(sum(y.JE),0) from t_dity_yj y where y.USER_NO=#{USER_NO}),decimal(15,2)) yjye
+		FROM
+			t_dity_order t
+		WHERE
+			t.ORDER_USER_BUY_NO IN (
+				SELECT
+					u.USER_NO
+				FROM
+					t_dity_user u
+				WHERE
+					u.PARENT_NO = #{USER_NO}
+			)
+			and t.STATUS=5
+	</select>
+	
+	<!-- 佣金明细列表 -->
+	<select id="getYjList" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT USR.USER_NAME,t.ID,t.USER_NO,t.JE,t.STATUS,DATE_FORMAT(T.CRITE_TIME,'%Y-%m-%d %H:%i:%s') CRITE_TIME,
+			CASE T.STATUS
+				WHEN 0 THEN
+					'已提现，待管理员转账'
+				WHEN 1 THEN
+					'管理员已确认转账'
+				ELSE
+					T.STATUS
+			END STATUS_NAME,
+			USR.BANK_NO,
+			USR.ZFB_NO,
+			USR.WX_NO,
+			USR.MOBILE_NO
+		FROM
+			t_dity_yj t LEFT JOIN T_DITY_USER USR
+		ON T.USER_NO = USR.USER_NO
+		WHERE 1=1
+			<if test="USER_NO != null and USER_NO !=''">
+				and t.USER_NO = #{USER_NO}
+			</if>
+			order by t.CRITE_TIME desc 
+	</select>
+	
+	<!-- 提现 -->
+	<insert id="addYJ" parameterType="java.util.HashMap">
+		INSERT INTO t_dity_yj (
+				ID,
+				USER_NO,
+				JE,
+				STATUS,
+				CRITE_TIME
+			) VALUES (
+				#{ID},
+				#{USER_NO},
+				#{JE},
+				0,
+				SYSDATE()
+			)
+	</insert>
+	
+	<!-- 管理员确认提现 -->
+	<update id="updateYjStatus" parameterType="java.util.HashMap">
+		update t_dity_yj t set t.STATUS=1 where t.ID = #{ID} and t.STATUS=0
+	</update>
+	
 </mapper>
